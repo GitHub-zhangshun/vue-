@@ -18,9 +18,7 @@ export default {
     ShowDetailsNav
   },
   data() {
-    return {
-      
-    };
+    return {};
   }
 };
 </script>

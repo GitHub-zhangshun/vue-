@@ -9,8 +9,8 @@
 </template>
 
 <script>
-import TopBar from './topBar';
-import TabBar from './tabBar';
+import TopBar from "./topBar";
+import TabBar from "./tabBar";
 export default {
   name: "Layout",
   components: {
@@ -23,13 +23,33 @@ export default {
   computed: {
     // 除首页、社区、购物车、我的，其他页面不显示 tabBar、topBar，需要显示的添加到 isShownTheTabBar、isShownTheTopBar 白名单即可。
     isTabBar() {
-      let isShownTheTabBar = ['home', 'community', 'show-details-content', 'shop-cart', 'my'], flag = new Boolean();
-      isShownTheTabBar.includes(this.$route.name) ? flag = true : flag = false;
+      let isShownTheTabBar = [
+          "home",
+          "community",
+          "show-details-content",
+          "attention-show-content",
+          "shop-cart",
+          "my"
+        ],
+        flag = new Boolean();
+      isShownTheTabBar.includes(this.$route.name)
+        ? (flag = true)
+        : (flag = false);
       return flag;
     },
     isTopBar() {
-      let isShownTheTopBar = ['home', 'community', 'show-details-content', 'shop-cart', 'my'], flag = new Boolean();
-      isShownTheTopBar.includes(this.$route.name) ? flag = true : flag = false;
+      let isShownTheTopBar = [
+          "home",
+          "community",
+          "show-details-content",
+          "attention-show-content",
+          "shop-cart",
+          "my"
+        ],
+        flag = new Boolean();
+      isShownTheTopBar.includes(this.$route.name)
+        ? (flag = true)
+        : (flag = false);
       return flag;
     }
   }

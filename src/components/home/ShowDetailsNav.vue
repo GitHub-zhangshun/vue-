@@ -2,6 +2,8 @@
   <section>
     <nav class="switch-list_wrapper">
       <van-tabs v-model="active" :line-width="28" @click="handleClick2Details">
+        <van-tab title="关注"></van-tab>
+        <van-tab title="推荐"></van-tab>
         <van-tab
           v-for="(item, idx) in tabList"
           :key="idx"
@@ -15,18 +17,13 @@
 </template>
 
 <script>
+import { sessionGetItem } from '@/common/util';
 export default {
   name: "ShowDetailsArea",
   data() {
     return {
-      active: 1,
+      active: sessionGetItem('activeTabItem'),
       tabList: [
-        {
-          title: '关注'
-        },
-        {
-          title: '推荐'
-        },
         {
           title: 'girl'
         },
@@ -43,13 +40,32 @@ export default {
     }
   },
   methods: {
-    handleClick2Details(index) {
-      this.$router.push({
-        name: `show-details-content`,
-        params: {
-          tabId: index
-        }
-      });
+    // 点击 tab 显示对应请求的 show 详情数据。
+    handleClick2Details(index, title) {
+      if(title === '关注') {
+        this.$router.push({
+          name: `attention-show-content`,
+          params: {
+            tabId: index
+          }
+        });
+      }
+      else if(title === '推荐') {
+        this.$router.push({
+          name: `community`,
+          params: {
+            tabId: index
+          }
+        });
+      }
+      else {
+        this.$router.push({
+          name: `show-details-content`,
+          params: {
+            tabId: index
+          }
+        });
+      }
     }
   }
 }

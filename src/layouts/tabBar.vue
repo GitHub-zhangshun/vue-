@@ -14,7 +14,6 @@
 
 <script>
 import { sessionGetItem } from "../common/util";
-
 export default {
   name: "TabBar",
   data() {
@@ -41,12 +40,12 @@ export default {
           name: "my"
         }
       ],
-      // 从 session 中获取之前位于哪个 item 下。
-      tabBar: sessionGetItem("tabBar") || "home"
+      // 非首次进入从 session 中获取路由中保存的 tabBar 当前高亮项，首次进入就是社区。
+      tabBar: sessionGetItem("tabBar") || "community"
     };
   },
   watch: {
-    // 判断 tabbar 中存在的路由，对应跳转。
+    // 判断 tabBar 中存在的路由，进行对应跳转。
     $route(to, from) {
       if (['home', 'community', 'shop-cart', 'my'].includes(to.name)) {
         this.tabBar = to.name;
@@ -54,7 +53,7 @@ export default {
     }
   },
   methods: {
-    // 点击 tabbar 切换的事件。
+    // 点击 tabBar 切换项。
     handleClick2TabDetails(routerName) {
       this.tabBar = routerName;
       this.$router.push({ name: routerName });
