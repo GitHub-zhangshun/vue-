@@ -7,12 +7,16 @@ import filters from "./filters";
 // 用于移动端多机型的适配方案。
 import "amfe-flexible";
 // 按需加载用到的 vant 依赖。
-import { Toast, Swipe, SwipeItem, Tab, Tabs } from "vant";
+import { Toast, Swipe, SwipeItem, Lazyload, Tab, Tabs } from "vant";
 Vue.use(Toast)
     .use(Swipe)
     .use(SwipeItem)
+    .use(Lazyload)
     .use(Tab)
     .use(Tabs);
+// 引入瀑布流、懒加载组件。
+import waterfall from 'vue-waterfall2';
+Vue.use(waterfall);
 // 消除移动端 click 事件 300ms 延迟。
 import attachFastClick from "fastclick";
 attachFastClick.attach(document.body);

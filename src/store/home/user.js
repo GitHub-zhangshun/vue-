@@ -1,5 +1,5 @@
 import * as types from "@/store/mutation-types.js";
-import { rankGender } from "@/api/common";
+// import { rankGender } from "@/api/common";
 
 export default {
   namespaced: true,
@@ -37,4 +37,4 @@ export default {
       state.rank = rank;
     }
   }
-};
+}

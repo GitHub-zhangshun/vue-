@@ -6,3 +6,4 @@ import Request from '../common/request';
 
 /* Common */
 // export const rankGender = data => Request.get('/ranking/gender', data);
+export const waterFallData = data => Request.get(`/js/data.json`);

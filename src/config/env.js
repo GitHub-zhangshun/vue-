@@ -9,7 +9,9 @@ const dev = {
   // or history
   routerMode: 'hash',
   /* beta */
-  baseUrl: `${location.origin}`, // 自定义反向代理
+  // 自定义反向代理
+  // baseUrl: `${location.origin}`,
+  baseUrl: ``,
   credential: true
 };
 

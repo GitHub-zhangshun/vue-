@@ -7,7 +7,8 @@ const MOCKURL = ""; // mock数据地址
  * 自定义Axios实例
  */
 const AJAX = axios.create({
-  baseURL: process.env.VUE_APP_API,
+  // baseURL: process.env.VUE_APP_API,
+  baseURL: '',
   timeout: 30000,
   withCredentials: env.credential
 });
@@ -42,7 +43,7 @@ AJAX.interceptors.response.use(
   }
 );
 
-// 定义对外Get、Post、File请求
+// 定义对外 Get、Post、File 请求。
 export default {
   get(url, param = {}, headers = {}) {
     return AJAX.get(url, {

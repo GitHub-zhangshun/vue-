@@ -2,12 +2,11 @@
   <section class="swiper-tags--list_wrapper">
     <div
       class="swiper-tags--list_item"
-      v-for="(item, idx) in tagsListData"
+      v-for="(image, idx) in tagsListImg"
       :key="idx"
-      :style="[item.bgImg]"
       @click="handleClick2TagDetailsPage"
     >
-      {{ item.name }}
+      <img v-lazy="image">
     </div>
     <span class="more-button" v-show="isShownMoreButtonFlag" @click="handleClickShowMoreTags">more>></span>
   </section>
@@ -18,49 +17,13 @@ export default {
   name: 'SwiperTagsList',
   data() {
     return {
-      tagsListData: [
-        {
-          name: '#圣诞装扮',
-          bgImg: {
-            backgroundColor: 'skyblue',
-            backgroundImg: ''
-          }
-        },
-        {
-          name: '#新年装扮',
-          bgImg: {
-            backgroundColor: 'orange',
-            backgroundImg: ''
-          }
-        },
-        {
-          name: '#初春装扮',
-          bgImg: {
-            backgroundColor: 'red',
-            backgroundImg: ''
-          }
-        },
-        {
-          name: '#夏日装扮',
-          bgImg: {
-            backgroundColor: 'yellowgreen',
-            backgroundImg: ''
-          }
-        },
-        {
-          name: '#秋季装扮',
-          bgImg: {
-            backgroundColor: 'yellow',
-            backgroundImg: ''
-          }
-        },
-        {
-          name: '#秋季装扮',
-          bgImg: {
-            backgroundColor: 'yellow',
-            backgroundImg: ''
-          }
-        }
+      tagsListImg: [
+        'http://ww1.sinaimg.cn/large/ecbd3051gy1gbgyhee34aj203l0253yn.jpg',
+        'http://ww1.sinaimg.cn/large/ecbd3051gy1gbgyhee34aj203l0253yn.jpg',
+        'http://ww1.sinaimg.cn/large/ecbd3051gy1gbgyhee34aj203l0253yn.jpg',
+        'http://ww1.sinaimg.cn/large/ecbd3051gy1gbgyhee34aj203l0253yn.jpg',
+        'http://ww1.sinaimg.cn/large/ecbd3051gy1gbgyhee34aj203l0253yn.jpg',
+        'http://ww1.sinaimg.cn/large/ecbd3051gy1gbgyhee34aj203l0253yn.jpg'
       ],
       isShownMoreButtonFlag: false
     }
@@ -71,7 +34,7 @@ export default {
   methods: {
     // 是否显示更多按钮。
     isShownMoreButton() {
-      if(this.tagsListData.length >= 6) {
+      if(this.tagsListImg.length >= 6) {
         this.isShownMoreButtonFlag = !this.isShownMoreButtonFlag;
       }
     },
@@ -95,16 +58,20 @@ export default {
 <style lang="scss" scoped>
 .swiper-tags--list_wrapper {
   display: flex;
-  height: 115px;
-  padding: 17.5px 12PX;
+  height: 114.5px;
+  padding: 17.5PX 12PX;
   overflow-x: scroll;
+  overflow-y: hidden;
   .swiper-tags--list_item {
     flex-shrink: 0;
-    width: 130px;
+    width: 129px;
     height: 100%;
-    border-radius: 8px;
+    border-radius: 10PX;
     text-align: center;
     line-height: 80px;
+    img {
+      width: 100%;
+    }
   }
   .swiper-tags--list_item:not(:first-of-type) {
     margin-left: 10PX;
@@ -116,7 +83,7 @@ export default {
     line-height: 80px;
   }
 }
-// 隐藏移动端的滚动条。
+// 隐藏移动端的横向滚动条。
 .swiper-tags--list_wrapper::-webkit-scrollbar {
   display: none;
 }

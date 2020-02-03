@@ -2,10 +2,10 @@
   <section class="swiper-banner_wrapper">
     <van-swipe :autoplay="3000" indicator-color="white">
       <van-swipe-item
-        v-for="(item, idx) in bannerListData"
+        v-for="(image, idx) in bannerImg"
         :key="idx"
-        :style="[item.bgImg]"
       >
+        <img v-lazy="image">
       </van-swipe-item>
     </van-swipe>
   </section>
@@ -16,19 +16,9 @@ export default {
   name: "SwiperBanner",
   data() {
     return {
-      bannerListData: [
-        {
-          bgImg: {
-            backgroundColor: 'skyblue',
-            backgroundImg: ''
-          }
-        },
-        {
-          bgImg: {
-            backgroundColor: 'yellowgreen',
-            backgroundImg: ''
-          }
-        }
+      bannerImg: [
+        'http://ww1.sinaimg.cn/large/ecbd3051gy1gbgxww3b1mj20af04q76v.jpg',
+        'http://ww1.sinaimg.cn/large/ecbd3051gy1gbgxww3b1mj20af04q76v.jpg'
       ]
     }
   }
@@ -45,12 +35,9 @@ export default {
     height: 100%;
     .van-swipe-item {
       width: 100%;
-    }
-    .van-swipe-item:nth-child(1) {
-      background: skyblue;
-    }
-    .van-swipe-item:nth-child(2) {
-      background: yellowgreen;
+      img {
+        width: 100%;
+      }
     }
   }
 }

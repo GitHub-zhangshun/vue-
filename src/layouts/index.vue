@@ -27,7 +27,6 @@ export default {
           "home",
           "community",
           "show-details-content",
-          "attention-show-content",
           "shop-cart",
           "my"
         ],
@@ -42,7 +41,6 @@ export default {
           "home",
           "community",
           "show-details-content",
-          "attention-show-content",
           "shop-cart",
           "my"
         ],
@@ -60,7 +58,7 @@ export default {
 .layout-container {
   height: 100vh;
   .content-container {
-    height: calc(100vh - 100px);
+    height: calc(100vh - 107PX);
     overflow-x: hidden;
     overflow-y: scroll;
   }

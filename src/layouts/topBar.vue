@@ -1,14 +1,14 @@
 <template>
   <section class="top-bar">
     <div class="nav-button_wrapper">
-      <i class="iconfont icon-weibo" @click="handleClickShowTabContent"></i>
+      <i class="iconfont icon-navicon" @click="handleClickShowTabContent"></i>
     </div>
     <div class="nav-sign_wrapper" @click="handleClick2HomePage">
       {{ title }}
     </div>
     <div class="nav-right_wrapper">
-      <i class="iconfont icon-weibo" @click="handleClick2UserPage"></i>
-      <i class="iconfont icon-weibo" @click="handleClickShowShareContent"></i>
+      <i class="iconfont icon-yonghu" @click="handleClick2UserPage"></i>
+      <i class="iconfont icon-fenxiang" @click="handleClickShowShareContent"></i>
     </div>
   </section>
 </template>
@@ -42,10 +42,17 @@ export default {
 .top-bar {
   display: flex;
   align-items: center;
-  height: 40PX;
+  height: 47PX;
   padding: 0 10PX;
+  .nav-sign_wrapper {
+    font-family: Amy;
+    font-size: 20px;
+  }
   .iconfont {
-    font-size: 18px;
+    font-size: 20px;
+  }
+  .iconfont:nth-child(1) {
+    margin-right: 10PX;
   }
 }
 .top-bar div:nth-child(1) {
