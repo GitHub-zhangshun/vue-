@@ -7,13 +7,14 @@ import filters from "./filters";
 // 用于移动端多机型的适配方案。
 import "amfe-flexible";
 // 按需加载用到的 vant 依赖。
-import { Toast, Swipe, SwipeItem, Lazyload, Tab, Tabs } from "vant";
+import { Toast, Swipe, SwipeItem, Lazyload, Tab, Tabs, Sticky } from "vant";
 Vue.use(Toast)
     .use(Swipe)
     .use(SwipeItem)
     .use(Lazyload)
     .use(Tab)
-    .use(Tabs);
+    .use(Tabs)
+    .use(Sticky);
 // 引入瀑布流、懒加载组件。
 import waterfall from 'vue-waterfall2';
 Vue.use(waterfall);

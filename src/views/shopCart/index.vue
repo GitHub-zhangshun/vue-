@@ -1,7 +1,7 @@
 <template>
-  <div class="shop-cart">
+  <section class="shop-cart">
     This is shopCart.
-  </div>
+  </section>
 </template>
 
 <script>

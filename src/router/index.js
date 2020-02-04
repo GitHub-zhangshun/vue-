@@ -11,10 +11,12 @@ Router.prototype.push = function push(location) {
  * 按需（懒）加载路由。
  * @param { String } webpackChunkName 打包之后的包名。
  */
-const Home = () => import(/* webpackChunkName: "home" */ "../views/home");
-const Community = () => import(/* webpackChunkName: "community" */ "../views/community");
-const ShopCart = () => import(/* webpackChunkName: "shopCart" */ "../views/shopCart");
-const My = () => import(/* webpackChunkName: "my" */ "../views/my");
+const Home = () => import(/* webpackChunkName: "home" */ "../views/home/index");
+const Community = () => import(/* webpackChunkName: "community" */ "../views/community/index");
+const ShopCart = () => import(/* webpackChunkName: "shopCart" */ "../views/shopCart/index");
+const My = () => import(/* webpackChunkName: "my" */ "../views/my/index");
+const Shield = () => import(/* webpackChunkName: "shieldPage" */ "../views/community/shieldPage");
+const ShowDetailsPage = () => import(/* webpackChunkName: "ShowDetailsPage" */ "../views/community/showDetailsPage");
 
 Vue.use(Router);
 // 动态获取二级目录。
@@ -34,6 +36,16 @@ const router = new Router({
       path: "/community",
       component: Community,
       children: community
+    },
+    {
+      path: "/showDetailsPage",
+      name: "showDetailsPage",
+      component: ShowDetailsPage
+    },
+    {
+      path: "/shield",
+      name: "shield",
+      component: Shield
     },
     {
       path: "/shop-cart",
@@ -68,10 +80,7 @@ const router = new Router({
  */
 router.beforeEach((to, from, next) => {
   // 对子路由做单独判断，防止子路由情况下刷新 tabBar 没有高亮当前项。
-  if (
-    to.name === "show-details-content" ||
-    to.name === "attention-show-content"
-  ) {
+  if (to.name === "show-details-content") {
     sessionSetItem("tabBar", "community");
   } else {
     sessionSetItem("tabBar", to.name);

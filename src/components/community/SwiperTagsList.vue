@@ -18,12 +18,12 @@ export default {
   data() {
     return {
       tagsListImg: [
-        'http://ww1.sinaimg.cn/large/ecbd3051gy1gbgyhee34aj203l0253yn.jpg',
-        'http://ww1.sinaimg.cn/large/ecbd3051gy1gbgyhee34aj203l0253yn.jpg',
-        'http://ww1.sinaimg.cn/large/ecbd3051gy1gbgyhee34aj203l0253yn.jpg',
-        'http://ww1.sinaimg.cn/large/ecbd3051gy1gbgyhee34aj203l0253yn.jpg',
-        'http://ww1.sinaimg.cn/large/ecbd3051gy1gbgyhee34aj203l0253yn.jpg',
-        'http://ww1.sinaimg.cn/large/ecbd3051gy1gbgyhee34aj203l0253yn.jpg'
+        'http://ww1.sinaimg.cn/large/ecbd3051gy1gbki6etaw1j207604awfi.jpg',
+        'http://ww1.sinaimg.cn/large/ecbd3051gy1gbki6etaw1j207604awfi.jpg',
+        'http://ww1.sinaimg.cn/large/ecbd3051gy1gbki6etaw1j207604awfi.jpg',
+        'http://ww1.sinaimg.cn/large/ecbd3051gy1gbki6etaw1j207604awfi.jpg',
+        'http://ww1.sinaimg.cn/large/ecbd3051gy1gbki6etaw1j207604awfi.jpg',
+        'http://ww1.sinaimg.cn/large/ecbd3051gy1gbki6etaw1j207604awfi.jpg'
       ],
       isShownMoreButtonFlag: false
     }

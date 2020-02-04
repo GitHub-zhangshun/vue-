@@ -8,7 +8,6 @@ export const setStore = (name, content) => {
   }
   window.localStorage.setItem(name, content);
 };
-
 /**
  * 获取 localStorage
  */
@@ -16,7 +15,6 @@ export const getStore = name => {
   if (!name) return;
   return window.localStorage.getItem(name);
 };
-
 /**
  * 删除 localStorage
  */
@@ -24,7 +22,6 @@ export const removeStore = name => {
   if (!name) return;
   window.localStorage.removeItem(name);
 };
-
 /**
  * 存储 sessionStorage
  * @param key
@@ -33,7 +30,6 @@ export const removeStore = name => {
 export const sessionSetItem = (key, value) => {
   window.sessionStorage.setItem(key, JSON.stringify(value));
 };
-
 /**
  * 获取 sessionStorage
  * @param key
@@ -48,7 +44,6 @@ export const sessionGetItem = key => {
   }
   return result;
 };
-
 /**
  * 删除 sessionStorage
  * @param key
@@ -57,7 +52,6 @@ export const sessionGetItem = key => {
 export const sessionRemoveItem = key => {
   window.sessionStorage.removeItem(key);
 };
-
 /**
  * 清除 sessionStorage
  * @param key
@@ -66,7 +60,6 @@ export const sessionRemoveItem = key => {
 export const sessionClear = () => {
   window.sessionStorage.clear();
 };
-
 /**
  * 生成随机字符串(可指定长度)
  * @param len
@@ -83,7 +76,6 @@ export const randomString = len => {
   }
   return pwd;
 };
-
 /**
  * randomWord 产生任意长度随机字母数字组合
  * @param randomFlag 是否任意长度 min-任意长度最小位[固定位数] max-任意长度最大位
@@ -163,7 +155,6 @@ export const randomWord = (randomFlag, min, max) => {
       "Y",
       "Z"
     ];
-
   // 随机产生
   if (randomFlag) {
     range = Math.round(Math.random() * (max - min)) + min;
@@ -174,7 +165,6 @@ export const randomWord = (randomFlag, min, max) => {
   }
   return str;
 };
-
 /**
  * 获取url后参数
  */
@@ -190,7 +180,6 @@ export const GetRequest = () => {
   }
   return theRequest;
 };
-
 /**
  * 生成随机颜色值
  */
@@ -203,7 +192,6 @@ export const getRandomColor = () => {
   }
   return "#" + rgb.join("");
 };
-
 /**
  * 验证身份证号
  * @param el 号码输入input
@@ -214,7 +202,6 @@ export const checkCardNo = el => {
   let reg = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
   return reg.test(txtval);
 };
-
 /**
  * 获取字符串字节长度
  * @param {String}
@@ -230,7 +217,6 @@ export const checkLength = v => {
   }
   return realLength;
 };
-
 /**
  * 判断微信浏览器
  * @returns {Boolean}
@@ -243,7 +229,6 @@ export const isWeiXin = () => {
     return false;
   }
 };
-
 /**
  * 写 cookies
  */
@@ -254,7 +239,6 @@ export const setCookie = (name, value, time) => {
   document.cookie =
     name + "=" + escape(value) + ";expires=" + exp.toGMTString();
 };
-
 /**
  * 读取 cookies
  */
@@ -264,7 +248,6 @@ export const getCookie = name => {
   if ((arr = document.cookie.match(reg))) return arr[2];
   else return null;
 };
-
 /**
  * 删除 cookies
  */
@@ -275,7 +258,6 @@ export const delCookie = name => {
   if (cval != null)
     document.cookie = name + "=" + cval + ";expires=" + exp.toGMTString();
 };
-
 /**
  * 浏览器判断
  * 用法示例——多套页面判断是否显示移动端：
@@ -314,7 +296,6 @@ export const parseUA = () => {
     ali: u.indexOf("AliApp") > -1
   };
 };
-
 /**
  * 生成UUID
  * @returns {string}
@@ -330,7 +311,6 @@ export const generateUUID = () => {
   });
   return uuid;
 };
-
 /**
  * 删除左右两端的空格
  * @param str
@@ -339,7 +319,6 @@ export const generateUUID = () => {
 function trim(str) {
   return str.replace(/(^\s*)|(\s*$)/g, "");
 }
-
 /**
  * 删除左边的空格
  * @param str
@@ -348,7 +327,6 @@ function trim(str) {
 function ltrim(str) {
   return str.replace(/(^\s*)/g, "");
 }
-
 /**
  * 删除右边的空格
  * @param str
@@ -357,7 +335,6 @@ function ltrim(str) {
 function rtrim(str) {
   return str.replace(/(\s*$)/g, "");
 }
-
 /**
  * 对象数组转二维数组
  * @param objArr
@@ -368,7 +345,6 @@ function obj2Arr(objArr) {
       return Object.values(item);
     });
 }
-
 /**
  * 找出对象数组中某属性的最大值
  * @param array
@@ -384,7 +360,6 @@ function maxItemInObjArr(array, item) {
   );
   return max;
 }
-
 /**
  * 判断当前网络环境
  */
@@ -412,7 +387,6 @@ export const isWifi = () => {
     return false;
   }
 };
-
 /**
  * 首字母大写
  * @param str
@@ -421,7 +395,6 @@ export const isWifi = () => {
 export const fistLetterUpper = str => {
   return str.charAt(0).toUpperCase() + str.slice(1);
 };
-
 /**
  * 过滤非法字符串
  */

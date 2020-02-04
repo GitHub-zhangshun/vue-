@@ -4,6 +4,11 @@
  */
 import Request from '../common/request';
 
-/* Common */
 // export const rankGender = data => Request.get('/ranking/gender', data);
-export const waterFallData = data => Request.get(`/js/data.json`);
+/**
+ * community module api
+ * @param waterFallData 社区瀑布流数据
+ * @param userDetailsData 社区 show 详情用户数据
+ */
+export const waterFallData = data => Request.get(`/js/water-fall-data.json`);
+export const userDetailsData = data => Request.get(`/js/show-details-data.json`);

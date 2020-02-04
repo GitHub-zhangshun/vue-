@@ -1,11 +1,11 @@
 <template>
-  <div class="layout-container">
+  <section class="layout-container">
     <TopBar v-show="isTopBar" />
     <div class="content-container">
       <slot></slot>
     </div>
     <TabBar v-show="isTabBar" />
-  </div>
+  </section>
 </template>
 
 <script>
@@ -21,14 +21,15 @@ export default {
     return {};
   },
   computed: {
-    // 除首页、社区、购物车、我的，其他页面不显示 tabBar、topBar，需要显示的添加到 isShownTheTabBar、isShownTheTopBar 白名单即可。
+    // 需要显示 tabbar || topbar 的，将路由名字添加到 isShownTheTabBar、isShownTheTopBar 白名单即可。
     isTabBar() {
       let isShownTheTabBar = [
           "home",
           "community",
           "show-details-content",
           "shop-cart",
-          "my"
+          "my",
+          "showDetailsPage"
         ],
         flag = new Boolean();
       isShownTheTabBar.includes(this.$route.name)
@@ -42,7 +43,9 @@ export default {
           "community",
           "show-details-content",
           "shop-cart",
-          "my"
+          "my",
+          "shield",
+          "showDetailsPage"
         ],
         flag = new Boolean();
       isShownTheTopBar.includes(this.$route.name)

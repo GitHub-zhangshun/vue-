@@ -1,7 +1,5 @@
 <template>
-  <!-- <section class="show-details_wrapper"> -->
   <!-- {{ tabId }} -->
-  <!-- </section> -->
   <div class="container-water-fall">
     <waterfall
       :col="2"
@@ -12,7 +10,12 @@
     >
       <template>
         <div class="cell-item" v-for="(item, index) in data" :key="index">
-          <img v-if="item.img" :src="item.img" alt="加载错误" />
+          <img
+            v-if="item.img"
+            :src="item.img"
+            @click="handleClick2DetailPage"
+            alt="加载错误"
+          />
           <div class="item-body">
             <div class="item-desc">{{ item.title }}</div>
             <div class="item-footer">
@@ -23,15 +26,17 @@
               ></div>
               <div class="name">{{ item.user }}</div>
               <div class="like" :class="item.liked ? 'active' : ''">
-                <i></i>
-                <div class="like-total">{{ item.like }}</div>
+                <i class="iconfont icon-zan"></i>
+                <div class="like-total">{{ item.like || item.liked }}</div>
               </div>
             </div>
           </div>
         </div>
       </template>
-      <div class=""></div>
     </waterfall>
+    <div class="show-details--bottom_area" v-show="isShownTheEndFlag">
+      <span class="show-details--bottom_area__text">END</span>
+    </div>
   </div>
 </template>
 
@@ -44,7 +49,11 @@ export default {
   data() {
     return {
       // 瀑布流数据数组。
-      data: []
+      data: [],
+      // 用于懒加载的定时器 ID 。
+      loadMoreId: "",
+      // 是否显示数据完结的标志布尔值。
+      isShownTheEndFlag: true
     };
   },
   watch: {
@@ -65,27 +74,34 @@ export default {
     }
   },
   methods: {
-    handleScrollFinish(){
-      console.info('finish');
+    handleScrollFinish() {
+      // console.info('finish');
     },
     handleScroll(scrollData) {
       // console.info(scrollData);
     },
-    handleScrollLoadmore(){
-      const loadMoreId = setTimeout(()=>{
+    handleScrollLoadmore() {
+      this.loadMoreId = setTimeout(() => {
         this.data = this.data.concat(this.data);
-        console.info(this.data.length);
+        // console.info(this.data.length);
       }, 1500);
       this.$waterfall.resize();
     },
+    handleClick2DetailPage() {
+      this.$router.push({
+        name: "shield"
+      });
+    },
     async getWaterFallData() {
-      let res = await waterFallData();
-      this.data = res;
+      this.data = await waterFallData();
     }
   },
   mounted() {
     // 调用函数获取瀑布流数据。
     this.getWaterFallData();
+  },
+  beforeDestroy() {
+    clearTimeout(this.loadMoreId);
   }
 };
 </script>
@@ -103,7 +119,7 @@ export default {
       display: block;
       width: 100%;
       height: auto;
-      border-radius: 10PX;
+      border-radius: 10px;
     }
     .item-body {
       padding: 13.5px 14.5px 13px 0px;
@@ -117,7 +133,7 @@ export default {
         -webkit-line-clamp: 2;
         overflow: hidden;
         text-overflow: ellipsis;
-        color: rgba(44,44,44,1);
+        color: rgba(44, 44, 44, 1);
       }
       .item-footer {
         position: relative;
@@ -135,7 +151,7 @@ export default {
           max-width: 150px;
           margin-left: 3px;
           font-size: 13px;
-          color:rgba(165,165,165,1);
+          color: rgba(165, 165, 165, 1);
         }
         .like {
           position: absolute;
@@ -144,22 +160,37 @@ export default {
           align-items: center;
           &.active {
             i {
+              color: #e26a9a;
             }
             .like-total {
-              color: #ff4479;
+              color: #e26a9a;
             }
           }
           i {
-            width: 28px;
             display: block;
+            width: 17.5px;
+            font-size: 12px;
           }
           .like-total {
-            width: 18px;
+            width: 22px;
             font-size: 12px;
-            color:rgba(21,21,21,1);
+            color: rgba(21, 21, 21, 1);
           }
         }
       }
+    }
+  }
+  .show-details--bottom_area {
+    width: 100%;
+    height: 30px;
+    text-align: center;
+    background: rgba(250, 250, 250, 1);
+    .show-details--bottom_area__text {
+      width: 29px;
+      height: 11px;
+      font-size: 13px;
+      line-height: 30px;
+      color: rgba(177, 177, 177, 1);
     }
   }
 }
