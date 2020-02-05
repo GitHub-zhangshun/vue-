@@ -49,6 +49,8 @@ textarea {
 
 html {
   box-sizing: border-box;
+  // 解决谷歌优化移动端新特性 passive event listener 报错。
+  touch-action: pan-y;
 }
 
 *,

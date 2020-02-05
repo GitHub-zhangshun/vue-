@@ -92,7 +92,6 @@ export default {
   align-items: center;
   height: 47PX;
   padding: 0 10PX;
-  touch-action: pan-y;
   .iconfont {
     font-size: 20px;
   }

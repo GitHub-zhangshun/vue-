@@ -6,7 +6,6 @@
       width: wrapperWidth,
       height: wrapperHeight
     }"
-    @click="handleClick2EditShowPage"
   >
     <img :src="editShow" alt="edit show icon" />
   </section>
@@ -34,13 +33,6 @@ export default {
     return {
       editShow: editShowIcon
     };
-  },
-  methods: {
-    handleClick2EditShowPage() {
-      // this.$router.push({
-      //   name: ''
-      // });
-    }
   }
 };
 </script>

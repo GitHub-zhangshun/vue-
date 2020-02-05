@@ -12,45 +12,80 @@
       <div class="info-top_wrapper">
         <div
           v-if="userData.avatar"
-          class="user-avatar"
           :style="{ backgroundImage: `url(${userData.avatar})` }"
         ></div>
-        <div class="user-info">
+        <div>
           <p>{{ userData.user }}</p>
           <p>{{ userData.intro }}</p>
         </div>
-        <div class="delete-icon_wrapper">
-          <i class="iconfont icon-delete"></i>
+        <div>
+          <i class="iconfont icon-delete" @click="handleClickDeleteShow"></i>
+        </div>
+      </div>
+      <div class="info-middle_wrapper">
+        {{ userData.des }}
+      </div>
+      <div class="info-bottom_wrapper">
+        <div v-for="(item, idx) in userData.tags" :key="idx">
+          #{{ item }}
+        </div>
+      </div>
+      <div class="info-extra_wrapper">
+        <div>
+          <i class="iconfont icon-eye"></i>{{ userData.views }}
+          <p :class="userData.liked ? 'active' : ''"><i class="iconfont icon-zan"></i><span>{{ userData.like || userData.liked }}</span></p>
+        </div>
+        <div>
+          <i class="iconfont icon-Clock"></i>{{ userData.time }}
         </div>
       </div>
     </section>
+    <BlockInterval />
+    <ShowRelatedGoods title="関連商品" />
+    <BlockInterval />
+    <ShowDetailsContent title="関連SHOW" />
   </section>
 </template>
 
 <script>
-import { userDetailsData } from "@/api/common";
+import BlockInterval from "@components/community/BlockInterval";
+import ShowRelatedGoods from "@components/community/ShowRelatedGoods";
+import ShowDetailsContent from "@components/ShowDetailsContent";
+import { showBannerData, userDetailsData } from "@/api/common";
 export default {
   name: "ShowDetailsPage",
+  components: {
+    BlockInterval,
+    ShowRelatedGoods,
+    ShowDetailsContent
+  },
   data() {
     return {
+      // 商品编号。
       goodsNumber: 134,
-      bannerImg: [
-        "https://img14.360buyimg.com/n1/s800x800_jfs/t1/75261/30/11354/182839/5d8b39a2Ea3d93f8c/f9c1922f0c3f88ce.jpg",
-        "https://pop.nosdn.127.net/d7fc70c5-1282-4814-8491-9e655ae967c2?imageView&thumbnail=750x0&quality=60&",
-        "https://img.alicdn.com/imgextra/i3/874022290/TB2QFZjgnqWBKNjSZFxXXcpLpXa_!!874022290.jpg",
-        "https://brup.shengri.cn/goods/2018/05/24021859_f1bc568669e2dd6f90e7fc371de87fa3.jpg"
-      ],
+      // 商品 banner 图片。
+      bannerImg: [],
+      // 用户详细数据。
       userData: []
     };
   },
   methods: {
+    // 获取商品 banner 图方法。
+    async getShowBannerData() {
+      this.bannerImg = await showBannerData();
+    },
+    // 获取用户详细数据方法。
     async getUserData() {
       let res = await userDetailsData();
       this.userData = res[0];
-      console.info(this.userData);
+    },
+    // 点击删除按钮方法。
+    handleClickDeleteShow() {
+      // console.info(1);
     }
   },
   mounted() {
+    this.getShowBannerData();
     this.getUserData();
   }
 };
@@ -85,7 +120,7 @@ export default {
     .info-top_wrapper {
       display: flex;
       align-items: center;
-      .user-avatar {
+      div:nth-child(1) {
         width: 33px;
         height: 33px;
         margin: 20px 13px 0px 15px;
@@ -93,7 +128,7 @@ export default {
         background-repeat: no-repeat;
         background-size: contain;
       }
-      .user-info {
+      div:nth-child(2) {
         min-width: 200px;
         height: 32px;
         margin-top: 21.5px;
@@ -101,7 +136,7 @@ export default {
         p:nth-child(1) {
           height: 12px;
           font-size: 15px;
-          color: rgba(21,21,21,1);
+          color: rgba(21, 21, 21, 1);
         }
         p:nth-child(2) {
           width: 183px;
@@ -109,7 +144,56 @@ export default {
           margin-top: 8.5px;
           font-size: 12px;
           font-weight: 300;
-          color: rgba(177,177,177,1);
+          display: -webkit-box;
+          -webkit-box-orient: vertical;
+          -webkit-line-clamp: 1;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          color: rgba(177, 177, 177, 1);
+        }
+      }
+      div:nth-child(3) {
+        margin: 20px 13.5px 0 auto;
+        i {
+          font-size: 16px;
+        }
+      }
+    }
+    .info-middle_wrapper {
+      padding: 18.5px 15px 17px;
+    }
+    .info-bottom_wrapper {
+      display: grid;
+      grid-template: repeat(2, 12px) / repeat(3, 1fr);
+      row-gap: 6.5px;
+      padding: 0px 15px 21px;
+      div {
+        font-size: 12px;
+        font-family: Source Han Sans CN;
+        color: rgba(91, 121, 188, 1);
+      }
+    }
+    .info-extra_wrapper {
+      display: flex;
+      justify-content: space-between;
+      padding: 0 15px 15px;
+      font-size: 12px;
+      font-family: DIN;
+      color: rgba(177,177,177,1);
+      i {
+        margin-right: 5.5px;
+        font-size: 12px;
+      }
+      p {
+        display: inline;
+        margin-left: 26.5px;
+        &.active {
+          span {
+            color: #e26a9a;
+          }
+          i {
+            color: #e26a9a;
+          }
         }
       }
     }

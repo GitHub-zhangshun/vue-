@@ -1,6 +1,7 @@
 <template>
-  <!-- {{ tabId }} -->
   <div class="container-water-fall">
+    <!-- {{ tabId }} -->
+    <h1 class="details-title_wrapper" v-show="title">{{ title }}</h1>
     <waterfall
       :col="2"
       :data="data"
@@ -45,7 +46,14 @@ import { waterFallData } from "@/api/common";
 import { sessionSetItem } from "@/common/util";
 export default {
   name: "ShowDetailsContent",
-  props: ["tabId"],
+  props: {
+    tabId: {
+      default: 1
+    },
+    title: {
+      type: String
+    }
+  },
   data() {
     return {
       // 瀑布流数据数组。
@@ -110,6 +118,15 @@ export default {
 .container-water-fall {
   width: 100vw;
   box-sizing: border-box;
+  .details-title_wrapper {
+    height: 15px;
+    padding: 14px 0px 0px 14.5px;
+    margin-bottom: 22.5px;
+    font-size: 15px;
+    font-family: Source Han Sans CN;
+    font-weight: 500;
+    color: rgba(21,21,21,1);
+  }
   .cell-item {
     width: 100%;
     padding: 10px;

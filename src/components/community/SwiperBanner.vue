@@ -13,15 +13,23 @@
 </template>
 
 <script>
+import { indexBannerData } from "@/api/common";
 export default {
   name: "SwiperBanner",
   data() {
     return {
-      bannerImg: [
-        'http://ww1.sinaimg.cn/large/ecbd3051gy1gbki5clk41j20ku09gqcf.jpg',
-        'http://ww1.sinaimg.cn/large/ecbd3051gy1gbki5clk41j20ku09gqcf.jpg'
-      ]
+      // 轮播图数据存放数组。
+      bannerImg: []
     }
+  },
+  methods: {
+    // 获取轮播图数据。
+    async getIndexBannerData() {
+      this.bannerImg = await indexBannerData();
+    }
+  },
+  mounted() {
+    this.getIndexBannerData();
   }
 }
 </script>
@@ -30,8 +38,6 @@ export default {
 .swiper-banner_wrapper {
   width: 100%;
   height: 170px;
-  // 解决谷歌优化移动端新特性 passive event listener 报错。
-  touch-action: pan-y;
   .van-swipe {
     width: 100%;
     height: 100%;

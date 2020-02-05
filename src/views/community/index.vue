@@ -23,7 +23,20 @@
       </nav>
     </van-sticky>
     <router-view></router-view>
-    <EditShowButton wrapperBottom="100px" wrapperWidth="35px" wrapperHeight="35px" />
+    <van-cell is-link @click="handleClick2ShowEditShowDialog">
+      <EditShowButton
+        wrapperBottom="100px"
+        wrapperWidth="35px"
+        wrapperHeight="35px"
+      />
+    </van-cell>
+    <van-popup
+      v-model="isShownTheEditShowDialog"
+      closeable
+      close-icon-position="top-left"
+      position="bottom"
+      :style="{ height: '100%' }"
+    ></van-popup>
   </section>
 </template>
 
@@ -43,7 +56,9 @@ export default {
   },
   data() {
     return {
+      // 当前高亮的 tab item 。
       active: sessionGetItem("activeTabItem"),
+      // 存放 tab item 的数组。
       tabList: [
         {
           title: "フォロー"
@@ -63,7 +78,9 @@ export default {
         {
           title: "home"
         }
-      ]
+      ],
+      // 是否展示弹窗的标志变量。
+      isShownTheEditShowDialog: false
     };
   },
   methods: {
@@ -75,16 +92,15 @@ export default {
           tabId: index
         }
       });
+    },
+    handleClick2ShowEditShowDialog() {
+      this.isShownTheEditShowDialog = true;
     }
   }
 };
 </script>
 
 <style lang="scss" scoped>
-.switch-list_wrapper {
-  // 解决谷歌优化移动端新特性 passive event listener 报错。
-  touch-action: pan-y;
-}
 // 修改 vant nav 自带样式。
 /deep/ .van-tab__text {
   font-size: 14px;
