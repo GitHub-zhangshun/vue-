@@ -23,7 +23,7 @@ body {
 .show {
   display: block;
 }
-// 文本溢出显示省略号。
+// 单行文本溢出显示省略号。
 .ellipsis {
   overflow: hidden;
   text-overflow: ellipsis;

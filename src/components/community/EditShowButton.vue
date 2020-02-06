@@ -6,6 +6,7 @@
       width: wrapperWidth,
       height: wrapperHeight
     }"
+    @click="openDialog"
   >
     <img :src="editShow" alt="edit show icon" />
   </section>
@@ -33,6 +34,11 @@ export default {
     return {
       editShow: editShowIcon
     };
+  },
+  methods: {
+    openDialog() {
+      this.$emit('open');
+    }
   }
 };
 </script>

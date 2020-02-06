@@ -127,71 +127,70 @@ export default {
     font-weight: 500;
     color: rgba(21,21,21,1);
   }
-  .cell-item {
-    width: 100%;
-    padding: 10px;
-    overflow: hidden;
-    box-sizing: border-box;
-    img {
-      display: block;
+  .vue-waterfall {
+    padding: 12.5px 7px 28.5px;
+    .cell-item {
       width: 100%;
-      height: auto;
-      border-radius: 10px;
-    }
-    .item-body {
-      padding: 13.5px 14.5px 13px 0px;
-      .item-desc {
-        width: 157px;
-        height: 32px;
-        font-size: 12px;
-        line-height: 16px;
-        display: -webkit-box;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 2;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        color: rgba(44, 44, 44, 1);
+      padding: 0px 5px 5px;
+      overflow: hidden;
+      box-sizing: border-box;
+      img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-radius: 10px;
       }
-      .item-footer {
-        position: relative;
-        display: flex;
-        align-items: center;
-        margin-top: 13px;
-        .avatar {
-          width: 18px;
-          height: 18px;
-          border-radius: 50%;
-          background-repeat: no-repeat;
-          background-size: contain;
+      .item-body {
+        padding: 13.5px 14.5px 13px 0px;
+        .item-desc {
+          width: 157px;
+          height: 32px;
+          font-size: 12px;
+          line-height: 16px;
+          @include ellipsis($line: 2, $line-height: 16px);
+          color: rgba(44, 44, 44, 1);
         }
-        .name {
-          max-width: 150px;
-          margin-left: 3px;
-          font-size: 13px;
-          color: rgba(165, 165, 165, 1);
-        }
-        .like {
-          position: absolute;
-          right: 0;
+        .item-footer {
+          position: relative;
           display: flex;
           align-items: center;
-          &.active {
+          margin-top: 13px;
+          .avatar {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background-repeat: no-repeat;
+            background-size: contain;
+          }
+          .name {
+            max-width: 150px;
+            margin-left: 3px;
+            font-size: 13px;
+            color: rgba(165, 165, 165, 1);
+          }
+          .like {
+            position: absolute;
+            right: 0;
+            display: flex;
+            align-items: center;
+            &.active {
+              i {
+                color: #e26a9a;
+              }
+              .like-total {
+                color: #e26a9a;
+              }
+            }
             i {
-              color: #e26a9a;
+              display: block;
+              width: 17.5px;
+              font-size: 12px;
             }
             .like-total {
-              color: #e26a9a;
+              width: 22px;
+              font-size: 12px;
+              color: rgba(21, 21, 21, 1);
             }
-          }
-          i {
-            display: block;
-            width: 17.5px;
-            font-size: 12px;
-          }
-          .like-total {
-            width: 22px;
-            font-size: 12px;
-            color: rgba(21, 21, 21, 1);
           }
         }
       }

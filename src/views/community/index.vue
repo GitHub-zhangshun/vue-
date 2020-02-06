@@ -23,20 +23,22 @@
       </nav>
     </van-sticky>
     <router-view></router-view>
-    <van-cell is-link @click="handleClick2ShowEditShowDialog">
-      <EditShowButton
-        wrapperBottom="100px"
-        wrapperWidth="35px"
-        wrapperHeight="35px"
-      />
-    </van-cell>
-    <van-popup
-      v-model="isShownTheEditShowDialog"
-      closeable
-      close-icon-position="top-left"
-      position="bottom"
-      :style="{ height: '100%' }"
-    ></van-popup>
+    <EditShowButton
+      wrapperBottom="100px"
+      wrapperWidth="35px"
+      wrapperHeight="35px"
+      @open="handleClick2ShowEditShowDialog"
+    />
+    <PopupDialog
+      v-show="isShownTheEditShowDialog"
+      outterTop="0"
+      outterHeight="100%"
+      maskBottom="0"
+      maskHeight="0"
+      isPopupHead="Yes"
+      isOnlyCloseIcon="No"
+      @close="handleClick2CloseEditShowDialog"
+    />
   </section>
 </template>
 
@@ -46,13 +48,15 @@ import SwiperBanner from "@components/community/SwiperBanner";
 import SwiperTagsList from "@components/community/SwiperTagsList";
 import EditShowButton from "@components/community/EditShowButton";
 import BlockInterval from "@components/community/BlockInterval";
+import PopupDialog from "@components/community/PopupDialog";
 export default {
   name: "home",
   components: {
     SwiperBanner,
     SwiperTagsList,
     EditShowButton,
-    BlockInterval
+    BlockInterval,
+    PopupDialog
   },
   data() {
     return {
@@ -93,8 +97,12 @@ export default {
         }
       });
     },
+    // 打开关闭弹窗的方法。
     handleClick2ShowEditShowDialog() {
-      this.isShownTheEditShowDialog = true;
+      this.isShownTheEditShowDialog = !this.isShownTheEditShowDialog;
+    },
+    handleClick2CloseEditShowDialog() {
+      this.isShownTheEditShowDialog = !this.isShownTheEditShowDialog;
     }
   }
 };

@@ -16,7 +16,7 @@
         ></div>
         <div>
           <p>{{ userData.user }}</p>
-          <p>{{ userData.intro }}</p>
+          <p class="ellipsis">{{ userData.intro }}</p>
         </div>
         <div>
           <i class="iconfont icon-delete" @click="handleClickDeleteShow"></i>
@@ -144,11 +144,6 @@ export default {
           margin-top: 8.5px;
           font-size: 12px;
           font-weight: 300;
-          display: -webkit-box;
-          -webkit-box-orient: vertical;
-          -webkit-line-clamp: 1;
-          overflow: hidden;
-          text-overflow: ellipsis;
           color: rgba(177, 177, 177, 1);
         }
       }

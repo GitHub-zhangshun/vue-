@@ -157,15 +157,15 @@
     }
   }
 }
-@mixin border-bottom($height: 1px, $width: 100%, $border-color: #999) {
+@mixin border-bottom($left: 0, $right: 0, $bottom: 0, $height: 1px, $width: 100%, $border-color: #999) {
   position: relative;
   // 默认。
   &:after {
     content: "";
     position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    left: $left;
+    right: $right;
+    bottom: $bottom;
     width: $width;
     height: $height;
     background-color: $border-color;
