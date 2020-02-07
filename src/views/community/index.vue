@@ -6,7 +6,7 @@
     <van-sticky :offset-top="47">
       <nav class="switch-list_wrapper">
         <van-tabs
-          v-model="active"
+          v-model="activeNavItem"
           title-inactive-color="#7C7C7C"
           title-active-color="#D22F2F"
           line-width="28"
@@ -37,6 +37,7 @@
       maskHeight="0"
       isPopupHead="Yes"
       isOnlyCloseIcon="No"
+      :isEditArea="true"
       @close="handleClick2CloseEditShowDialog"
     />
   </section>
@@ -61,7 +62,7 @@ export default {
   data() {
     return {
       // 当前高亮的 tab item 。
-      active: sessionGetItem("activeTabItem"),
+      activeNavItem: sessionGetItem("activeTabItem"),
       // 存放 tab item 的数组。
       tabList: [
         {

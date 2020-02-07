@@ -7,7 +7,7 @@
     <div class="only-close_wrapper" v-show="isShownOnlyCloseIcon">
       <i class="iconfont icon-close" @click="closeDialog"></i>
     </div>
-    <ShowEditArea />
+    <ShowEditArea v-show="isEditArea" />
     <div class="popup-dialog_mask" :style="{ bottom: maskBottom, height: maskHeight }"></div>
   </section>
 </template>
@@ -40,6 +40,10 @@ export default {
     isOnlyCloseIcon: {
       type: String,
       default: 'No'
+    },
+    isEditArea: {
+      type: Boolean,
+      default: false
     }
   },
   components: {
@@ -74,6 +78,8 @@ export default {
   bottom: 0;
   left: 0;
   width: 100%;
+  overflow-x: hidden;
+  overflow-y: scroll;
   z-index: 300;
   background-color: rgba(255,255,255,1);
   .popup-dialog_head {

@@ -51,13 +51,15 @@
 import BlockInterval from "@components/community/BlockInterval";
 import ShowRelatedGoods from "@components/community/ShowRelatedGoods";
 import ShowDetailsContent from "@components/ShowDetailsContent";
+import { Dialog } from  'vant';
 import { showBannerData, userDetailsData } from "@/api/common";
 export default {
   name: "ShowDetailsPage",
   components: {
     BlockInterval,
     ShowRelatedGoods,
-    ShowDetailsContent
+    ShowDetailsContent,
+    "van-dialog":  Dialog.Component
   },
   data() {
     return {
@@ -81,7 +83,27 @@ export default {
     },
     // 点击删除按钮方法。
     handleClickDeleteShow() {
-      // console.info(1);
+      Dialog.confirm({
+        title: '削除してもよろしいですか?',
+        message: '一度削除したSHOWを復元することはできませんのでご注意ください',
+        width: 250,
+        confirmButtonText: '削除します',
+        confirmButtonColor: '#DE4644',
+        cancelButtonText: 'キャンセル',
+        cancelButtonColor: '#6D6D6D',
+        // 添加回调函数以异步关闭弹窗。
+        beforeClose: (action, done) => {
+          if (action === 'confirm') {
+            setTimeout(done, 1500);
+          } else {
+            done();
+          }
+        }
+      }).then(() => {
+        // on confirm
+      }).catch(() => {
+        // on cancel
+      });
     }
   },
   mounted() {

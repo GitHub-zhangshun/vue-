@@ -7,16 +7,23 @@
           <img :src="item.img" alt="关联商品图" />
         </div>
         <div>
-          <span>¥{{ item.price }}</span>
-          <span v-if="item.priceSale">税入</span>
-          <span v-if="item.priceSale">¥{{ item.priceSale }}</span>
+          <span>¥{{ item.currentPrice }}</span>
+          <span v-show="item.originalPrice">税入</span>
+          <span v-show="item.originalPrice">¥{{ item.originalPrice }}</span>
         </div>
+        <SaleIcon
+          v-show="item.originalPrice"
+          wrapperTop="3rem"
+          wrapperLeft="0px"
+          :saleArray="[ item.currentPrice, item.originalPrice ]"
+        />
       </div>
     </div>
   </section>
 </template>
 
 <script>
+import SaleIcon from "@components/community/SaleIcon";
 import { relatedGoodsData } from "@/api/common";
 export default {
   name: "ShowRelatedGoods",
@@ -25,6 +32,9 @@ export default {
       type: String,
       default: "関連商品"
     }
+  },
+  components: {
+    SaleIcon
   },
   data() {
     return {
@@ -70,16 +80,8 @@ export default {
         img {
           width: 108px;
           height: 143px;
-          border-radius: 10PX;
+          border-radius: 10px;
         }
-      }
-      div:nth-child(1)::after {
-        position: absolute;
-        width: 40px;
-        height: 17px;
-        left: 0;
-        bottom: 9.5px;
-        background-color: #FFD75F;
       }
       div:nth-child(2) {
         position: absolute;
@@ -93,18 +95,18 @@ export default {
         span:nth-child(1) {
           height: 11px;
           font-family: Source Han Sans CN;
-          color: rgba(205,54,54,1);
+          color: rgba(205, 54, 54, 1);
         }
         span:nth-child(2) {
           height: 12px;
           font-size: 12px;
-          color: rgba(204,204,205,1);
+          color: rgba(204, 204, 205, 1);
         }
         span:nth-child(3) {
           height: 9px;
           font-weight: 400;
           text-decoration: line-through;
-          color: rgba(21,21,21,1);
+          color: rgba(21, 21, 21, 1);
         }
       }
     }

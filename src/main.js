@@ -16,7 +16,10 @@ import {
   Tabs,
   Sticky,
   Field,
-  Uploader
+  Uploader,
+  Popup,
+  Checkbox,
+  CheckboxGroup
 } from "vant";
 Vue.use(Toast)
   .use(Swipe)
@@ -26,7 +29,10 @@ Vue.use(Toast)
   .use(Tabs)
   .use(Sticky)
   .use(Field)
-  .use(Uploader);
+  .use(Uploader)
+  .use(Popup)
+  .use(Checkbox)
+  .use(CheckboxGroup);
 // 引入瀑布流、懒加载组件。
 import waterfall from "vue-waterfall2";
 Vue.use(waterfall);
