@@ -8,7 +8,7 @@
     }"
     @click="openDialog"
   >
-    <img :src="editShow" alt="edit show icon" />
+    <img :src="editShow" alt="ショーエントリの編集アイコン" />
   </section>
 </template>
 

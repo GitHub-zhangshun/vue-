@@ -43,7 +43,7 @@
     <BlockInterval />
     <ShowRelatedGoods title="関連商品" />
     <BlockInterval />
-    <ShowDetailsContent title="関連SHOW" />
+    <ShowDetailsContent title="関連SHOW" :tabId="2" />
   </section>
 </template>
 

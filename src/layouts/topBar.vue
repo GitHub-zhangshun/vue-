@@ -29,7 +29,10 @@ export default {
     // 需要显示对应按钮的，将路由名字添加到 isShownTheBackButton、isShownTheUserButton、isShownTheShareButton 对应白名单即可。
     isBackButton() {
       let isShownTheBackButton = [
-        "showDetailsPage"
+        "showDetailsPage",
+        "showTagsPage",
+        "tagDetailsPage",
+        "personalHomepage"
       ],
         flag = new Boolean();
       isShownTheBackButton.includes(this.$route.name)
@@ -41,7 +44,9 @@ export default {
       let isShownTheUserButton = [
         "community",
         "show-details-content",
-        "shield"
+        "shield",
+        "showTagsPage",
+        "tagDetailsPage"
       ],
         flag = new Boolean();
       isShownTheUserButton.includes(this.$route.name)
@@ -53,7 +58,9 @@ export default {
       let isShownTheShareButton = [
         "community",
         "show-details-content",
-        "showDetailsPage"
+        "showDetailsPage",
+        "tagDetailsPage",
+        "personalHomepage"
       ],
         flag = new Boolean();
       isShownTheShareButton.includes(this.$route.name)
@@ -63,6 +70,7 @@ export default {
     }
   },
   methods: {
+    // 点击 topbar 中各项对应方法。
     handleClickGoBack() {
       this.$router.go(-1);
     },
@@ -76,7 +84,7 @@ export default {
     },
     handleClick2UserPage() {
       this.$router.push({
-        name: "showDetailsPage"
+        name: "personalHomepage"
       });
     },
     handleClickShowShareContent() {

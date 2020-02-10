@@ -401,7 +401,6 @@ export const fistLetterUpper = str => {
 export const illegalFilter = str => {
   let regEn = /[`~!@#$%^&*()_+<>?:"{},.\/;'[\]]/im;
   let regCn = /[·！#￥（——）：；“”‘、，|《。》？、【】[\]]/im;
-
   if (regEn.test(str) || regCn.test(str)) return false;
   return true;
 };

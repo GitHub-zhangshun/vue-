@@ -11,6 +11,7 @@
           title-active-color="#D22F2F"
           line-width="28"
           line-height="3"
+          animated
           @click="handleClick2Details"
         >
           <van-tab
@@ -29,27 +30,34 @@
       wrapperHeight="35px"
       @open="handleClick2ShowEditShowDialog"
     />
-    <PopupDialog
-      v-show="isShownTheEditShowDialog"
-      outterTop="0"
-      outterHeight="100%"
-      maskBottom="0"
-      maskHeight="0"
-      isPopupHead="Yes"
-      isOnlyCloseIcon="No"
-      :isEditArea="true"
-      @close="handleClick2CloseEditShowDialog"
-    />
+    <transition
+      enter-active-class="animated slideInUp"
+      leave-active-class="animated slideOutDown"
+    >
+      <PopupDialog
+        style="animation-duration: 0.5s"
+        v-show="isShownTheEditShowDialog"
+        outterTop="0"
+        outterHeight="100%"
+        maskBottom="0"
+        maskHeight="0"
+        isPopupHead="Yes"
+        isOnlyCloseIcon="No"
+        :isEditArea="true"
+        @close="handleClick2CloseEditShowDialog"
+      />
+    </transition>
   </section>
 </template>
 
 <script>
-import { sessionGetItem } from "@/common/util";
+import animate from "animate.css";
 import SwiperBanner from "@components/community/SwiperBanner";
 import SwiperTagsList from "@components/community/SwiperTagsList";
 import EditShowButton from "@components/community/EditShowButton";
 import BlockInterval from "@components/community/BlockInterval";
 import PopupDialog from "@components/community/PopupDialog";
+import { sessionGetItem } from "@/common/util";
 export default {
   name: "home",
   components: {

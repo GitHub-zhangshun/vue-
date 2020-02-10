@@ -2,11 +2,11 @@
   <section class="swiper-tags--list_wrapper">
     <div
       class="swiper-tags--list_item"
-      v-for="(image, idx) in tagsListImg"
+      v-for="(item, idx) in tagsListData"
       :key="idx"
-      @click="handleClick2TagDetailsPage"
+      @click="handleClick2TagDetailsPage(item.id)"
     >
-      <img v-lazy="image" />
+      <img v-lazy="item.thumb" />
     </div>
     <span
       class="more-button"
@@ -23,36 +23,37 @@ export default {
   name: "SwiperTagsList",
   data() {
     return {
-      // 标签图数据存放数组。
-      tagsListImg: [],
+      // 存放标签数据的数组。
+      tagsListData: [],
     };
   },
   computed: {
     // 是否显示更多按钮。
     isShownMoreButton() {
-      return this.tagsListImg.length >= 6 ? true : false;
+      return this.tagsListData.length >= 6 ? true : false;
     },
   },
   mounted() {
     this.getindexTagListData();
   },
   methods: {
-    // 点击标签跳转对应详情页。
-    handleClick2TagDetailsPage(el) {
-      // this.$router.push({
-      //   name: '',
-      //   params: {}
-      // });
-      // 对应取数据
-      // this.$route.params.xxx
+    // 点击标签跳转对应详情页，并传递 id 。
+    handleClick2TagDetailsPage(id) {
+      this.$router.push({
+        name: 'tagDetailsPage',
+        params: {id}
+      });
     },
     // 点击 more 按钮显示更多 Tags 页面。
     handleClickShowMoreTags() {
-      // this.$router.push();
+      this.$router.push({
+        name: 'showTagsPage'
+      });
     },
     // 获取 tag 图数据方法。
     async getindexTagListData() {
-      this.tagsListImg = await indexTagListData();
+      let res = await indexTagListData();
+      this.tagsListData = res.slice(0, 6);
     }
   }
 };

@@ -1,6 +1,5 @@
 <template>
   <div class="container-water-fall">
-    <!-- {{ tabId }} -->
     <h1 class="details-title_wrapper" v-show="title">{{ title }}</h1>
     <waterfall
       :col="2"
@@ -15,7 +14,7 @@
             v-if="item.img"
             :src="item.img"
             @click="handleClick2DetailPage"
-            alt="加载错误"
+            alt="読み込みエラー"
           />
           <div class="item-body">
             <div class="item-desc">{{ item.title }}</div>
@@ -101,7 +100,9 @@ export default {
       });
     },
     async getWaterFallData() {
-      this.data = await waterFallData();
+      this.data = await waterFallData(this.tabId);
+      // 强制更新展示 show 的数据。
+      this.$waterfall.forceUpdate();
     }
   },
   mounted() {

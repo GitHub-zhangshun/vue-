@@ -1,7 +1,7 @@
 <template>
   <section class="shield">
     <div class="cant-see--img_wrapper">
-      <img :src="cantSee" alt="violate icon" />
+      <img :src="cantSee" alt="違法な商品" />
     </div>
     <div class="cant-see--text">
       该SHOW因为不符合社区规则而无法展示请移步至社区查看更多精彩

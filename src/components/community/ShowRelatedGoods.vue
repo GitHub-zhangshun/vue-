@@ -4,7 +4,7 @@
     <div class="related-area_list">
       <div class="goods-wrapper" v-for="(item, idx) in goodsData" :key="idx">
         <div>
-          <img :src="item.img" alt="关联商品图" />
+          <img :src="item.img" alt="関連製品図" />
         </div>
         <div>
           <span>¥{{ item.currentPrice }}</span>

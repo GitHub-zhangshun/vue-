@@ -1,8 +1,68 @@
 [
-  "http://ww1.sinaimg.cn/large/ecbd3051gy1gbki6etaw1j207604awfi.jpg",
-  "http://ww1.sinaimg.cn/large/ecbd3051gy1gbki6etaw1j207604awfi.jpg",
-  "http://ww1.sinaimg.cn/large/ecbd3051gy1gbki6etaw1j207604awfi.jpg",
-  "http://ww1.sinaimg.cn/large/ecbd3051gy1gbki6etaw1j207604awfi.jpg",
-  "http://ww1.sinaimg.cn/large/ecbd3051gy1gbki6etaw1j207604awfi.jpg",
-  "http://ww1.sinaimg.cn/large/ecbd3051gy1gbki6etaw1j207604awfi.jpg"
+  {
+    "id": 0,
+    "thumb": "http://ww1.sinaimg.cn/large/ecbd3051gy1gbki6etaw1j207604awfi.jpg",
+    "img": "http://ww1.sinaimg.cn/large/ecbd3051gy1gbpbgzbj3jj20j606o410.jpg",
+    "activity": "http://ww1.sinaimg.cn/large/ecbd3051gy1gbqar2ru1sj20ks08wdi6.jpg",
+    "reward": "奖励内容，后台配置，例如选前5名各送一张优惠券",
+    "info": "标签定义HOWを投稿すると10ポイントプレゼント、またはSHOWに関連 する商品を追加したら50ポイント,标签定义HOWを投稿すると10ポイントプレゼント、またはHOWに関連 する商品を追加したら50ポイント",
+    "activityStart": true
+  },
+  {
+    "id": 1,
+    "thumb": "http://ww1.sinaimg.cn/large/ecbd3051gy1gbki6etaw1j207604awfi.jpg",
+    "img": "http://ww1.sinaimg.cn/large/ecbd3051gy1gbpbgzbj3jj20j606o410.jpg",
+    "activity": "http://ww1.sinaimg.cn/large/ecbd3051gy1gbqar2ru1sj20ks08wdi6.jpg",
+    "reward": "奖励内容，后台配置，例如选前5名各送一张优惠券",
+    "info": "标签定义HOWを投稿すると10ポイントプレゼント、またはSHOWに関連 する商品を追加したら50ポイント,标签定义HOWを投稿すると10ポイントプレゼント、またはHOWに関連 する商品を追加したら50ポイント",
+    "activityStart": false
+  },
+  {
+    "id": 2,
+    "thumb": "http://ww1.sinaimg.cn/large/ecbd3051gy1gbki6etaw1j207604awfi.jpg",
+    "img": "http://ww1.sinaimg.cn/large/ecbd3051gy1gbpbgzbj3jj20j606o410.jpg",
+    "activity": "http://ww1.sinaimg.cn/large/ecbd3051gy1gbqar2ru1sj20ks08wdi6.jpg",
+    "reward": "奖励内容，后台配置，例如选前5名各送一张优惠券",
+    "info": "标签定义HOWを投稿すると10ポイントプレゼント、またはSHOWに関連 する商品を追加したら50ポイント,标签定义HOWを投稿すると10ポイントプレゼント、またはHOWに関連 する商品を追加したら50ポイント"
+  },
+  {
+    "id": 3,
+    "thumb": "http://ww1.sinaimg.cn/large/ecbd3051gy1gbki6etaw1j207604awfi.jpg",
+    "img": "http://ww1.sinaimg.cn/large/ecbd3051gy1gbpbgzbj3jj20j606o410.jpg",
+    "activity": "http://ww1.sinaimg.cn/large/ecbd3051gy1gbqar2ru1sj20ks08wdi6.jpg",
+    "reward": "奖励内容，后台配置，例如选前5名各送一张优惠券",
+    "info": "标签定义HOWを投稿すると10ポイントプレゼント、またはSHOWに関連 する商品を追加したら50ポイント,标签定义HOWを投稿すると10ポイントプレゼント、またはHOWに関連 する商品を追加したら50ポイント"
+  },
+  {
+    "id": 4,
+    "thumb": "http://ww1.sinaimg.cn/large/ecbd3051gy1gbki6etaw1j207604awfi.jpg",
+    "img": "http://ww1.sinaimg.cn/large/ecbd3051gy1gbpbgzbj3jj20j606o410.jpg",
+    "activity": "http://ww1.sinaimg.cn/large/ecbd3051gy1gbqar2ru1sj20ks08wdi6.jpg",
+    "reward": "奖励内容，后台配置，例如选前5名各送一张优惠券",
+    "info": "标签定义HOWを投稿すると10ポイントプレゼント、またはSHOWに関連 する商品を追加したら50ポイント,标签定义HOWを投稿すると10ポイントプレゼント、またはHOWに関連 する商品を追加したら50ポイント"
+  },
+  {
+    "id": 5,
+    "thumb": "http://ww1.sinaimg.cn/large/ecbd3051gy1gbki6etaw1j207604awfi.jpg",
+    "img": "http://ww1.sinaimg.cn/large/ecbd3051gy1gbpbgzbj3jj20j606o410.jpg",
+    "activity": "http://ww1.sinaimg.cn/large/ecbd3051gy1gbqar2ru1sj20ks08wdi6.jpg",
+    "reward": "奖励内容，后台配置，例如选前5名各送一张优惠券",
+    "info": "标签定义HOWを投稿すると10ポイントプレゼント、またはSHOWに関連 する商品を追加したら50ポイント,标签定义HOWを投稿すると10ポイントプレゼント、またはHOWに関連 する商品を追加したら50ポイント"
+  },
+  {
+    "id": 6,
+    "thumb": "http://ww1.sinaimg.cn/large/ecbd3051gy1gbki6etaw1j207604awfi.jpg",
+    "img": "http://ww1.sinaimg.cn/large/ecbd3051gy1gbpbgzbj3jj20j606o410.jpg",
+    "activity": "http://ww1.sinaimg.cn/large/ecbd3051gy1gbqar2ru1sj20ks08wdi6.jpg",
+    "reward": "奖励内容，后台配置，例如选前5名各送一张优惠券",
+    "info": "标签定义HOWを投稿すると10ポイントプレゼント、またはSHOWに関連 する商品を追加したら50ポイント,标签定义HOWを投稿すると10ポイントプレゼント、またはHOWに関連 する商品を追加したら50ポイント"
+  },
+  {
+    "id": 7,
+    "thumb": "http://ww1.sinaimg.cn/large/ecbd3051gy1gbki6etaw1j207604awfi.jpg",
+    "img": "http://ww1.sinaimg.cn/large/ecbd3051gy1gbpbgzbj3jj20j606o410.jpg",
+    "activity": "http://ww1.sinaimg.cn/large/ecbd3051gy1gbqar2ru1sj20ks08wdi6.jpg",
+    "reward": "奖励内容，后台配置，例如选前5名各送一张优惠券",
+    "info": "标签定义HOWを投稿すると10ポイントプレゼント、またはSHOWに関連 する商品を追加したら50ポイント,标签定义HOWを投稿すると10ポイントプレゼント、またはHOWに関連 する商品を追加したら50ポイント"
+  }
 ]

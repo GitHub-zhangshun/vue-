@@ -19,7 +19,7 @@
         :after-read="afterUploading"
       >
         <div class="upload-button_wrapper">
-          <img :src="uploadMirrorIcon" alt="上传写真" />
+          <img :src="uploadMirrorIcon" alt="写真アイコンをアップロード" />
         </div>
       </van-uploader>
     </section>
@@ -39,12 +39,22 @@
     <section class="select-product--image_wrapper">
       <div class="reward-info">
         HOWを投稿すると10ポイントプレゼント、またはSHOWに関連
-        する商品を追加したら50ポイントプレゼント！（毎日100ポイ
-        ント上限）
+        する商品を追加したら50ポイントプレゼント！（毎日100ポイ ント上限）
       </div>
       <div class="product-image_area">
+        <div
+          class="select-product--image_wrapper"
+          v-for="(item, idx) in checkedSrc"
+          :key="idx"
+        >
+          <img :src="item" alt="製品写真" />
+        </div>
         <div class="select-product--image_button">
-          <img :src="selectProductIcon" alt="选择产品图" @click="handleClickShowProductSelectPopup">
+          <img
+            :src="selectProductIcon"
+            alt="製品図アイコンを選択"
+            @click="handleClickShowProductSelectPopup"
+          />
           <span>関連商品を追加</span>
         </div>
       </div>
@@ -60,14 +70,18 @@
     <van-popup
       v-model="isShownFlag"
       position="bottom"
+      duration="0.5"
       :overlay="false"
       :style="{ height: '100%' }"
     >
       <section class="select-product--popup_wrapper">
         <section class="product-image_head">
-          <i class="iconfont icon-fanhui" @click="handleClickHideProductSelectPopup"></i>
+          <i
+            class="iconfont icon-fanhui"
+            @click="handleClickHideProductSelectPopup"
+          ></i>
           <h1>SISILILY</h1>
-          <div>確認</div>
+          <div @click="handleClickGetIdAndSrc">{{ checkedLength }}</div>
         </section>
         <nav class="product-nav_body">
           <van-tabs
@@ -76,13 +90,45 @@
             title-active-color="#D22F2F"
             line-width="28"
             line-height="3"
+            animated
+            :swipeable="true"
+            @click="handleClickTheTab"
           >
             <van-tab
               v-for="(item, idx) in tabList"
               :key="idx"
               :title="item.title"
             >
-              <ProductDetailsContent :tabId="idx" />
+              <div
+                class="product-item_wrapper"
+                v-for="(item, idx) in productData"
+                :key="idx"
+              >
+                <div>
+                  <img :src="item.img" alt="製品写真" />
+                </div>
+                <div>
+                  <span class="product-des">{{ item.des }}</span>
+                  <span class="product-price_unit">¥</span>
+                  <span class="product-price">{{ item.price }}</span>
+                </div>
+                <div>
+                  <input
+                    type="checkbox"
+                    :id="item.id"
+                    :value="item.id"
+                    v-model="checkedId"
+                  />
+                  <label
+                    :class="{
+                      forbidden:
+                        checkedId.length > 5 &&
+                        checkedId.indexOf(item.id) === -1
+                    }"
+                    :for="item.id"
+                  ></label>
+                </div>
+              </div>
             </van-tab>
           </van-tabs>
         </nav>
@@ -95,13 +141,11 @@
 import uploadMirror from "@/assets/img/upload-mirror.png";
 import selectProduct from "@/assets/img/select-product.png";
 import PopupDialog from "@components/community/PopupDialog";
-import ProductDetailsContent from "@components/community/ProductDetailsContent";
-import { editShowTagsData } from "@/api/common";
+import { editShowTagsData, productImageData } from "@/api/common";
 export default {
   name: "ShowEditArea",
   components: {
-    PopupDialog,
-    ProductDetailsContent
+    PopupDialog
   },
   data() {
     return {
@@ -133,11 +177,32 @@ export default {
           title: "閲覧履歴"
         }
       ],
+      // 存放产品详细数据的数组。
+      productData: [],
+      // 存放被选中的 checkbox id 数组。
+      checkedId: [],
+      // 点击确认按钮之后获取的 id 和 src 。
+      checkedSrc: []
     };
   },
   computed: {
+    // 根据是否选择产品图，改变提交按钮文字。
     isProductImg() {
-      return false;
+      return this.checkedId.length > 0 ? true : false;
+    },
+    // 实时计算选择产品图数量来确定按钮的文字。
+    checkedLength() {
+      if (this.checkedId.length === 0) {
+        return "選択";
+      } else if (this.checkedId.length > 6) {
+        return `確認 6/6`;
+      } else {
+        return `確認 ${this.checkedId.length}/6`;
+      }
+    },
+    // 实时计算选择产品图数量，超出范围禁止选择。
+    isMoreThanLimit() {
+      return this.checkedId.length >= 6 ? true : false;
     }
   },
   methods: {
@@ -156,10 +221,35 @@ export default {
     },
     handleClickHideProductSelectPopup() {
       this.isShownFlag = !this.isShownFlag;
+    },
+    // 获取产品图详细数据。
+    async getProductImageData() {
+      this.productData = await productImageData(this.activeNavItem);
+    },
+    // 点击 tab item 切换显示不同数据。
+    async handleClickTheTab(id) {
+      this.productData = await productImageData(id);
+    },
+    // 点击获取到产品 id 和图片 src 。
+    handleClickGetIdAndSrc() {
+      if (this.checkedId.length === 0) {
+        this.$toast("製品を選択してください");
+      } else {
+        this.checkedSrc = [];
+        for (let i = 0; i < this.checkedId.length; i++) {
+          for (let j = 0; j < this.productData.length; j++) {
+            if (this.productData[j].id === this.checkedId[i]) {
+              this.checkedSrc.push(this.productData[j].img);
+            }
+          }
+        }
+        this.isShownFlag = !this.isShownFlag;
+      }
     }
   },
   mounted() {
     this.getEditShowTagsData();
+    this.getProductImageData();
   }
 };
 </script>
@@ -248,7 +338,7 @@ export default {
       font-size: 12px;
       font-family: Source Han Sans CN;
       font-weight: 300;
-      color: rgba(54,54,54,1);
+      color: rgba(54, 54, 54, 1);
     }
     .product-image_area {
       display: grid;
@@ -258,6 +348,11 @@ export default {
       padding: 0px 15.5px;
       overflow-x: scroll;
       overflow-y: hidden;
+      .select-product--image_wrapper {
+        img {
+          border-radius: 10px;
+        }
+      }
       .select-product--image_button {
         position: relative;
         width: 100%;
@@ -269,7 +364,7 @@ export default {
           font-size: 11px;
           font-family: Source Han Sans CN;
           font-weight: 300;
-          color: rgba(75,75,75,1);
+          color: rgba(75, 75, 75, 1);
         }
       }
     }
@@ -277,7 +372,7 @@ export default {
       width: 345px;
       height: 45px;
       margin: 21.5px 15px 9px;
-      background: rgba(226,106,154,1);
+      background: rgba(226, 106, 154, 1);
       border-radius: 23px;
       text-align: center;
       line-height: 45px;
@@ -285,12 +380,12 @@ export default {
         font-size: 16px;
         font-family: Source Han Sans CN;
         font-weight: 400;
-        color: rgba(255,255,255,1);
+        color: rgba(255, 255, 255, 1);
       }
       .reward-text_wrapper {
         margin-left: 13px;
         font-family: Source Han Sans CN;
-        color: rgba(255,255,255,1);
+        color: rgba(255, 255, 255, 1);
         span:nth-child(1) {
           font-size: 13px;
         }
@@ -298,7 +393,7 @@ export default {
           font-size: 17px;
           font-weight: 500;
         }
-          span:nth-child(3) {
+        span:nth-child(3) {
           font-size: 12px;
         }
       }
@@ -321,7 +416,7 @@ export default {
         font-size: 22px;
         font-family: Amy;
         font-weight: 400;
-        color: rgba(0,0,0,1);
+        color: rgba(0, 0, 0, 1);
       }
       div {
         width: 69px;
@@ -334,13 +429,107 @@ export default {
         text-align: center;
         line-height: 29px;
         border-radius: 5px;
-        color: rgba(255,255,255,1);
-        background:  rgba(226,106,154,1);
+        color: rgba(255, 255, 255, 1);
+        background: rgba(226, 106, 154, 1);
       }
     }
     .product-nav_body {
       width: 100%;
       height: 43px;
+      .product-item_wrapper {
+        display: flex;
+        width: 100%;
+        height: 137px;
+        div:nth-child(1) {
+          width: 80px;
+          height: 107px;
+          margin: 15px 0px 15px 15px;
+          img {
+            width: 100%;
+            height: 100%;
+            border-radius: 5px;
+          }
+        }
+        div:nth-child(2) {
+          span {
+            display: inline-block;
+          }
+          .product-des {
+            display: block;
+            width: 169px;
+            height: 31px;
+            margin: 27.5px 0px 40.5px 15px;
+            font-size: 14px;
+            font-family: Source Han Sans CN;
+            font-weight: 200;
+            @include ellipsis($line: 2, $line-height: 1.2);
+            color: rgba(28, 31, 41, 1);
+          }
+          .product-price_unit {
+            margin-left: 15px;
+          }
+          .product-price {
+            margin-left: 4.5px;
+            font-size: 18px;
+            font-family: SimHei;
+            font-weight: bold;
+            color: rgba(28, 31, 41, 1);
+          }
+        }
+        div:nth-child(3) {
+          margin: 55px 18px 54.5px 51.5px;
+          input {
+            display: none;
+          }
+          label {
+            width: 27px;
+            height: 27px;
+            position: relative;
+            display: inline-block;
+            border: 1px solid rgba(37, 49, 64, 1);
+            border-radius: 50%;
+          }
+          .forbidden {
+            pointer-events: none;
+            opacity: 0.4;
+          }
+          label::before {
+            position: absolute;
+            transition: opacity 0.5s ease;
+            opacity: 0;
+            content: "";
+          }
+          input:checked + label::before {
+            width: 27px;
+            height: 27px;
+            top: -1px;
+            right: -1px;
+            bottom: -1px;
+            left: -1px;
+            border-radius: 50%;
+            opacity: 1;
+            background-color: black;
+          }
+          label::after {
+            position: absolute;
+            transition: opacity 0.5s ease;
+            opacity: 0;
+            content: "";
+          }
+          input:checked + label::after {
+            width: 17px;
+            height: 8px;
+            top: 65%;
+            left: 60%;
+            margin: -10px 0px 0px -11px;
+            transform: rotate(-45deg);
+            border: 2px solid #ffffff;
+            border-top: none;
+            border-right: none;
+            opacity: 1;
+          }
+        }
+      }
     }
   }
 }

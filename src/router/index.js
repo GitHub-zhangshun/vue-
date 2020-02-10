@@ -15,8 +15,11 @@ const Home = () => import(/* webpackChunkName: "home" */ "../views/home/index");
 const Community = () => import(/* webpackChunkName: "community" */ "../views/community/index");
 const ShopCart = () => import(/* webpackChunkName: "shopCart" */ "../views/shopCart/index");
 const My = () => import(/* webpackChunkName: "my" */ "../views/my/index");
-const Shield = () => import(/* webpackChunkName: "shieldPage" */ "../views/community/shieldPage");
-const ShowDetailsPage = () => import(/* webpackChunkName: "ShowDetailsPage" */ "../views/community/showDetailsPage");
+const PersonalHomepage = () => import(/* webpackChunkName: "personalHomepage" */ "../views/community/personalHomepage");
+const ShowTagsPage = () => import(/* webpackChunkName: "showTagsPage" */ "../views/community/showTagsPage");
+const TagDetailsPage = () => import(/* webpackChunkName: "tagDetailsPage" */ "../views/community/tagDetailsPage");
+const ShowDetailsPage = () => import(/* webpackChunkName: "showDetailsPage" */ "../views/community/showDetailsPage");
+const Shield = () => import(/* webpackChunkName: "shield" */ "../views/community/shieldPage");
 
 Vue.use(Router);
 // 动态获取二级目录。
@@ -38,9 +41,24 @@ const router = new Router({
       children: community
     },
     {
+      path: "/personalHomepage",
+      name: "personalHomepage",
+      component: PersonalHomepage
+    },
+    {
       path: "/showDetailsPage",
       name: "showDetailsPage",
       component: ShowDetailsPage
+    },
+    {
+      path: "/showTagsPage",
+      name: "showTagsPage",
+      component: ShowTagsPage
+    },
+    {
+      path: "/tagDetailsPage",
+      name: "tagDetailsPage",
+      component: TagDetailsPage
     },
     {
       path: "/shield",
