@@ -32,7 +32,8 @@ export default {
         "showDetailsPage",
         "showTagsPage",
         "tagDetailsPage",
-        "personalHomepage"
+        "personalHomepage",
+        "changePersonalPageBg"
       ],
         flag = new Boolean();
       isShownTheBackButton.includes(this.$route.name)

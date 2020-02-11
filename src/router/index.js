@@ -16,6 +16,7 @@ const Community = () => import(/* webpackChunkName: "community" */ "../views/com
 const ShopCart = () => import(/* webpackChunkName: "shopCart" */ "../views/shopCart/index");
 const My = () => import(/* webpackChunkName: "my" */ "../views/my/index");
 const PersonalHomepage = () => import(/* webpackChunkName: "personalHomepage" */ "../views/community/personalHomepage");
+const ChangePersonalPageBg = () => import(/* webpackChunkName: "changePersonalPageBg" */ "../views/community/changePersonalPageBg");
 const ShowTagsPage = () => import(/* webpackChunkName: "showTagsPage" */ "../views/community/showTagsPage");
 const TagDetailsPage = () => import(/* webpackChunkName: "tagDetailsPage" */ "../views/community/tagDetailsPage");
 const ShowDetailsPage = () => import(/* webpackChunkName: "showDetailsPage" */ "../views/community/showDetailsPage");
@@ -44,6 +45,11 @@ const router = new Router({
       path: "/personalHomepage",
       name: "personalHomepage",
       component: PersonalHomepage
+    },
+    {
+      path: "/changePersonalPageBg",
+      name: "changePersonalPageBg",
+      component: ChangePersonalPageBg
     },
     {
       path: "/showDetailsPage",

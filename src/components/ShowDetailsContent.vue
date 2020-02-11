@@ -13,7 +13,7 @@
           <img
             v-if="item.img"
             :src="item.img"
-            @click="handleClick2DetailPage"
+            @click="handleClick2DetailPage(item.del)"
             alt="読み込みエラー"
           />
           <div class="item-body">
@@ -60,7 +60,7 @@ export default {
       // 用于懒加载的定时器 ID 。
       loadMoreId: "",
       // 是否显示数据完结的标志布尔值。
-      isShownTheEndFlag: true
+      isShownTheEndFlag: false
     };
   },
   watch: {
@@ -80,37 +80,49 @@ export default {
       return 9 * 0.5 * (document.documentElement.clientWidth / 375);
     }
   },
+  mounted() {
+    this.getWaterFallData();
+  },
+  beforeDestroy() {
+    // 离开页面清除用于加载更多的定时器。
+    clearTimeout(this.loadMoreId);
+  },
   methods: {
+    // 判断是否加载完毕数据的方法。
     handleScrollFinish() {
-      // console.info('finish');
+      this.isShownTheEndFlag = !this.isShownTheEndFlag;
     },
+    // 滚动加载数据信息的方法。
     handleScroll(scrollData) {
       // console.info(scrollData);
     },
+    // 滚动加载更多数据的方法。
     handleScrollLoadmore() {
       this.loadMoreId = setTimeout(() => {
-        this.data = this.data.concat(this.data);
+        this.data = this.data.concat(waterFallData(this.tabId));
         // console.info(this.data.length);
       }, 1500);
       this.$waterfall.resize();
     },
-    handleClick2DetailPage() {
-      this.$router.push({
-        name: "shield"
-      });
+    // 点击跳转详 show 情页面。
+    handleClick2DetailPage(delFlag) {
+      if(delFlag) {
+        this.$router.push({
+          name: "shield"
+        });
+      }
+      else {
+        this.$router.push({
+          name: "showDetailsPage"
+        });
+      }
     },
+    // 获取瀑布流 show 详情数据的方法。
     async getWaterFallData() {
       this.data = await waterFallData(this.tabId);
       // 强制更新展示 show 的数据。
       this.$waterfall.forceUpdate();
     }
-  },
-  mounted() {
-    // 调用函数获取瀑布流数据。
-    this.getWaterFallData();
-  },
-  beforeDestroy() {
-    clearTimeout(this.loadMoreId);
   }
 };
 </script>

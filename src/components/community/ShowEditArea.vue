@@ -23,6 +23,9 @@
         </div>
       </van-uploader>
     </section>
+    <section class="upload-image--count_area">
+      <p>{{ fileList.length }}/9</p>
+    </section>
     <section class="tags-switch_wrapper">
       <p>标签选择<span>有机会赢好礼</span></p>
       <div class="tags-area">
@@ -30,9 +33,10 @@
           class="tags-checkbox_item"
           v-for="(item, idx) in tagsData"
           :key="idx"
+          v-show="item.isShown"
         >
           <input class="input" type="checkbox" name="colors" value="1" />
-          <div class="colors">#{{ item }}</div>
+          <div class="colors">#{{ item.text }}</div>
         </div>
       </div>
     </section>
@@ -57,6 +61,9 @@
           />
           <span>関連商品を追加</span>
         </div>
+      </div>
+      <div class="select-product--num_wrapper">
+        <p>{{ this.checkedId.length }}/6</p>
       </div>
       <div class="contriute-button">
         <span class="text">投稿</span>
@@ -209,7 +216,6 @@ export default {
     // 上传图片之后的回调函数。
     afterUploading(file) {
       // 这里通过接口将图片上传至服务器。
-      console.log(file);
     },
     // 获取可选标签数据的方法。
     async getEditShowTagsData() {
@@ -273,9 +279,21 @@ export default {
       margin: 17px 15px;
     }
   }
+  .upload-image--count_area {
+    width: 100%;
+    height: 20px;
+    text-align: end;
+    line-height: 20px;
+    background-color: rgba(246, 246, 246, 1);
+    p {
+      margin-right: 12px;
+      font-size: 14px;
+      font-family: Source Han Sans CN;
+      color: rgba(201,201,201,1);
+    }
+  }
   .tags-switch_wrapper {
     width: 100%;
-    height: 155.5px;
     @include border-bottom(
       $left: 15px,
       $right: 15px,
@@ -332,7 +350,7 @@ export default {
   }
   .select-product--image_wrapper {
     width: 100%;
-    height: 293.5px;
+    height: 313.5px;
     .reward-info {
       padding: 18.5px 17px 18px;
       font-size: 12px;
@@ -368,10 +386,23 @@ export default {
         }
       }
     }
+    .select-product--num_wrapper {
+      height: 20px;
+      width: 100%;
+      margin-top: 10px;
+      text-align: end;
+      line-height: 20px;
+      p {
+        margin-right: 12px;
+        font-size: 14px;
+        font-family: Source Han Sans CN;
+        color: rgba(201,201,201,1);
+      }
+    }
     .contriute-button {
       width: 345px;
       height: 45px;
-      margin: 21.5px 15px 9px;
+      margin: 11.5px 15px 9px;
       background: rgba(226, 106, 154, 1);
       border-radius: 23px;
       text-align: center;

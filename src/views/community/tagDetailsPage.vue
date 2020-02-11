@@ -2,7 +2,15 @@
   <section class="tag-details_wrapper">
     <section class="activity-area_wrapper">
       <div class="image-wrapper">
-        <img :src="tagsListData.activity" alt="活動写真" />
+        <van-swipe :autoplay="3000">
+          <van-swipe-item
+            v-for="(image, idx) in bannerImg"
+            :key="idx"
+          >
+            <img v-lazy="image" alt="活動写真">
+          </van-swipe-item>
+          <div class="custom-indicator" slot="indicator"></div>
+        </van-swipe>
       </div>
       <div class="text-wrapper">
         <div @click="handleClickShowCommentDialog">
@@ -145,6 +153,8 @@ export default {
       isCommentDialog: false,
       // 存放标签数据的数组。
       tagsListData: [],
+      // 存放轮播图片数据。
+      bannerImg: [],
       // 是否展示弹窗的标志变量。
       isShownTheEditShowDialog: false
     };
@@ -174,6 +184,7 @@ export default {
     async getindexTagListData() {
       let res = await indexTagListData(this.$route.params.id);
       this.tagsListData = res[0];
+      this.bannerImg = res[0].activity;
     },
     // 显示、关闭编辑 show 弹窗的方法。
     handleClick2ShowEditShowDialog() {
@@ -298,5 +309,18 @@ export default {
 /deep/ .van-popup__close-icon--top-right {
   top: 28px;
   right: 15px;
+}
+// 修改 vant nav 自带样式。
+/deep/ .van-tab__text {
+  font-size: 14px;
+  font-weight: bold;
+}
+/deep/ .van-tabs__line {
+  bottom: 20px;
+  background: linear-gradient(
+    90deg,
+    rgba(219, 67, 64, 1),
+    rgba(255, 163, 172, 1)
+  );
 }
 </style>
