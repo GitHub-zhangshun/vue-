@@ -1,22 +1,44 @@
 <template>
   <section class="change-bg_wrapper">
-    <div>
-      <img :src="personalInfo.bgImg" alt="背景画像">
+    <div class="bg-wrapper">
+      <img :src="bgImgSrc" alt="背景画像" />
     </div>
-    <div>背景画像を変更</div>
-    <div>キャンセルする</div>
+    <van-uploader
+      v-model="fileList"
+      :preview-image="false"
+      :after-read="afterUploading"
+    >
+      <div class="change-bg_button">背景画像を変更</div>
+    </van-uploader>
+    <div
+      class="cancel_button"
+      v-show="whichButtonShown"
+      @click="handleClickCancelUpload"
+    >
+      キャンセルする
+    </div>
+    <div
+      class="submit_button"
+      v-show="!whichButtonShown"
+    >
+      確認する
+    </div>
   </section>
 </template>
 
 <script>
 import { personalInfoData } from "@/api/common";
 export default {
-  name: 'changePersonalPageBg',
+  name: "changePersonalPageBg",
   data() {
     return {
-      // 存放个人信息的对象。
-      personalInfo: {}
-    }
+      // 存放背景图链接。
+      bgImgSrc: "",
+      // 存放上传图片的数组。
+      fileList: [],
+      // 显示取消、确定按钮的标志布尔值。
+      whichButtonShown: true
+    };
   },
   mounted() {
     this.getPersonalInfoData();
@@ -24,10 +46,21 @@ export default {
   methods: {
     // 获取个人信息数据的方法。
     async getPersonalInfoData() {
-      this.personalInfo = await personalInfoData();
+      let res = await personalInfoData();
+      this.bgImgSrc = res.bgImg;
+    },
+    // 背景图上传完毕之后的回调函数。
+    afterUploading(file) {
+      this.bgImgSrc = this.fileList[0].content;
+      this.fileList = [];
+      this.whichButtonShown = !this.whichButtonShown;
+    },
+    // 点击取消回退页面。
+    handleClickCancelUpload() {
+      this.$router.go(-1);
     }
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>
@@ -35,7 +68,7 @@ export default {
   position: relative;
   width: 100%;
   height: calc(100vh - 60px);
-  div:nth-child(1) {
+  .bg-wrapper {
     width: 100%;
     height: 151px;
     img {
@@ -43,7 +76,7 @@ export default {
       height: 100%;
     }
   }
-  div:nth-child(2) {
+  .change-bg_button {
     width: 345px;
     height: 45px;
     margin: 17.5px auto 0px;
@@ -51,12 +84,12 @@ export default {
     font-family: Source Han Sans CN;
     text-align: center;
     line-height: 45px;
-    color: rgba(21,21,21,1);
-    background:rgba(255,255,255,1);
-    border: 1px solid rgba(21,21,21,1);
+    color: rgba(21, 21, 21, 1);
+    background: rgba(255, 255, 255, 1);
+    border: 1px solid rgba(21, 21, 21, 1);
     border-radius: 5px;
   }
-  div:nth-child(3) {
+  .cancel_button {
     position: absolute;
     bottom: 10px;
     left: 15px;
@@ -66,10 +99,29 @@ export default {
     font-family: Source Han Sans CN;
     text-align: center;
     line-height: 45px;
-    color: rgba(21,21,21,1);
-    background:rgba(255,255,255,1);
-    border: 1px solid rgba(21,21,21,1);
+    color: rgba(177, 177, 177, 1);
+    background: rgba(255, 255, 255, 1);
+    border: 1px solid rgba(177, 177, 177, 1);
     border-radius: 5px;
   }
+  .submit_button {
+    position: absolute;
+    bottom: 10px;
+    left: 15px;
+    width: 345px;
+    height: 45px;
+    font-size: 13px;
+    font-family: Source Han Sans CN;
+    text-align: center;
+    line-height: 45px;
+    color: rgba(21, 21, 21, 1);
+    background: rgba(255, 255, 255, 1);
+    border: 1px solid rgba(21, 21, 21, 1);
+    border-radius: 5px;
+  }
+}
+// 修改 vant 上传按钮样式。
+/deep/ .van-uploader {
+  margin-left: 15px;
 }
 </style>

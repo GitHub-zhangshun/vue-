@@ -38,7 +38,9 @@ export default {
           "showTagsPage",
           "tagDetailsPage",
           "personalHomepage",
-          "changePersonalPageBg"
+          "changePersonalPageBg",
+          "changePersonalInfo",
+          "personalInteraction"
         ],
         flag = new Boolean();
       isShownTheTopBar.includes(this.$route.name)

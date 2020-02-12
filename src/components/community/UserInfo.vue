@@ -2,13 +2,17 @@
   <section class="user-info_wrapper">
     <section class="bg-avatar_wrapper">
       <div>
-        <img :src="personalInfo.bgImg" alt="背景画像" @click="handleClick2ChangePage" />
+        <img
+          :src="personalInfo.bgImg"
+          alt="背景画像"
+          @click="handleClick2ChangePage"
+        />
       </div>
       <div>
         <img :src="personalInfo.avatar" alt="アバター" />
       </div>
       <div>
-        <img :src="editIcon" alt="" />
+        <img :src="editIcon" alt="変更する" @click="handleClick2ChangeInfo" />
       </div>
     </section>
     <section class="name-des_wrapper">
@@ -16,9 +20,18 @@
       <div>{{ personalInfo.des }}</div>
       <div v-show="personalInfo.id">フォロー中</div>
       <div>
-        <section><span class="interaction-num">{{ personalInfo.attention }} </span><span class="interaction-text">フォロー中</span></section>
-        <section><span class="interaction-num">{{ personalInfo.fans }} </span><span class="interaction-text">フォロワー</span></section>
-        <section><span class="interaction-num">{{ personalInfo.liked }} </span><span class="interaction-text">いいね！</span></section>
+        <section @click="handleClick2AttentionPage">
+          <span class="interaction-num">{{ personalInfo.attention }} </span
+          ><span class="interaction-text">フォロー中</span>
+        </section>
+        <section @click="handleClick2FansPage">
+          <span class="interaction-num">{{ personalInfo.fans }} </span
+          ><span class="interaction-text">フォロワー</span>
+        </section>
+        <section>
+          <span class="interaction-num">{{ personalInfo.liked }} </span
+          ><span class="interaction-text">いいね！</span>
+        </section>
       </div>
     </section>
     <BlockInterval />
@@ -32,11 +45,7 @@
         animated
         @click="handleClickGetId"
       >
-        <van-tab
-          v-for="(item, idx) in tabList"
-          :key="idx"
-          :title="item.title"
-        >
+        <van-tab v-for="(item, idx) in tabList" :key="idx" :title="item.title">
           <ShowDetailsContent :tabId="computedTabId" />
         </van-tab>
       </van-tabs>
@@ -89,7 +98,27 @@ export default {
     // 点击跳转切换背景页面。
     handleClick2ChangePage() {
       this.$router.push({
-        name: 'changePersonalPageBg'
+        name: "changePersonalPageBg"
+      });
+    },
+    // 点击跳转编辑个人信息页面。
+    handleClick2ChangeInfo() {
+      this.$router.push({
+        name: "changePersonalInfo"
+      });
+    },
+    // 点击跳转我的关注页面。
+    handleClick2AttentionPage() {
+      this.$router.push({
+        name: 'personalInteraction',
+        params: {tabId: 0}
+      });
+    },
+    // 点击跳转我的粉丝页面。
+    handleClick2FansPage() {
+      this.$router.push({
+        name: 'personalInteraction',
+        params: {tabId: 1}
       });
     },
     // 点击 tab item 改变用于请求数据的 id 。
@@ -167,8 +196,12 @@ export default {
       font-size: 13px;
       text-align: center;
       line-height: 34px;
-      color: rgba(21,21,21,1);
-      @include border($width: 1px, $border-color: rgba(23,23,23,1), $border-radius: 2px);
+      color: rgba(21, 21, 21, 1);
+      @include border(
+        $width: 1px,
+        $border-color: rgba(23, 23, 23, 1),
+        $border-radius: 2px
+      );
     }
     div:nth-child(4) {
       display: grid;
@@ -176,19 +209,19 @@ export default {
       section {
         place-self: start center;
         span {
-        display: block;
-        text-align: center;
+          display: block;
+          text-align: center;
         }
         .interaction-num {
           font-size: 18px;
           font-family: DIN;
           font-weight: bold;
-          color: rgba(36,36,36,1);
+          color: rgba(36, 36, 36, 1);
         }
         .interaction-text {
           margin-top: 7.5px;
           font-size: 12px;
-          color: rgba(135,135,135,1);
+          color: rgba(135, 135, 135, 1);
         }
       }
     }

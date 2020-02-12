@@ -17,6 +17,8 @@ const ShopCart = () => import(/* webpackChunkName: "shopCart" */ "../views/shopC
 const My = () => import(/* webpackChunkName: "my" */ "../views/my/index");
 const PersonalHomepage = () => import(/* webpackChunkName: "personalHomepage" */ "../views/community/personalHomepage");
 const ChangePersonalPageBg = () => import(/* webpackChunkName: "changePersonalPageBg" */ "../views/community/changePersonalPageBg");
+const ChangePersonalInfo = () => import(/* webpackChunkName: "changePersonalInfo" */ "../views/community/changePersonalInfo");
+const PersonalInteraction = () => import(/* webpackChunkName: "personalInteraction" */ "../views/community/personalInteraction");
 const ShowTagsPage = () => import(/* webpackChunkName: "showTagsPage" */ "../views/community/showTagsPage");
 const TagDetailsPage = () => import(/* webpackChunkName: "tagDetailsPage" */ "../views/community/tagDetailsPage");
 const ShowDetailsPage = () => import(/* webpackChunkName: "showDetailsPage" */ "../views/community/showDetailsPage");
@@ -50,6 +52,16 @@ const router = new Router({
       path: "/changePersonalPageBg",
       name: "changePersonalPageBg",
       component: ChangePersonalPageBg
+    },
+    {
+      path: "/changePersonalInfo",
+      name: "changePersonalInfo",
+      component: ChangePersonalInfo
+    },
+    {
+      path: "/personalInteraction",
+      name: "personalInteraction",
+      component: PersonalInteraction
     },
     {
       path: "/showDetailsPage",

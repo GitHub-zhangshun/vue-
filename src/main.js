@@ -19,7 +19,9 @@ import {
   Uploader,
   Popup,
   Checkbox,
-  CheckboxGroup
+  CheckboxGroup,
+  RadioGroup,
+  Radio
 } from "vant";
 Vue.use(Toast)
   .use(Swipe)
@@ -32,7 +34,9 @@ Vue.use(Toast)
   .use(Uploader)
   .use(Popup)
   .use(Checkbox)
-  .use(CheckboxGroup);
+  .use(CheckboxGroup)
+  .use(RadioGroup)
+  .use(Radio);
 // 引入瀑布流、懒加载组件。
 import waterfall from "vue-waterfall2";
 Vue.use(waterfall);

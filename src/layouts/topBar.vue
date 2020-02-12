@@ -4,7 +4,7 @@
       <i class="iconfont icon-fanhui" @click="handleClickGoBack"></i>
     </div>
     <div>
-      <i class="iconfont icon-navicon" @click="handleClickShowTabContent"></i>
+      <i class="iconfont icon-home" @click="handleClick2Community"></i>
     </div>
     <div @click="handleClick2HomePage">
       {{ titleText }}
@@ -33,7 +33,9 @@ export default {
         "showTagsPage",
         "tagDetailsPage",
         "personalHomepage",
-        "changePersonalPageBg"
+        "changePersonalPageBg",
+        "changePersonalInfo",
+        "personalInteraction"
       ],
         flag = new Boolean();
       isShownTheBackButton.includes(this.$route.name)
@@ -75,13 +77,13 @@ export default {
     handleClickGoBack() {
       this.$router.go(-1);
     },
-    handleClickShowTabContent() {
-      this.$toast('弹出层');
-    },
-    handleClick2HomePage() {
+    handleClick2Community() {
       this.$router.push({
         name: "show-details-content"
       });
+    },
+    handleClick2HomePage() {
+      window.location = "http://m.sisilily.com";
     },
     handleClick2UserPage() {
       this.$router.push({
