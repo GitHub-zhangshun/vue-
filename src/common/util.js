@@ -1,5 +1,5 @@
 /**
- * 存储 localStorage
+ * 存储 localStorage 。
  */
 export const setStore = (name, content) => {
   if (!name) return;
@@ -9,21 +9,21 @@ export const setStore = (name, content) => {
   window.localStorage.setItem(name, content);
 };
 /**
- * 获取 localStorage
+ * 获取 localStorage 。
  */
 export const getStore = name => {
   if (!name) return;
   return window.localStorage.getItem(name);
 };
 /**
- * 删除 localStorage
+ * 删除 localStorage 。
  */
 export const removeStore = name => {
   if (!name) return;
   window.localStorage.removeItem(name);
 };
 /**
- * 存储 sessionStorage
+ * 存储 sessionStorage 。
  * @param key
  * @param value
  */
@@ -31,7 +31,7 @@ export const sessionSetItem = (key, value) => {
   window.sessionStorage.setItem(key, JSON.stringify(value));
 };
 /**
- * 获取 sessionStorage
+ * 获取 sessionStorage 。
  * @param key
  * @returns {any}
  */
@@ -45,7 +45,7 @@ export const sessionGetItem = key => {
   return result;
 };
 /**
- * 删除 sessionStorage
+ * 删除 sessionStorage 。
  * @param key
  * @returns {any}
  */
@@ -53,7 +53,7 @@ export const sessionRemoveItem = key => {
   window.sessionStorage.removeItem(key);
 };
 /**
- * 清除 sessionStorage
+ * 清除 sessionStorage 。
  * @param key
  * @returns {any}
  */
@@ -61,7 +61,7 @@ export const sessionClear = () => {
   window.sessionStorage.clear();
 };
 /**
- * 生成随机字符串(可指定长度)
+ * 生成随机字符串（可指定长度）。
  * @param len
  * @returns {string}
  */
@@ -77,16 +77,16 @@ export const randomString = len => {
   return pwd;
 };
 /**
- * randomWord 产生任意长度随机字母数字组合
- * @param randomFlag 是否任意长度 min-任意长度最小位[固定位数] max-任意长度最大位
+ * randomWord 产生任意长度随机字母数字组合。
+ * @param randomFlag 是否任意长度 min - 任意长度最小位（固定位数） max - 任意长度最大位。
  * @param min
  * @param max
  * @returns {string}
- * 调用方法:
- * 生成 3 - 32 位随即字符串
- * randomWord(true,3,32);    例如：olyOXUF5oDsuMmXl3Mi48
+ * 调用方法：
+ * 生成 3 - 32 位随机字符串。
+ * randomWord(true, 3, 32); --> olyOXUF5oDsuMmXl3Mi48
  * 生成 32 位随机字符串
- * randomWord(false,32);     例如：fjpnWj29Bb8boiXbLeDF0nxkR4aYcLRl
+ * randomWord(false,32); --> fjpnWj29Bb8boiXbLeDF0nxkR4aYcLRl
  */
 export const randomWord = (randomFlag, min, max) => {
   let str = "",
@@ -155,7 +155,7 @@ export const randomWord = (randomFlag, min, max) => {
       "Y",
       "Z"
     ];
-  // 随机产生
+  // 随机产生。
   if (randomFlag) {
     range = Math.round(Math.random() * (max - min)) + min;
   }
@@ -166,10 +166,11 @@ export const randomWord = (randomFlag, min, max) => {
   return str;
 };
 /**
- * 获取url后参数
+ * 获取 url 后参数。
  */
 export const GetRequest = () => {
-  let url = location.search; //获取url中"?"符后的字串
+  // 获取 url 中 "?" 后的字符串。
+  let url = location.search;
   let theRequest = new Object();
   if (url.indexOf("?") != -1) {
     let str = url.substr(1);
@@ -181,7 +182,7 @@ export const GetRequest = () => {
   return theRequest;
 };
 /**
- * 生成随机颜色值
+ * 生成随机颜色值。
  */
 export const getRandomColor = () => {
   const rgb = [];
@@ -193,8 +194,8 @@ export const getRandomColor = () => {
   return "#" + rgb.join("");
 };
 /**
- * 验证身份证号
- * @param el 号码输入input
+ * 验证身份证号。
+ * @param el 号码输入 input 。
  * @returns {boolean}
  */
 export const checkCardNo = el => {
@@ -203,7 +204,7 @@ export const checkCardNo = el => {
   return reg.test(txtval);
 };
 /**
- * 获取字符串字节长度
+ * 获取字符串字节长度。
  * @param {String}
  * @returns {Boolean}
  */
@@ -218,7 +219,7 @@ export const checkLength = v => {
   return realLength;
 };
 /**
- * 判断微信浏览器
+ * 判断微信浏览器。
  * @returns {Boolean}
  */
 export const isWeiXin = () => {
@@ -230,7 +231,7 @@ export const isWeiXin = () => {
   }
 };
 /**
- * 写 cookies
+ * 写 cookies 。
  */
 export const setCookie = (name, value, time) => {
   let strsec = getsec(time);
@@ -240,7 +241,7 @@ export const setCookie = (name, value, time) => {
     name + "=" + escape(value) + ";expires=" + exp.toGMTString();
 };
 /**
- * 读取 cookies
+ * 读取 cookies 。
  */
 export const getCookie = name => {
   let arr,
@@ -249,7 +250,7 @@ export const getCookie = name => {
   else return null;
 };
 /**
- * 删除 cookies
+ * 删除 cookies 。
  */
 export const delCookie = name => {
   let exp = new Date();
@@ -259,8 +260,8 @@ export const delCookie = name => {
     document.cookie = name + "=" + cval + ";expires=" + exp.toGMTString();
 };
 /**
- * 浏览器判断
- * 用法示例——多套页面判断是否显示移动端：
+ * 浏览器判断，M 还是 PC 。
+ * 用法示例 —— 多套页面判断是否显示移动端：
  *   let ua = parseUA();
  *   if (!ua.mobile) {
  *       location.href = './pc.html';
@@ -270,34 +271,34 @@ export const parseUA = () => {
   let u = navigator.userAgent;
   let u2 = navigator.userAgent.toLowerCase();
   return {
-    //移动终端浏览器版本信息
+    // 移动终端浏览器版本信息。
     trident: u.indexOf("Trident") > -1,
-    //IE内核
+    // IE 内核。
     presto: u.indexOf("Presto") > -1,
-    //opera内核
+    // opera 内核。
     webKit: u.indexOf("AppleWebKit") > -1,
-    //苹果、谷歌内核
+    // Safari、谷歌内核。
     gecko: u.indexOf("Gecko") > -1 && u.indexOf("KHTML") == -1,
-    //火狐内核
+    // 火狐内核。
     mobile: !!u.match(/AppleWebKit.*Mobile.*/),
-    //是否为移动终端
+    // 是否为移动终端。
     ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/),
-    //ios终端
+    // ios 终端。
     android: u.indexOf("Android") > -1 || u.indexOf("Linux") > -1,
-    //android终端或uc浏览器
+    // android 终端或 uc 浏览器。
     iPhone: u.indexOf("iPhone") > -1,
-    //是否为iPhone或者QQHD浏览器
+    // 是否为 iPhone 或者 QQ HD 浏览器。
     iPad: u.indexOf("iPad") > -1,
-    //是否iPad
+    // 是否 iPad 。
     webApp: u.indexOf("Safari") == -1,
-    //是否web应该程序，没有头部与底部
+    // 是否 web 应该程序，没有头部与底部。
     iosv: u.substr(u.indexOf("iPhone OS") + 9, 3),
     weixin: u2.match(/MicroMessenger/i) == "micromessenger",
     ali: u.indexOf("AliApp") > -1
   };
 };
 /**
- * 生成UUID
+ * 生成 UUID 。
  * @returns {string}
  */
 export const generateUUID = () => {
@@ -312,7 +313,7 @@ export const generateUUID = () => {
   return uuid;
 };
 /**
- * 删除左右两端的空格
+ * 删除左右两端的空格。
  * @param str
  * @returns {string | * | void}
  */
@@ -320,7 +321,7 @@ function trim(str) {
   return str.replace(/(^\s*)|(\s*$)/g, "");
 }
 /**
- * 删除左边的空格
+ * 删除左边的空格。
  * @param str
  * @returns {string | * | void}
  */
@@ -328,7 +329,7 @@ function ltrim(str) {
   return str.replace(/(^\s*)/g, "");
 }
 /**
- * 删除右边的空格
+ * 删除右边的空格。
  * @param str
  * @returns {string | * | void}
  */
@@ -336,7 +337,7 @@ function rtrim(str) {
   return str.replace(/(\s*$)/g, "");
 }
 /**
- * 对象数组转二维数组
+ * 对象数组转二维数组。
  * @param objArr
  */
 function obj2Arr(objArr) {
@@ -346,7 +347,7 @@ function obj2Arr(objArr) {
     });
 }
 /**
- * 找出对象数组中某属性的最大值
+ * 找出对象数组中某属性的最大值。
  * @param array
  * @param item
  * @returns val
@@ -361,21 +362,21 @@ function maxItemInObjArr(array, item) {
   return max;
 }
 /**
- * 判断当前网络环境
+ * 判断当前网络环境。
  */
 export const isWifi = () => {
   try {
     let wifi = true;
     let ua = window.navigator.userAgent;
     let con = window.navigator.connection;
-    // 如果是微信
+    // 如果是微信。
     if (/MicroMessenger/.test(ua)) {
       if (ua.indexOf("WIFI") >= 0) {
         return true;
       } else {
         wifi = false;
       }
-      // 如果支持navigator.connection
+      // 如果支持 navigator.connection 。
     } else if (con) {
       let network = con.type;
       if (network !== "wifi" && network !== "2" && network !== "unknown") {
@@ -388,7 +389,7 @@ export const isWifi = () => {
   }
 };
 /**
- * 首字母大写
+ * 首字母大写。
  * @param str
  * @returns {string}
  */
@@ -396,7 +397,7 @@ export const fistLetterUpper = str => {
   return str.charAt(0).toUpperCase() + str.slice(1);
 };
 /**
- * 过滤非法字符串
+ * 过滤非法字符串。
  */
 export const illegalFilter = str => {
   let regEn = /[`~!@#$%^&*()_+<>?:"{},.\/;'[\]]/im;
@@ -404,3 +405,12 @@ export const illegalFilter = str => {
   if (regEn.test(str) || regCn.test(str)) return false;
   return true;
 };
+/**
+ * 删除数组中指定的元素。
+ */
+export const delTheEleInArray = (val, arr) => {
+  let index = arr.indexOf(val);
+  if(index > -1) {
+    arr.splice(index, 1);
+  }
+}

@@ -13,8 +13,8 @@
           <div
             v-show="activeNavItem === 0 ? true : false"
             class="attention-wrapper"
-            v-for="(item, idx) in attentionData"
-            :key="idx"
+            v-for="item in attentionData"
+            :key="item.id"
           >
             <div>
               <img :src="item.avatar" alt="ユーザーアバター" />
@@ -25,16 +25,24 @@
             </div>
             <div>
               <div
-                v-show="unfollowUserData.indexOf(item.id) === -1 ? true : false"
+                v-show="
+                  attentionUnfollowUserData.indexOf(item.id) === -1
+                    ? true
+                    : false
+                "
                 class="is-attention_button"
-                @click="handleClickUnfollowUser(item.id)"
+                @click="handleClickUnfollowAttentionUser(item.id)"
               >
                 フォロー中
               </div>
               <div
-                v-show="unfollowUserData.indexOf(item.id) !== -1 ? true : false"
+                v-show="
+                  attentionUnfollowUserData.indexOf(item.id) !== -1
+                    ? true
+                    : false
+                "
                 class="non-attention_button"
-                @click="handleClickFollowUser(item.id)"
+                @click="handleClickFollowAttentionUser(item.id)"
               >
                 フォローする
               </div>
@@ -43,17 +51,53 @@
           <div
             v-show="activeNavItem === 1 ? true : false"
             class="fans-wrapper"
-            v-for="(item, idx) in fansData"
-            :key="idx"
+            v-for="item in fansData"
+            :key="item.id"
           >
             <div>
-              <img :src="item.avatar" alt="ユーザーアバター">
+              <img :src="item.avatar" alt="ユーザーアバター" />
             </div>
             <div>
               <span>{{ item.name }}</span>
               <span>{{ item.des }}</span>
             </div>
-            <div></div>
+            <div>
+              <div
+                v-show="
+                  fansUnfollowUserData.indexOf(item.id) === -1 ? true : false
+                "
+                class="is-attention--button"
+                @click="handleClickUnfollowFansUser(item.id)"
+              >
+                フォロー中
+              </div>
+              <div
+                v-show="
+                  fansUnfollowUserData.indexOf(item.id) !== -1 ? true : false
+                "
+                class="non-attention--button"
+                @click="handleClickFollowFansUser(item.id)"
+              >
+                フォローする
+              </div>
+              <div
+                class="del-icon_wrapper"
+                @click="handleClickShowDelButton(item.id)"
+              >
+                <img :src="delIcon" alt="" />
+              </div>
+            </div>
+            <transition
+              enter-active-class="animated slideInRight"
+              leave-active-class="animated slideOutRight"
+            >
+              <div
+                v-show="fansDelUserData.indexOf(item.id) !== -1 ? true : false"
+                @click="handleClickShowDialog(item.id)"
+              >
+                フォロワーを削除
+              </div>
+            </transition>
           </div>
         </van-tab>
       </van-tabs>
@@ -62,11 +106,20 @@
 </template>
 
 <script>
+import delFansIcon from "@assets/img/delete-fans-icon.png";
+import animate from "animate.css";
+import { Dialog } from  'vant';
+import { delTheEleInArray } from "@/common/util";
 import { personalAttentionData, personalFansData } from "@/api/common";
 export default {
   name: "personalInteraction",
+  components: {
+    "van-dialog":  Dialog.Component
+  },
   data() {
     return {
+      // 删除粉丝的图标。
+      delIcon: delFansIcon,
       // 当前高亮的 tab item 。
       activeNavItem: this.$route.params.tabId,
       // 存放 tab item 的数组。
@@ -82,8 +135,12 @@ export default {
       attentionData: [],
       // 粉丝详细数据数组。
       fansData: [],
-      // 需要取关的用户 id 数组。
-      unfollowUserData: []
+      // 我的关注中需要取关的用户 id 数组。
+      attentionUnfollowUserData: [],
+      // 我的粉丝中需要取关的用户 id 数组。
+      fansUnfollowUserData: [],
+      // 我的粉丝中需要删除的用户 id 数组。
+      fansDelUserData: []
     };
   },
   mounted() {
@@ -99,19 +156,58 @@ export default {
     async getPersonalFansData() {
       this.fansData = await personalFansData();
     },
-    // 点击按钮取消关注用户。
-    handleClickUnfollowUser(id) {
-      this.unfollowUserData.push(id);
+    // 点击按钮取消关注用户（我的关注中）。
+    handleClickUnfollowAttentionUser(id) {
+      this.attentionUnfollowUserData.push(id);
     },
-    // 点击按钮继续关注用户。
-    handleClickFollowUser(id) {
-      Array.prototype.remove = function(val) {
-        var index = this.indexOf(val);
-        if (index > -1) {
-          this.splice(index, 1);
+    // 点击按钮继续关注用户（我的关注中）。
+    handleClickFollowAttentionUser(id) {
+      delTheEleInArray(id, this.attentionUnfollowUserData);
+    },
+    // 点击按钮取消关注用户（我的粉丝中）。
+    handleClickUnfollowFansUser(id) {
+      this.fansUnfollowUserData.push(id);
+    },
+    // 点击按钮继续关注用户（我的粉丝中）。
+    handleClickFollowFansUser(id) {
+      delTheEleInArray(id, this.fansUnfollowUserData);
+    },
+    // 点击小叉弹出删除用户的按钮。
+    handleClickShowDelButton(id) {
+      this.fansDelUserData.push(id);
+    },
+    // 点击对应小叉其他部分隐藏删除用户按钮。
+    handleClickHideDelButton(id) {
+      delTheEleInArray(id, this.fansDelUserData);
+    },
+    // 点击右边弹出的删除按钮，进行弹窗。
+    handleClickShowDialog(id) {
+      Dialog.confirm({
+        title: 'フォロワーを削除してもよろしいですか',
+        message: '削除後、彼女の投稿を確認できなくなります',
+        width: 250,
+        confirmButtonText: 'はい',
+        confirmButtonColor: '#8B8B8B',
+        cancelButtonText: 'いいえ',
+        cancelButtonColor: '#151515',
+        // 添加回调函数以异步关闭弹窗。
+        beforeClose: (action, done) => {
+          if (action === 'confirm') {
+            setTimeout(done, 1500);
+          }
+          else if(action === 'cancel') {
+            done();
+            this.handleClickHideDelButton(id);
+          }
+          else {
+            done();
+          }
         }
-      };
-      this.unfollowUserData.remove(id);
+      }).then(() => {
+        // on confirm
+      }).catch(() => {
+        // on cancel
+      });
     }
   }
 };
@@ -183,10 +279,13 @@ export default {
     }
   }
   .fans-wrapper {
+    position: relative;
     display: grid;
     grid-template: 100% / 80px 162px 133px;
     width: 100%;
     height: 81px;
+    // 解决删除按钮从右边出来时，创建一个重复的按钮。
+    overflow: hidden;
     @include border-bottom(
       $left: 15px,
       $width: calc(100% - 15px),
@@ -218,6 +317,54 @@ export default {
         color: rgba(144, 144, 144, 1);
         @include ellipsis($line: 1);
       }
+    }
+    div:nth-child(3) {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      font-family: Source Han Sans CN;
+      text-align: center;
+      line-height: 28px;
+      .is-attention--button {
+        width: 88px;
+        height: 28px;
+        color: rgba(21, 21, 21, 1);
+        @include border(
+          $width: 1px,
+          $border-color: rgba(23, 23, 23, 1),
+          $border-radius: 2px
+        );
+      }
+      .non-attention--button {
+        width: 88px;
+        height: 28px;
+        color: rgba(255, 255, 255, 1);
+        background-color: rgba(235, 129, 154, 1);
+        border-radius: 2px;
+      }
+      .del-icon_wrapper {
+        width: 17px;
+        height: 17px;
+        margin-right: 12px;
+        img {
+          width: 100%;
+          height: 100%;
+        }
+      }
+    }
+    div:nth-child(4) {
+      position: absolute;
+      top: 16px;
+      right: 0;
+      width: 133px;
+      height: 51px;
+      font-size: 13px;
+      font-family: Source Han Sans CN;
+      text-align: center;
+      line-height: 51px;
+      color: rgba(255, 255, 255, 1);
+      background-color: rgba(235, 71, 71, 1);
     }
   }
 }

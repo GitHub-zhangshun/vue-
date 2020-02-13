@@ -17,7 +17,7 @@
           <van-tab
             v-for="(item, idx) in tabList"
             :key="idx"
-            :title="item.title"
+            :title="item.name"
           >
           </van-tab>
         </van-tabs>
@@ -58,6 +58,7 @@ import EditShowButton from "@components/community/EditShowButton";
 import BlockInterval from "@components/community/BlockInterval";
 import PopupDialog from "@components/community/PopupDialog";
 import { sessionGetItem } from "@/common/util";
+import { indexStadiumData } from "@/api/common";
 export default {
   name: "home",
   components: {
@@ -74,29 +75,27 @@ export default {
       // 存放 tab item 的数组。
       tabList: [
         {
-          title: "フォロー"
+          name: "フォロー"
         },
         {
-          title: "おすすめ"
-        },
-        {
-          title: "girl"
-        },
-        {
-          title: "lady"
-        },
-        {
-          title: "madam"
-        },
-        {
-          title: "home"
+          name: "おすすめ"
         }
       ],
       // 是否展示弹窗的标志变量。
       isShownTheEditShowDialog: false
     };
   },
+  mounted() {
+    this.getIndexStadiumData();
+  },
   methods: {
+    // 获取首页场馆 item 数据的方法。
+    async getIndexStadiumData() {
+      let res = await indexStadiumData();
+      // console.info(...res.data);
+      this.tabList.push(...res.data);
+      console.info(this.tabList);
+    },
     // 点击 tab 显示对应请求的 show 详情数据。
     handleClick2Details(index, title) {
       this.$router.push({

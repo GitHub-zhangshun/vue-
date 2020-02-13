@@ -51,7 +51,7 @@
 import BlockInterval from "@components/community/BlockInterval";
 import ShowRelatedGoods from "@components/community/ShowRelatedGoods";
 import ShowDetailsContent from "@components/ShowDetailsContent";
-import { Dialog } from  'vant';
+import { Dialog } from 'vant';
 import { showBannerData, userDetailsData } from "@/api/common";
 export default {
   name: "ShowDetailsPage",
@@ -215,5 +215,26 @@ export default {
       }
     }
   }
+}
+</style>
+<style lang="scss">
+// 修改 vant dialog 自带样式。
+.van-dialog__header {
+  padding: 31.5px 25.5px 0px;
+  font-size: 16px;
+  font-family: Source Han Sans CN;
+  font-weight: bold;
+  color: rgba(31,31,31,1);
+}
+.van-dialog__message--has-title {
+  padding: 25.5px 23.5px 42px;
+  font-size: 12px;
+  font-family: Source Han Sans CN;
+  color: rgba(31,31,31,1);
+}
+.van-dialog__cancel,
+.van-dialog__confirm {
+  font-size: 13px;
+  font-family: Source Han Sans CN;
 }
 </style>

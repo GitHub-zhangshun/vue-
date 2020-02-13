@@ -8,7 +8,6 @@ import filters from "./filters";
 import "amfe-flexible";
 // 按需加载用到的 vant 依赖。
 import {
-  Toast,
   Swipe,
   SwipeItem,
   Lazyload,
@@ -23,8 +22,7 @@ import {
   RadioGroup,
   Radio
 } from "vant";
-Vue.use(Toast)
-  .use(Swipe)
+Vue.use(Swipe)
   .use(SwipeItem)
   .use(Lazyload)
   .use(Tab)

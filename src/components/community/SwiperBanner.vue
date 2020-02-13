@@ -25,7 +25,8 @@ export default {
   methods: {
     // 获取轮播图数据。
     async getIndexBannerData() {
-      this.bannerImg = await indexBannerData();
+      let res = await indexBannerData();
+      this.bannerImg = res.data;
     }
   },
   mounted() {
@@ -43,7 +44,9 @@ export default {
     height: 100%;
     .van-swipe-item {
       width: 100%;
+      height: 100%;
       img {
+        width: 100%;
         height: 100%;
       }
     }

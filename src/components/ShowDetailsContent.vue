@@ -11,23 +11,23 @@
       <template>
         <div class="cell-item" v-for="(item, index) in data" :key="index">
           <img
-            v-if="item.img"
-            :src="item.img"
+            v-if="item.data.thumb"
+            :src="item.data.thumb"
             @click="handleClick2DetailPage(item.del)"
             alt="読み込みエラー"
           />
           <div class="item-body">
-            <div class="item-desc">{{ item.title }}</div>
+            <div class="item-desc">{{ item.content }}</div>
             <div class="item-footer">
               <div
-                v-if="item.avatar"
+                v-if="item.user.avatar"
                 class="avatar"
-                :style="{ backgroundImage: `url(${item.avatar})` }"
+                :style="{ backgroundImage: `url(${item.user.avatar})` }"
               ></div>
-              <div class="name">{{ item.user }}</div>
-              <div class="like" :class="item.liked ? 'active' : ''">
+              <div class="name">{{ item.user.name }}</div>
+              <div class="like" :class="item.is_like === 1 ? 'active' : ''">
                 <i class="iconfont icon-zan"></i>
-                <div class="like-total">{{ item.like || item.liked }}</div>
+                <div class="like-total">{{ item.likes }}</div>
               </div>
             </div>
           </div>
@@ -41,8 +41,8 @@
 </template>
 
 <script>
-import { waterFallData } from "@/api/common";
 import { sessionSetItem } from "@/common/util";
+import { waterFallData } from "@/api/common";
 export default {
   name: "ShowDetailsContent",
   props: {
@@ -102,6 +102,8 @@ export default {
         this.data = this.data.concat(waterFallData(this.tabId));
         // console.info(this.data.length);
       }, 1500);
+      // 强制更新展示 show 的数据，并重绘板式。
+      this.$waterfall.forceUpdate();
       this.$waterfall.resize();
     },
     // 点击跳转详 show 情页面。
@@ -119,7 +121,9 @@ export default {
     },
     // 获取瀑布流 show 详情数据的方法。
     async getWaterFallData() {
-      this.data = await waterFallData(this.tabId);
+      let res = await waterFallData(this.tabId);
+      this.data = res.data.data;
+      // console.info(this.data);
       // 强制更新展示 show 的数据。
       this.$waterfall.forceUpdate();
     }
