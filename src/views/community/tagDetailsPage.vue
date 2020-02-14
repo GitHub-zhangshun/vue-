@@ -23,14 +23,14 @@
         <div>
           标签定义HOWを投稿すると10ポイントプレゼント、またはSHOWに関連する商品を追加したら50ポイント
         </div>
-        <div>{{ tagsListData.reward }}</div>
+        <div>{{ tagDetailsData.reward }}</div>
         <div>
           <p>ENDS IN</p>
-          <p v-show="!tagsListData.activityStart">
+          <p v-show="!tagDetailsData.activityStart">
             ——&nbsp;&nbsp;&nbsp;イベント終了&nbsp;&nbsp;&nbsp;——
           </p>
           <count-down
-            v-show="tagsListData.activityStart"
+            v-show="tagDetailsData.activityStart"
             :startTime="'4100829240'"
             :endTime="'4101002040'"
             :tipText="''"
@@ -58,11 +58,11 @@
       >
         <van-tab v-for="(item, idx) in tabList" :key="idx" :title="item.title">
           <ShowDetailsContent
-            v-show="tagsListData.activityStart"
+            v-show="tagDetailsData.activityStart"
             :tabId="computedTabId"
           />
           <section
-            v-show="!tagsListData.activityStart"
+            v-show="!tagDetailsData.activityStart"
             class="no-activity_wrapper"
           >
             <div>
@@ -84,7 +84,7 @@
     >
       <section class="popup-content_wrapper">
         <div>ルール説明</div>
-        <div>{{ tagsListData.info }}</div>
+        <div>{{ tagDetailsData.info }}</div>
         <div @click="handleClickHideCommentDialog">オッケー</div>
       </section>
     </van-popup>
@@ -122,7 +122,7 @@ import ShowDetailsContent from "@components/ShowDetailsContent";
 import CountDown from "@components/CountDown.vue";
 import EditShowButton from "@components/community/EditShowButton";
 import PopupDialog from "@components/community/PopupDialog";
-import { indexTagListData } from "@/api/common";
+import { tagDetailsData } from "@/api/common";
 export default {
   name: "tagDetailsPage",
   components: {
@@ -151,8 +151,8 @@ export default {
       pushTabId: 0,
       // 显示标签解释弹窗的标志布尔值。
       isCommentDialog: false,
-      // 存放标签数据的数组。
-      tagsListData: [],
+      // 存放标签详细数据的数组。
+      tagDetailsData: [],
       // 存放轮播图片数据。
       bannerImg: [],
       // 是否展示弹窗的标志变量。
@@ -166,7 +166,7 @@ export default {
     }
   },
   mounted() {
-    this.getindexTagListData();
+    this.getTagDetailsData();
   },
   methods: {
     // 点击 tab item 改变用于请求数据的 id 。
@@ -181,10 +181,11 @@ export default {
       this.isCommentDialog = !this.isCommentDialog;
     },
     // 获取 tag 详细数据方法。
-    async getindexTagListData() {
-      let res = await indexTagListData(this.$route.params.id);
-      this.tagsListData = res[0];
-      this.bannerImg = res[0].activity;
+    async getTagDetailsData() {
+      let res = await tagDetailsData(this.$route.params.tag_id);
+      console.info(res);
+      // this.tagDetailsData = res[0];
+      // this.bannerImg = res[0].activity;
     },
     // 显示、关闭编辑 show 弹窗的方法。
     handleClick2ShowEditShowDialog() {

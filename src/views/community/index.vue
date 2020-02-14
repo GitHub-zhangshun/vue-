@@ -71,7 +71,7 @@ export default {
   data() {
     return {
       // 当前高亮的 tab item 。
-      activeNavItem: sessionGetItem("activeTabItem"),
+      activeNavItem: 1,
       // 存放 tab item 的数组。
       tabList: [
         {
@@ -92,18 +92,37 @@ export default {
     // 获取首页场馆 item 数据的方法。
     async getIndexStadiumData() {
       let res = await indexStadiumData();
-      // console.info(...res.data);
       this.tabList.push(...res.data);
-      console.info(this.tabList);
     },
     // 点击 tab 显示对应请求的 show 详情数据。
-    handleClick2Details(index, title) {
-      this.$router.push({
-        name: `show-details-content`,
-        params: {
-          tabId: index
-        }
-      });
+    handleClick2Details(index) {
+      if(index === 0) {
+        this.$router.push({
+          name: `show-details-content/attention`,
+          params: {
+            subscribes: 1,
+            page: 1
+          }
+        });
+      }
+      else if(index === 1) {
+        this.$router.push({
+          name: `show-details-content/recommend`,
+          params: {
+            subscribes: 0,
+            page: 1
+          }
+        });
+      }
+      else {
+        this.$router.push({
+          name: `show-details-content`,
+          params: {
+            stadium_id: this.tabList[index].id,
+            page: 1
+          }
+        });
+      }
     },
     // 打开关闭弹窗的方法。
     handleClick2ShowEditShowDialog() {

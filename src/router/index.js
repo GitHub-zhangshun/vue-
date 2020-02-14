@@ -36,6 +36,7 @@ const router = new Router({
     {
       path: "/",
       name: "home",
+      redirect: "/community/show-details-content/recommend",
       component: Home
     },
     {
@@ -74,7 +75,7 @@ const router = new Router({
       component: ShowTagsPage
     },
     {
-      path: "/tagDetailsPage",
+      path: "/tagDetailsPage/?tag_id=:tag_id",
       name: "tagDetailsPage",
       component: TagDetailsPage
     },

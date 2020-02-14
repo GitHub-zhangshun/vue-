@@ -6,13 +6,13 @@
       :key="idx"
       @click="handleClick2TagDetailsPage(item.id)"
     >
-      <img :src="item.img" alt="ラベル詳細マップ" />
+      <img v-lazy="item.list_image.original_url" alt="ラベル詳細マップ" />
     </div>
   </section>
 </template>
 
 <script>
-import { indexTagListData } from "@/api/common";
+import { listTagsData } from "@/api/common";
 export default {
   name: "showTagsPage",
   data() {
@@ -27,13 +27,16 @@ export default {
   methods: {
     // 获取标签详细数据的方法。
     async getTagsListData() {
-      this.tagsListData = await indexTagListData();
+      let res = await listTagsData();
+      this.tagsListData = res.data.data;
     },
     // 点击标签跳转对应详情页，并传递 id 。
     handleClick2TagDetailsPage(id) {
       this.$router.push({
         name: 'tagDetailsPage',
-        params: {id}
+        params: {
+          tag_id: id
+        }
       });
     }
   }

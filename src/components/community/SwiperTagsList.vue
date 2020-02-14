@@ -6,7 +6,7 @@
       :key="idx"
       @click="handleClick2TagDetailsPage(item.id)"
     >
-      <img v-lazy="item.list_image.original_url" />
+      <img :src="item.index_image.original_url" />
     </div>
     <span
       class="more-button"
@@ -31,8 +31,8 @@ export default {
   computed: {
     // 是否显示更多按钮。
     isShownMoreButton() {
-      // return true;
-      return this.tagsListData.length >= 6 ? true : false;
+      return true;
+      // return this.tagsListData.length >= 6 ? true : false;
     },
   },
   mounted() {
@@ -41,10 +41,11 @@ export default {
   methods: {
     // 点击标签跳转对应详情页，并传递 id 。
     handleClick2TagDetailsPage(id) {
-      console.info(id);
       this.$router.push({
         name: 'tagDetailsPage',
-        params: {id}
+        params: {
+          tag_id: id
+        }
       });
     },
     // 点击 more 按钮显示更多 Tags 页面。

@@ -3,13 +3,13 @@
     <h1 class="details-title_wrapper" v-show="title">{{ title }}</h1>
     <waterfall
       :col="2"
-      :data="showData"
+      :data="data"
       @loadmore="handleScrollLoadmore"
       @scroll="handleScroll"
       @finish="handleScrollFinish"
     >
       <template>
-        <div class="cell-item" v-for="(item, index) in showData" :key="index">
+        <div class="cell-item" v-for="(item, index) in data" :key="index">
           <img
             v-if="item.thumb"
             :src="item.thumb"
@@ -34,9 +34,6 @@
         </div>
       </template>
     </waterfall>
-    <div class="loading-show_flag" v-show="isShownTheLoadingFlag">
-      <img :src="showLoadingFlag" alt="読み込み中">
-    </div>
     <div class="show-details--bottom_area" v-show="isShownTheEndFlag">
       <span class="show-details--bottom_area__text">END</span>
     </div>
@@ -44,11 +41,10 @@
 </template>
 
 <script>
-import loadingGif from "@assets/img/loading.gif";
 import { sessionSetItem } from "@/common/util";
 import { waterFallData } from "@/api/common";
 export default {
-  name: "ShowDetailsContent",
+  name: "ShowDetailsContentAttention",
   props: {
     requestObj: {
       type: Object
@@ -59,17 +55,10 @@ export default {
   },
   data() {
     return {
-      // 用于请求的页数。
-      page: 1,
-      // 显示加载中的动图。
-      showLoadingFlag: loadingGif,
       // 瀑布流数据数组。
-      showData: [],
       data: [],
       // 用于懒加载的定时器 ID 。
       loadMoreId: "",
-      // 是否显示加载中的标志布尔值。
-      isShownTheLoadingFlag: false,
       // 是否显示数据完结的标志布尔值。
       isShownTheEndFlag: false
     };
@@ -109,30 +98,20 @@ export default {
     },
     // 滚动加载更多数据的方法。
     handleScrollLoadmore() {
-      this.isShownTheLoadingFlag = true;
       this.loadMoreId = setTimeout(() => {
-        if(this.page < this.data.last_page) {
-          this.page++;
-          let res = waterFallData({
-            stadium_id: this.requestObj.stadium_id,
-            page: this.page
-          });
-          this.showData.concat(res.data);
-          this.isShownTheLoadingFlag = false;
-        }
+        this.data = this.data.concat(waterFallData(this.requestObj));
       }, 1500);
-      // 强制更新展示 show 的数据，调整容器样式。
+      // 强制更新展示 show 的数据，并重绘板式。
       this.$waterfall.forceUpdate();
       this.$waterfall.resize();
     },
     // 点击跳转详 show 情页面。
     handleClick2DetailPage(delFlag) {
-      if(delFlag) {
+      if (delFlag) {
         this.$router.push({
           name: "shield"
         });
-      }
-      else {
+      } else {
         this.$router.push({
           name: "showDetailsPage"
         });
@@ -140,12 +119,11 @@ export default {
     },
     // 获取瀑布流 show 详情数据的方法。
     async getWaterFallData() {
+      this.data = [];
       let res = await waterFallData(this.requestObj);
-      this.data = res.data;
-      this.showData = res.data.data;
-      // 强制更新展示 show 的数据，调整容器样式。
+      this.data = res.data.data;
+      // 强制更新展示 show 的数据。
       this.$waterfall.forceUpdate();
-      this.$waterfall.resize();
     }
   }
 };
@@ -162,7 +140,7 @@ export default {
     font-size: 15px;
     font-family: Source Han Sans CN;
     font-weight: 500;
-    color: rgba(21,21,21,1);
+    color: rgba(21, 21, 21, 1);
   }
   .vue-waterfall {
     padding: 12.5px 7px 28.5px;
@@ -233,11 +211,6 @@ export default {
         }
       }
     }
-  }
-  .loading-show_flag {
-    width: 100px;
-    height: 35px;
-    margin: 0 auto;
   }
   .show-details--bottom_area {
     width: 100%;

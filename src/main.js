@@ -10,7 +10,6 @@ import "amfe-flexible";
 import {
   Swipe,
   SwipeItem,
-  Lazyload,
   Tab,
   Tabs,
   Sticky,
@@ -20,11 +19,11 @@ import {
   Checkbox,
   CheckboxGroup,
   RadioGroup,
-  Radio
+  Radio,
+  Lazyload
 } from "vant";
 Vue.use(Swipe)
   .use(SwipeItem)
-  .use(Lazyload)
   .use(Tab)
   .use(Tabs)
   .use(Sticky)
@@ -34,7 +33,8 @@ Vue.use(Swipe)
   .use(Checkbox)
   .use(CheckboxGroup)
   .use(RadioGroup)
-  .use(Radio);
+  .use(Radio)
+  .use(Lazyload);
 // 引入瀑布流、懒加载组件。
 import waterfall from "vue-waterfall2";
 Vue.use(waterfall);

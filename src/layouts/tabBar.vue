@@ -21,33 +21,33 @@ export default {
       tabs: [
         {
           label: "主页",
-          icon: "icon-weibo",
+          icon: "icon-shouye",
           name: "home"
         },
         {
           label: "社区",
-          icon: "icon-weibo",
+          icon: "icon-shequ",
           name: "community"
         },
         {
           label: "购物车",
-          icon: "icon-weibo",
+          icon: "icon-gouwuche",
           name: "shop-cart"
         },
         {
           label: "个人中心",
-          icon: "icon-weibo",
+          icon: "icon-gerenzhongxin",
           name: "my"
         }
       ],
-      // 非首次进入从 session 中获取路由中保存的 tabBar 当前高亮项，首次进入就是社区。
-      tabBar: sessionGetItem("tabBar") || "community"
+      // 进入该项目就高亮社区。
+      tabBar: "community"
     };
   },
   watch: {
     // 判断 tabBar 中存在的路由，进行对应跳转。
     $route(to, from) {
-      if (['home', 'community', 'shop-cart', 'my'].includes(to.name)) {
+      if (["home", "community", "shop-cart", "my"].includes(to.name)) {
         this.tabBar = to.name;
       }
     }
@@ -56,10 +56,23 @@ export default {
     // 点击 tabBar 切换项。
     handleClick2TabDetails(routerName) {
       this.tabBar = routerName;
-      this.$router.push({ name: routerName });
+      if (routerName === "community") {
+        this.$router.push({
+          name: "show-details-content/recommend"
+        });
+      }
+      else if(routerName === "home") {
+        window.location.href = "https://m.sisilily.com";
+      }
+      else if(routerName === "shop-cart") {
+        window.location.href = "https://m.sisilily.com/checkout/cart.html";
+      }
+      else if(routerName === "my") {
+        window.location.href = "https://m.sisilily.com/account/dashboard.html";
+      }
     }
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>
@@ -67,7 +80,7 @@ export default {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  height: 60PX;
+  height: 60px;
   @include border-top();
   .bar-item {
     flex: 1;

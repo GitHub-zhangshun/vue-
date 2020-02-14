@@ -5,7 +5,7 @@
         v-for="(image, idx) in bannerImg"
         :key="idx"
       >
-        <img v-lazy="image">
+        <img :src="image">
       </van-swipe-item>
       <div class="custom-indicator" slot="indicator"></div>
     </van-swipe>

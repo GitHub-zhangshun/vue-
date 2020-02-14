@@ -31,6 +31,8 @@ export default {
           "home",
           "community",
           "show-details-content",
+          "show-details-content/recommend",
+          "show-details-content/attention",
           "shop-cart",
           "my",
           "shield",
@@ -54,6 +56,8 @@ export default {
           "home",
           "community",
           "show-details-content",
+          "show-details-content/recommend",
+          "show-details-content/attention",
           "shop-cart",
           "my",
           "showDetailsPage"

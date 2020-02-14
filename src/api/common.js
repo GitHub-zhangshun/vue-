@@ -8,8 +8,10 @@ import Request from '../common/request';
  * @param personalInfoData 用户个人主页数据。
  * @param personalAttentionData 关注详细数据。
  * @param personalFansData 粉丝详细数据。
- * @param indexBannerData 社区主页轮播图数据。
- * @param indexTagListData 社区主页标签图数据。
+ * @param indexBannerData 社区主页轮播数据。
+ * @param indexTagListData 社区主页标签数据。
+ * @param listTagsData 列表标签数据。
+ * @param tagDetailsData 标签详情页数据。
  * @param indexStadiumData 社区主页场馆 item 数据。
  * @param waterFallData 社区瀑布流数据。
  * @param showBannerData 社区 show 商品轮播图数据。
@@ -23,8 +25,10 @@ export const personalAttentionData = data => Request.get(`/js/personal-attention
 export const personalFansData = data => Request.get(`/js/personal-fans-data.json`);
 export const indexBannerData = data => Request.get(`/api/v1/show/banners`);
 export const indexTagListData = data => Request.get(`/api/v1/show/preview-tags`);
+export const listTagsData = data => Request.get(`/api/v1/show/tags`);
+export const tagDetailsData = data => Request.get(`/api/v1/show/tags/${data}`);
 export const indexStadiumData = data => Request.get(`/api/v1/show/stadiums`);
-export const waterFallData = data => Request.get(`/api/v1/show/list`, data);
+export const waterFallData = (param, headers) => Request.get(`/api/v1/show/list`, param, headers);
 export const showBannerData = data => Request.get(`/js/show-banner-data.json`);
 export const userDetailsData = data => Request.get(`/js/show-details-data.json`);
 export const relatedGoodsData = data => Request.get(`/js/show-related-data.json`);
