@@ -230,7 +230,8 @@ export default {
     },
     // 获取产品图详细数据。
     async getProductImageData() {
-      this.productData = await productImageData(this.activeNavItem);
+      let res = await productImageData({ type: 'cart' });
+      console.info(res);
     },
     // 点击 tab item 切换显示不同数据。
     async handleClickTheTab(id) {

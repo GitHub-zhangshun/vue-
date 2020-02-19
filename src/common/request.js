@@ -1,5 +1,6 @@
 import axios from "axios";
 import env from "@/config/env";
+import loginStore from "@/store/community/login";
 // mock 数据地址。
 const MOCKURL = "";
 /**
@@ -9,10 +10,9 @@ const MOCKURL = "";
  * @param withCredentials 跨域请求时是否需要使用凭证，默认 false 。
  */
 const AJAX = axios.create({
-  // baseURL: '',
   baseURL: process.env.VUE_APP_API,
-  timeout: 30000,
-  withCredentials: env.credential
+  timeout: 30000
+  // withCredentials: env.credential
 });
 // 添加请求拦截器。
 AJAX.interceptors.request.use(
@@ -22,6 +22,10 @@ AJAX.interceptors.request.use(
     // 自定义反向代理，可以在 demo 阶段打开看下请求效果。
     //   config.url = `http://${location.host}` + config.url;
     // }
+    if (loginStore.state.token) {
+      // 判断是否存在 token，如果存在的话，则每个 http header 都加上 token 。
+      config.headers.Authorization = `${loginStore.state.token}`;
+    }
     return config;
   },
   function(error) {
@@ -37,9 +41,17 @@ AJAX.interceptors.response.use(
     return response.data;
   },
   function(error) {
-    // 对响应错误的操作，比如 400、401、402 等。
+    // 对请求响应错误的操作。
     if (error && error.response) {
-      console.log(error.response);
+      // 返回状态码为 401，表示未授权，清除 token 信息并跳转到社区主页。
+      switch (error.response.code) {
+        case 401:
+          store.commit(types.LOG_OUT);
+          router.replace({
+            path: "/community/show-details-content/recommend"
+            // query: { redirect: router.currentRoute.fullPath }
+          });
+      }
     }
     return Promise.reject(error);
   }

@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <Layout>
-      <router-view />
+      <router-view v-if="isRouterAlive" />
     </Layout>
   </div>
 </template>
@@ -12,7 +12,28 @@ export default {
   name: "App",
   components: {
     Layout
-  }
+  },
+  provide (){
+    return {
+      reload: this.reload
+    }
+  },
+  data () {
+    return {
+      isRouterAlive : true
+    }
+  },
+  methods: {
+    // 模拟刷新当前路由的方法。
+    reload () {
+      this.isRouterAlive = false;
+      this.$nextTick(function () {
+        setTimeout(() => {
+          this.isRouterAlive = true;
+        }, 1000);
+      });
+    }
+  },
 };
 </script>
 

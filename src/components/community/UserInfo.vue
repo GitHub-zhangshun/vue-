@@ -3,33 +3,38 @@
     <section class="bg-avatar_wrapper">
       <div>
         <img
-          :src="personalInfo.bgImg"
-          alt="背景画像"
+          :src="personalInfo.background_image"
           @click="handleClick2ChangePage"
+          @error="defaultBgImg(personalInfo)"
+          alt="背景画像"
         />
       </div>
       <div>
-        <img :src="personalInfo.avatar" alt="アバター" />
+        <img
+          :src="personalInfo.avatar"
+          @error="defaultAvatarImg(personalInfo)"
+          alt="アバター"
+        />
       </div>
       <div>
         <img :src="editIcon" alt="変更する" @click="handleClick2ChangeInfo" />
       </div>
     </section>
     <section class="name-des_wrapper">
-      <div>{{ personalInfo.name }}</div>
-      <div>{{ personalInfo.des }}</div>
-      <div v-show="personalInfo.id">フォロー中</div>
+      <div>{{ personalInfo.nickname }}</div>
+      <div>{{ personalInfo.summary }}</div>
+      <!-- <div v-show="personalInfo.id">フォロー中</div> -->
       <div>
-        <section @click="handleClick2AttentionPage">
-          <span class="interaction-num">{{ personalInfo.attention }} </span
+        <section @click="handleClick2AttentionPage(personalInfo.id)">
+          <span class="interaction-num">{{ personalInfo.followings }} </span
           ><span class="interaction-text">フォロー中</span>
         </section>
-        <section @click="handleClick2FansPage">
-          <span class="interaction-num">{{ personalInfo.fans }} </span
+        <section @click="handleClick2FansPage(personalInfo.id)">
+          <span class="interaction-num">{{ personalInfo.followers }} </span
           ><span class="interaction-text">フォロワー</span>
         </section>
         <section>
-          <span class="interaction-num">{{ personalInfo.liked }} </span
+          <span class="interaction-num">{{ personalInfo.likes }} </span
           ><span class="interaction-text">いいね！</span>
         </section>
       </div>
@@ -95,6 +100,14 @@ export default {
     this.getPersonalInfoData();
   },
   methods: {
+    // 背景为空展示默认图片。
+    defaultBgImg(item) {
+      item.background_image = require("../../assets/img/default-user-bg.png");
+    },
+    // 头像为空展示默认图片。
+    defaultAvatarImg(item) {
+      item.avatar = require("../../assets/img/default-user-avatar.png");
+    },
     // 点击跳转切换背景页面。
     handleClick2ChangePage() {
       this.$router.push({
@@ -108,17 +121,23 @@ export default {
       });
     },
     // 点击跳转我的关注页面。
-    handleClick2AttentionPage() {
+    handleClick2AttentionPage(id) {
       this.$router.push({
-        name: 'personalInteraction',
-        params: {tabId: 0}
+        name: "personalInteraction",
+        params: {
+          userId: id,
+          tabId: 0
+        }
       });
     },
     // 点击跳转我的粉丝页面。
-    handleClick2FansPage() {
+    handleClick2FansPage(id) {
       this.$router.push({
-        name: 'personalInteraction',
-        params: {tabId: 1}
+        name: "personalInteraction",
+        params: {
+          userId: id,
+          tabId: 1
+        }
       });
     },
     // 点击 tab item 改变用于请求数据的 id 。
@@ -127,7 +146,8 @@ export default {
     },
     // 获取个人信息数据的方法。
     async getPersonalInfoData() {
-      this.personalInfo = await personalInfoData();
+      let res = await personalInfoData();
+      this.personalInfo = res.data;
     }
   }
 };
@@ -189,21 +209,21 @@ export default {
       text-align: center;
       color: rgba(144, 144, 144, 1);
     }
+    // div:nth-child(3) {
+    //   width: 102px;
+    //   height: 34px;
+    //   margin: 0px 0px 23.5px 136.5px;
+    //   font-size: 13px;
+    //   text-align: center;
+    //   line-height: 34px;
+    //   color: rgba(21, 21, 21, 1);
+    //   @include border(
+    //     $width: 1px,
+    //     $border-color: rgba(23, 23, 23, 1),
+    //     $border-radius: 2px
+    //   );
+    // }
     div:nth-child(3) {
-      width: 102px;
-      height: 34px;
-      margin: 0px 0px 23.5px 136.5px;
-      font-size: 13px;
-      text-align: center;
-      line-height: 34px;
-      color: rgba(21, 21, 21, 1);
-      @include border(
-        $width: 1px,
-        $border-color: rgba(23, 23, 23, 1),
-        $border-radius: 2px
-      );
-    }
-    div:nth-child(4) {
       display: grid;
       grid-template: 53px / repeat(3, 1fr);
       section {

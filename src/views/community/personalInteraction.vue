@@ -10,95 +10,117 @@
         animated
       >
         <van-tab v-for="(item, idx) in tabList" :key="idx" :title="item.title">
-          <div
+          <van-list
             v-show="activeNavItem === 0 ? true : false"
-            class="attention-wrapper"
-            v-for="item in attentionData"
-            :key="item.id"
+            v-model="attentionLoading"
+            :finished="attentionFinished"
+            :immediate-check="false"
+            :offset="300"
+            finished-text="END"
+            @load="handleScrollOnLoadAttention"
           >
-            <div>
-              <img :src="item.avatar" alt="ユーザーアバター" />
-            </div>
-            <div>
-              <span>{{ item.name }}</span>
-              <span>{{ item.des }}</span>
-            </div>
-            <div>
-              <div
-                v-show="
-                  attentionUnfollowUserData.indexOf(item.id) === -1
-                    ? true
-                    : false
-                "
-                class="is-attention_button"
-                @click="handleClickUnfollowAttentionUser(item.id)"
-              >
-                フォロー中
-              </div>
-              <div
-                v-show="
-                  attentionUnfollowUserData.indexOf(item.id) !== -1
-                    ? true
-                    : false
-                "
-                class="non-attention_button"
-                @click="handleClickFollowAttentionUser(item.id)"
-              >
-                フォローする
-              </div>
-            </div>
-          </div>
-          <div
-            v-show="activeNavItem === 1 ? true : false"
-            class="fans-wrapper"
-            v-for="item in fansData"
-            :key="item.id"
-          >
-            <div>
-              <img :src="item.avatar" alt="ユーザーアバター" />
-            </div>
-            <div>
-              <span>{{ item.name }}</span>
-              <span>{{ item.des }}</span>
-            </div>
-            <div>
-              <div
-                v-show="
-                  fansUnfollowUserData.indexOf(item.id) === -1 ? true : false
-                "
-                class="is-attention--button"
-                @click="handleClickUnfollowFansUser(item.id)"
-              >
-                フォロー中
-              </div>
-              <div
-                v-show="
-                  fansUnfollowUserData.indexOf(item.id) !== -1 ? true : false
-                "
-                class="non-attention--button"
-                @click="handleClickFollowFansUser(item.id)"
-              >
-                フォローする
-              </div>
-              <div
-                class="del-icon_wrapper"
-                @click="handleClickShowDelButton(item.id)"
-              >
-                <img :src="delIcon" alt="" />
-              </div>
-            </div>
-            <transition
-              enter-active-class="animated slideInRight"
-              leave-active-class="animated slideOutRight"
+            <div
+              class="attention-wrapper"
+              v-for="(item, idx) in attentionData"
+              :key="idx"
             >
-              <div
-                v-show="fansDelUserData.indexOf(item.id) !== -1 ? true : false"
-                @click="handleClickShowDialog(item.id)"
-              >
-                フォロワーを削除
+              <div>
+                <img
+                  :src="item.avatar"
+                  @error="defaultAttentionAvatarImg(item)"
+                  alt="ユーザーアバター"
+                />
               </div>
-            </transition>
-          </div>
+              <div>
+                <span>{{ item.nickname }}</span>
+                <span>{{ item.summary }}</span>
+              </div>
+              <div>
+                <div
+                  v-show="
+                    attentionUnfollowUserData.indexOf(item.id) === -1
+                      ? true
+                      : false
+                  "
+                  class="is-attention_button"
+                  @click="handleClickUnfollowAttentionUser(item.id)"
+                >
+                  フォロー中
+                </div>
+                <div
+                  v-show="
+                    attentionUnfollowUserData.indexOf(item.id) !== -1
+                      ? true
+                      : false
+                  "
+                  class="non-attention_button"
+                  @click="handleClickFollowAttentionUser(item.id)"
+                >
+                  フォローする
+                </div>
+              </div>
+            </div>
+          </van-list>
+          <van-list
+            v-show="activeNavItem === 1 ? true : false"
+            v-model="fansLoading"
+            :finished="fansFinished"
+            :immediate-check="false"
+            :offset="300"
+            finished-text="END"
+            @load="handleScrollOnLoadFans"
+          >
+            <div
+              class="fans-wrapper"
+              v-for="item in fansData"
+              :key="item.id"
+            >
+              <div>
+                <img
+                  :src="item.avatar"
+                  @error="defaultFansAvatarImg(item)"
+                  alt="ユーザーアバター"
+                />
+              </div>
+              <div>
+                <span>{{ item.nickname }}</span>
+                <span>{{ item.summary }}</span>
+              </div>
+              <div>
+                <div
+                  v-show="item.is_follow === 1"
+                  class="is-attention--button"
+                  @click="handleClickUnfollowFansUser(item.id)"
+                >
+                  フォロー中
+                </div>
+                <div
+                  v-show="item.is_follow !== 1"
+                  class="non-attention--button"
+                  @click="handleClickFollowFansUser(item.id)"
+                >
+                  フォローする
+                </div>
+                <div
+                  class="del-icon_wrapper"
+                  @click="handleClickShowDelButton(item.id)"
+                >
+                  <img :src="delIcon" alt="" />
+                </div>
+              </div>
+              <transition
+                enter-active-class="animated slideInRight"
+                leave-active-class="animated slideOutRight"
+              >
+                <div
+                  v-show="fansDelUserData.indexOf(item.id) !== -1 ? true : false"
+                  @click="handleClickShowDialog(item.id)"
+                >
+                  フォロワーを削除
+                </div>
+              </transition>
+            </div>
+          </van-list>
         </van-tab>
       </van-tabs>
     </nav>
@@ -108,14 +130,20 @@
 <script>
 import delFansIcon from "@assets/img/delete-fans-icon.png";
 import animate from "animate.css";
-import { Dialog } from  'vant';
+import { Dialog } from "vant";
 import { delTheEleInArray } from "@/common/util";
-import { personalAttentionData, personalFansData } from "@/api/common";
+import {
+  personalAttentionData,
+  personalFansData,
+  unFollowUser,
+  deleteUser
+} from "@/api/common";
 export default {
   name: "personalInteraction",
   components: {
-    "van-dialog":  Dialog.Component
+    "van-dialog": Dialog.Component
   },
+  inject: ["reload"],
   data() {
     return {
       // 删除粉丝的图标。
@@ -131,30 +159,119 @@ export default {
           title: "フォロワー"
         }
       ],
+      // 关注原始数据。
+      attentionOriginalData: {},
       // 关注详细数据数组。
       attentionData: [],
+      // 粉丝原始数据。
+      fansOriginalData: {},
       // 粉丝详细数据数组。
       fansData: [],
       // 我的关注中需要取关的用户 id 数组。
       attentionUnfollowUserData: [],
-      // 我的粉丝中需要取关的用户 id 数组。
-      fansUnfollowUserData: [],
       // 我的粉丝中需要删除的用户 id 数组。
-      fansDelUserData: []
+      fansDelUserData: [],
+      // 关注分页加载所需数据。
+      attentionPage: 1,
+      attentionLoading: false,
+      attentionFinished: false,
+      // 粉丝分页加载所需数据。
+      fansPage: 1,
+      fansLoading: false,
+      fansFinished: false
     };
   },
+  inject: ["reload"],
   mounted() {
     this.getPersonalAttentionData();
     this.getPersonalFansData();
   },
+  destroyed() {
+    this.hanldeUnFollowUser();
+  },
   methods: {
+    // 关注头像为空展示默认图片。
+    defaultAttentionAvatarImg(item) {
+      item.avatar = require("../../assets/img/default-user-avatar.png");
+    },
+    // 粉丝头像为空展示默认图片。
+    defaultFansAvatarImg(item) {
+      item.avatar = require("../../assets/img/default-user-avatar.png");
+    },
     // 获取关注详细数据。
     async getPersonalAttentionData() {
-      this.attentionData = await personalAttentionData();
+      let res = await personalAttentionData({
+        id: this.$route.params.userId,
+        page: 1
+      });
+      this.attentionOriginalData = res.data;
+      this.attentionData = res.data.data;
+      // 获取数据的时候更新我的关注中需要取关的用户 id 数组。
+      this.attentionData.map(item => {
+        if (item.is_follow === 0) {
+          this.attentionUnfollowUserData.push(item.id);
+        }
+      });
+    },
+    // 关注分页请求数据拼接。
+    async getMoreAttentionData(curPage) {
+      this.attentionLoading = true;
+      let res = await personalAttentionData({
+        id: this.$route.params.userId,
+        page: curPage
+      }),
+        concatData = res.data.data;
+      if(res.code === 200) {
+        concatData.map(item => {
+          this.attentionData.push(item);
+        });
+        setTimeout(() => {
+          this.attentionLoading = false;
+          this.attentionFinished = true;
+        }, 500);
+      }
+    },
+    // 下滑请求更多关注数据。
+    handleScrollOnLoadAttention() {
+      if(this.attentionPage < this.attentionOriginalData.last_page) {
+        this.attentionPage++;
+        this.getMoreAttentionData(this.attentionPage);
+      }
     },
     // 获取粉丝详细数据。
     async getPersonalFansData() {
-      this.fansData = await personalFansData();
+      let res = await personalFansData({
+        id: this.$route.params.userId,
+        page: 1 
+      });
+      this.fansOriginalData = res.data;
+      this.fansData = res.data.data;
+      // console.info(this.fansData);
+    },
+    // 粉丝分页请求数据拼接。
+    async getMoreFansData(curPage) {
+      this.attentionLoading = true;
+      let res = await personalFansData({
+        id: this.$route.params.userId,
+        page: curPage
+      }),
+        concatData = res.data.data;
+      if(res.code === 200) {
+        concatData.map(item => {
+          this.fansData.push(item);
+        });
+        setTimeout(() => {
+          this.fansLoading = false;
+          this.fansFinished = true;
+        }, 500);
+      }
+    },
+    // 粉丝请求更多关注数据。
+    handleScrollOnLoadFans() {
+      if(this.fansPage < this.fansOriginalData.last_page) {
+        this.fansPage++;
+        this.getMoreAttentionData(this.fansPage);
+      }
     },
     // 点击按钮取消关注用户（我的关注中）。
     handleClickUnfollowAttentionUser(id) {
@@ -166,11 +283,21 @@ export default {
     },
     // 点击按钮取消关注用户（我的粉丝中）。
     handleClickUnfollowFansUser(id) {
-      this.fansUnfollowUserData.push(id);
+      console.info(id);
+      unFollowUser(id);
+      this.reload();
     },
     // 点击按钮继续关注用户（我的粉丝中）。
     handleClickFollowFansUser(id) {
-      delTheEleInArray(id, this.fansUnfollowUserData);
+      console.info(id);
+      unFollowUser(id);
+      this.reload();
+    },
+    // 调用取关接口进行用户取关操作。
+    hanldeUnFollowUser() {
+      this.attentionUnfollowUserData.map(item => {
+        unFollowUser(item);
+      });
     },
     // 点击小叉弹出删除用户的按钮。
     handleClickShowDelButton(id) {
@@ -183,31 +310,36 @@ export default {
     // 点击右边弹出的删除按钮，进行弹窗。
     handleClickShowDialog(id) {
       Dialog.confirm({
-        title: 'フォロワーを削除してもよろしいですか',
-        message: '削除後、彼女の投稿を確認できなくなります',
+        title: "フォロワーを削除してもよろしいですか",
+        message: "削除後、彼女の投稿を確認できなくなります",
         width: 250,
-        confirmButtonText: 'はい',
-        confirmButtonColor: '#8B8B8B',
-        cancelButtonText: 'いいえ',
-        cancelButtonColor: '#151515',
+        confirmButtonText: "はい",
+        confirmButtonColor: "#8B8B8B",
+        cancelButtonText: "いいえ",
+        cancelButtonColor: "#151515",
         // 添加回调函数以异步关闭弹窗。
-        beforeClose: (action, done) => {
-          if (action === 'confirm') {
-            setTimeout(done, 1500);
-          }
-          else if(action === 'cancel') {
+        beforeClose: async (action, done) => {
+          if (action === "confirm") {
+            let res = await deleteUser(id);
+            // console.info(res);
+            if (res.code === 200) {
+              setTimeout(done, 1500);
+              this.reload();
+            }
+          } else if (action === "cancel") {
             done();
             this.handleClickHideDelButton(id);
-          }
-          else {
+          } else {
             done();
           }
         }
-      }).then(() => {
-        // on confirm
-      }).catch(() => {
-        // on cancel
-      });
+      })
+        .then(() => {
+          // on confirm
+        })
+        .catch(() => {
+          // on cancel
+        });
     }
   }
 };

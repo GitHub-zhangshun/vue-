@@ -42,7 +42,6 @@ export default {
       this.start();
     },
     startTime(val, oldval) {
-      console.log("startTime", val);
       this.start();
     }
   },

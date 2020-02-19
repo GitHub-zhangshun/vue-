@@ -6,14 +6,15 @@
     <van-uploader
       v-model="fileList"
       :preview-image="false"
+      :max-count="1"
       :after-read="afterUploading"
     >
       <div class="upload-button">プロフィール写真を変更</div>
     </van-uploader>
     <van-radio-group v-model="radio">
-      <van-radio name="female" checked-color="#EE809E">女性<i class="iconfont icon-female"></i></van-radio>
-      <van-radio name="male" checked-color="#EE809E">男性<i class="iconfont icon-nan"></i></van-radio>
-      <van-radio name="secret" checked-color="#EE809E">保密<i class="iconfont icon-secret"></i></van-radio>
+      <van-radio name="2" checked-color="#EE809E">女性<i class="iconfont icon-female"></i></van-radio>
+      <van-radio name="1" checked-color="#EE809E">男性<i class="iconfont icon-nan"></i></van-radio>
+      <van-radio name="0" checked-color="#EE809E">保密<i class="iconfont icon-secret"></i></van-radio>
     </van-radio-group>
     <section class="input-area">
       <div class="edit-name_wrapper">
@@ -28,15 +29,17 @@
 </template>
 
 <script>
-import { personalInfoData } from "@/api/common";
+import { personalInfoData, editPersonalInfo, commonUploadSingleImg } from "@/api/common";
 export default {
   name: "changePersonalInfo",
   data() {
     return {
-      // 默认头像链接。
+      // 头像链接。
       avatarSrc: "",
+      // 上传头像之后获取的 code 。
+      avatarCode: 0,
       // 性别选项默认选中项。
-      radio: "1",
+      radio: "",
       // 存放名字的字符串。
       name: '',
       // 存放简介的字符串。
@@ -52,19 +55,35 @@ export default {
     // 获取个人信息数据的方法。
     async getPersonalInfoData() {
       let res = await personalInfoData();
-      this.avatarSrc = res.avatar;
-      this.radio = res.sex;
-      this.name = res.name;
-      this.info = res.des;
+      this.avatarSrc = res.data.avatar;
+      this.radio = String(res.data.gender);
+      this.name = res.data.nickname;
+      this.info = res.data.summary;
     },
     // 头像上传完毕之后的回调函数。
-    afterUploading(file) {
+    async afterUploading(file) {
       this.avatarSrc = this.fileList[0].content;
       this.fileList = [];
+      // 上传文件到服务器，并获取 id 。
+      let formData = new FormData();
+      formData.append('image', file.file);
+      let res = await commonUploadSingleImg(1, formData);
+      this.avatarCode = res.data;
     },
     // 点击提交按钮提交修改的个人信息。
-    handleClickSubmitPersonalInfo() {
-      console.info('submit');
+    async handleClickSubmitPersonalInfo() {
+      let res = await editPersonalInfo({
+        nickname: this.name,
+        gender: Number(this.radio),
+        summary: this.info,
+        avatar: this.avatarCode
+      });
+      if(res.code === 200) {
+        this.$toast('個人情報が正常に変更されました！');
+      }
+      else {
+        this.$toast('個人情報の変更に失敗しました。再編集してください！');
+      }
     }
   }
 };

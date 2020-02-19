@@ -6,7 +6,7 @@
       :key="idx"
       @click="handleClick2TagDetailsPage(item.id)"
     >
-      <img :src="item.index_image.original_url" />
+      <img :src="item.index_image.original_url" alt="ラベルのサムネイル" />
     </div>
     <span
       class="more-button"
@@ -31,8 +31,7 @@ export default {
   computed: {
     // 是否显示更多按钮。
     isShownMoreButton() {
-      return true;
-      // return this.tagsListData.length >= 6 ? true : false;
+      return this.tagsListData.length >= 5 ? true : false;
     },
   },
   mounted() {
@@ -57,7 +56,7 @@ export default {
     // 获取 tag 图数据方法。
     async getindexTagListData() {
       let res = await indexTagListData();
-      this.tagsListData = res.data.slice(0, 6);
+      this.tagsListData = res.data.slice(0, 5);
     }
   }
 };

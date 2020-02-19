@@ -20,7 +20,9 @@ import {
   CheckboxGroup,
   RadioGroup,
   Radio,
-  Lazyload
+  Lazyload,
+  toast,
+  List
 } from "vant";
 Vue.use(Swipe)
   .use(SwipeItem)
@@ -34,7 +36,9 @@ Vue.use(Swipe)
   .use(CheckboxGroup)
   .use(RadioGroup)
   .use(Radio)
-  .use(Lazyload);
+  .use(Lazyload)
+  .use(toast)
+  .use(List);
 // 引入瀑布流、懒加载组件。
 import waterfall from "vue-waterfall2";
 Vue.use(waterfall);

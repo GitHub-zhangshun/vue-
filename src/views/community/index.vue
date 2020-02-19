@@ -14,11 +14,7 @@
           animated
           @click="handleClick2Details"
         >
-          <van-tab
-            v-for="(item, idx) in tabList"
-            :key="idx"
-            :title="item.name"
-          >
+          <van-tab v-for="(item, idx) in tabList" :key="idx" :title="item.name">
           </van-tab>
         </van-tabs>
       </nav>
@@ -58,7 +54,8 @@ import EditShowButton from "@components/community/EditShowButton";
 import BlockInterval from "@components/community/BlockInterval";
 import PopupDialog from "@components/community/PopupDialog";
 import { sessionGetItem } from "@/common/util";
-import { indexStadiumData } from "@/api/common";
+import * as types from "@/store/mutation-types";
+import { getUserToken, indexStadiumData, waterFallData } from "@/api/common";
 export default {
   name: "home",
   components: {
@@ -87,6 +84,7 @@ export default {
   },
   mounted() {
     this.getIndexStadiumData();
+    this.login();
   },
   methods: {
     // 获取首页场馆 item 数据的方法。
@@ -96,7 +94,7 @@ export default {
     },
     // 点击 tab 显示对应请求的 show 详情数据。
     handleClick2Details(index) {
-      if(index === 0) {
+      if (index === 0) {
         this.$router.push({
           name: `show-details-content/attention`,
           params: {
@@ -104,8 +102,7 @@ export default {
             page: 1
           }
         });
-      }
-      else if(index === 1) {
+      } else if (index === 1) {
         this.$router.push({
           name: `show-details-content/recommend`,
           params: {
@@ -113,8 +110,7 @@ export default {
             page: 1
           }
         });
-      }
-      else {
+      } else {
         this.$router.push({
           name: `show-details-content`,
           params: {
@@ -130,6 +126,16 @@ export default {
     },
     handleClick2CloseEditShowDialog() {
       this.isShownTheEditShowDialog = !this.isShownTheEditShowDialog;
+    },
+    // 模拟登陆获取用户 token 。
+    async login() {
+      let res = await getUserToken({
+        username: '925614389@qq.com',
+        password: '123456'
+      }),
+        userToken = res.data.token;
+      // 显示提交，存储 token 到 localStorage、vuex 中。
+      this.$store.commit(types.USER_LOG_IN, userToken);
     }
   }
 };

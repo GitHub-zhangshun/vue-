@@ -1,5 +1,5 @@
-import editShow from './edit-show';
+import login from './login';
 
 export default {
-  editShow
+  login
 }

@@ -19,11 +19,13 @@
           <div class="item-body">
             <div class="item-desc">{{ item.content }}</div>
             <div class="item-footer">
-              <div
-                v-if="item.user.avatar"
-                class="avatar"
-                :style="{ backgroundImage: `url(${item.user.avatar})` }"
-              ></div>
+              <div class="avatar">
+                <img
+                  :src="item.user.avatar"
+                  @error="defaultUserAvatar(item)"
+                  alt="アバター"
+                />
+              </div>
               <div class="name">{{ item.user.name }}</div>
               <div class="like" :class="item.is_like === 1 ? 'active' : ''">
                 <i class="iconfont icon-zan"></i>
@@ -91,6 +93,10 @@ export default {
     clearTimeout(this.loadMoreId);
   },
   methods: {
+    // 头像为空显示默认图片。
+    defaultUserAvatar(item) {
+      item.user.avatar = require("../assets/img/default-user-avatar.png");
+    },
     // 判断是否加载完毕数据的方法。
     handleScrollFinish() {
       this.isShownTheEndFlag = !this.isShownTheEndFlag;
@@ -177,9 +183,11 @@ export default {
           .avatar {
             width: 18px;
             height: 18px;
-            border-radius: 50%;
-            background-repeat: no-repeat;
-            background-size: contain;
+            img {
+              width: 100%;
+              height: 100%;
+              border-radius: 50%;
+            }
           }
           .name {
             width: 85px;

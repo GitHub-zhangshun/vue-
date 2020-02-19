@@ -2,7 +2,7 @@
   <section class="tags-list_wrapper">
     <div
       class="tags-item_wrapper"
-      v-for="(item, idx) in tagsListData"
+      v-for="(item, idx) in listTagsData"
       :key="idx"
       @click="handleClick2TagDetailsPage(item.id)"
     >
@@ -18,7 +18,7 @@ export default {
   data() {
     return {
       // 存放标签数据的数组。
-      tagsListData: []
+      listTagsData: []
     };
   },
   mounted() {
@@ -28,7 +28,8 @@ export default {
     // 获取标签详细数据的方法。
     async getTagsListData() {
       let res = await listTagsData();
-      this.tagsListData = res.data.data;
+      this.listTagsData = res.data;
+      console.info(this.listTagsData);
     },
     // 点击标签跳转对应详情页，并传递 id 。
     handleClick2TagDetailsPage(id) {

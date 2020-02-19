@@ -3,36 +3,35 @@
     <section class="activity-area_wrapper">
       <div class="image-wrapper">
         <van-swipe :autoplay="3000">
-          <van-swipe-item
-            v-for="(image, idx) in bannerImg"
-            :key="idx"
-          >
-            <img v-lazy="image" alt="活動写真">
+          <van-swipe-item v-for="(item, idx) in bannerImg" :key="idx">
+            <img v-lazy="item.original_url" alt="活動写真" />
           </van-swipe-item>
           <div class="custom-indicator" slot="indicator"></div>
         </van-swipe>
       </div>
       <div class="text-wrapper">
         <div @click="handleClickShowCommentDialog">
-          #标签标题
+          #{{ tagDetailsData.name }}
           <i
             class="iconfont icon-fanhui"
             @click="handleClickHideCommentDialog"
           ></i>
         </div>
         <div>
-          标签定义HOWを投稿すると10ポイントプレゼント、またはSHOWに関連する商品を追加したら50ポイント
+          {{ tagDetailsData.explanation }}
         </div>
-        <div>{{ tagDetailsData.reward }}</div>
+        <div>
+          {{ tagDetailsData.content }}
+        </div>
         <div>
           <p>ENDS IN</p>
-          <p v-show="!tagDetailsData.activityStart">
+          <p v-show="tagDetailsData.is_period_enabled === 0 ? true : false">
             ——&nbsp;&nbsp;&nbsp;イベント終了&nbsp;&nbsp;&nbsp;——
           </p>
-          <count-down
-            v-show="tagDetailsData.activityStart"
-            :startTime="'4100829240'"
-            :endTime="'4101002040'"
+          <CountDown
+            v-show="tagDetailsData.is_period_enabled === 1 ? true : false"
+            :startTime="start_at"
+            :endTime="end_at"
             :tipText="''"
             :tipTextEnd="''"
             :endText="''"
@@ -40,7 +39,7 @@
             :hourTxt="'H :'"
             :minutesTxt="'M :'"
             :secondsTxt="'S'"
-          ></count-down>
+          ></CountDown>
         </div>
       </div>
     </section>
@@ -58,15 +57,15 @@
       >
         <van-tab v-for="(item, idx) in tabList" :key="idx" :title="item.title">
           <ShowDetailsContent
-            v-show="tagDetailsData.activityStart"
+            v-show="tagDetailsData.is_period_enabled === 1 ? true : false"
             :tabId="computedTabId"
           />
           <section
-            v-show="!tagDetailsData.activityStart"
+            v-show="tagDetailsData.is_period_enabled === 0 ? true : false"
             class="no-activity_wrapper"
           >
             <div>
-              <img :src="noActIcon" alt="">
+              <img :src="noActIcon" alt="" />
             </div>
             <div>投稿がありません</div>
           </section>
@@ -84,7 +83,7 @@
     >
       <section class="popup-content_wrapper">
         <div>ルール説明</div>
-        <div>{{ tagDetailsData.info }}</div>
+        <div>{{ tagDetailsData.description }}</div>
         <div @click="handleClickHideCommentDialog">オッケー</div>
       </section>
     </van-popup>
@@ -152,9 +151,12 @@ export default {
       // 显示标签解释弹窗的标志布尔值。
       isCommentDialog: false,
       // 存放标签详细数据的数组。
-      tagDetailsData: [],
+      tagDetailsData: {},
       // 存放轮播图片数据。
       bannerImg: [],
+      // 活动开始和结束时间。
+      start_at: '',
+      end_at: '',
       // 是否展示弹窗的标志变量。
       isShownTheEditShowDialog: false
     };
@@ -183,9 +185,11 @@ export default {
     // 获取 tag 详细数据方法。
     async getTagDetailsData() {
       let res = await tagDetailsData(this.$route.params.tag_id);
-      console.info(res);
-      // this.tagDetailsData = res[0];
-      // this.bannerImg = res[0].activity;
+      this.tagDetailsData = res.data;
+      this.bannerImg = res.data.show_image;
+      this.start_at = String(res.data.start_at);
+      this.end_at = String(res.data.end_at);
+      // console.info(typeof this.start_at, this.end_at);
     },
     // 显示、关闭编辑 show 弹窗的方法。
     handleClick2ShowEditShowDialog() {
@@ -206,14 +210,22 @@ export default {
     .image-wrapper {
       width: 100%;
       height: 160px;
-      img {
+      .van-swipe {
         width: 100%;
         height: 100%;
+        .van-swipe-item {
+          width: 100%;
+          height: 100%;
+          img {
+            width: 100%;
+            height: 100%;
+          }
+        }
       }
     }
     .text-wrapper {
       width: 100%;
-      height: 193px;
+      min-height: 123px;
       font-family: Source Han Sans CN;
       text-align: center;
       div:nth-child(1) {
@@ -241,7 +253,7 @@ export default {
       div:nth-child(4) {
         width: 281px;
         height: 52px;
-        margin: 0 auto;
+        margin: 0 auto 15.5px;
         text-align: center;
         background: rgba(182, 155, 128, 1);
         p:nth-child(1) {
@@ -275,7 +287,7 @@ export default {
       font-size: 13px;
       font-family: Source Han Sans CN;
       font-weight: 400;
-      color: rgba(232,147,165,1);
+      color: rgba(232, 147, 165, 1);
     }
   }
   .popup-content_wrapper {
@@ -289,6 +301,7 @@ export default {
       color: rgba(21, 21, 21, 1);
     }
     div:nth-child(2) {
+      min-height: 80px;
       padding: 0px 30px 20px;
       font-size: 12px;
       font-weight: 300;
@@ -296,7 +309,7 @@ export default {
     }
     div:nth-child(3) {
       width: 100%;
-      height: 100%;
+      height: 45px;
       padding-top: 15px;
       font-size: 18px;
       text-align: center;

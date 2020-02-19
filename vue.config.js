@@ -1,6 +1,7 @@
 // vue.config.js
 const path = require("path");
-const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
+const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
+  .BundleAnalyzerPlugin;
 
 function resolve(dir) {
   return path.join(__dirname, dir);
@@ -25,23 +26,20 @@ module.exports = {
     // 端口地址。
     port: 8080,
     // 使用 https 提供服务。
-    https: false, 
+    https: false,
     // 这里写调用接口的基础路径，来解决跨域，如果设置了代理，那本地开发环境的 axios 的 baseUrl 要写为 '' ，即空字符串。
     // proxy: "http://localhost:8080"
     proxy: null
   },
-
   chainWebpack: config => {
     // 设置一些常用 alias 文件别名。
     config.resolve.alias
       .set("@", resolve("src"))
       .set("@assets", resolve("src/assets"))
       .set("@components", resolve("src/components"));
-
     // 移除 prefetch 插件，减少首屏加载时间。
     config.plugins.delete("prefetch");
   },
-
   configureWebpack: config => {
     // 生产环境。
     if (process.env.NODE_ENV === "production") {
