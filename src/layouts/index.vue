@@ -42,7 +42,9 @@ export default {
           "personalHomepage",
           "changePersonalPageBg",
           "changePersonalInfo",
-          "personalInteraction"
+          "personalInteraction",
+          "othersHomepage",
+          "othersInteraction"
         ],
         flag = new Boolean();
       isShownTheTopBar.includes(this.$route.name)
@@ -59,8 +61,7 @@ export default {
           "show-details-content/recommend",
           "show-details-content/attention",
           "shop-cart",
-          "my",
-          "showDetailsPage"
+          "my"
         ],
         flag = new Boolean();
       isShownTheTabBar.includes(this.$route.name)

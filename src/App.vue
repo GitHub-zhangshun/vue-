@@ -1,39 +1,45 @@
 <template>
   <div id="app">
     <Layout>
-      <router-view v-if="isRouterAlive" />
+      <transition
+        enter-active-class="animated fadeIn"
+        leave-active-class="animated fadeOut"
+      >
+        <router-view v-if="isRouterAlive" />
+      </transition>
     </Layout>
   </div>
 </template>
 
 <script>
+import animate from "animate.css";
 import Layout from "@/layouts";
 export default {
   name: "App",
   components: {
     Layout
   },
-  provide (){
+  provide() {
     return {
       reload: this.reload
-    }
+    };
   },
-  data () {
+  data() {
     return {
-      isRouterAlive : true
-    }
+      isRouterAlive: true
+    };
   },
   methods: {
     // 模拟刷新当前路由的方法。
-    reload () {
+    reload() {
       this.isRouterAlive = false;
-      this.$nextTick(function () {
+      this.$nextTick(function() {
         setTimeout(() => {
           this.isRouterAlive = true;
-        }, 1000);
+        }, 500);
       });
     }
-  },
+  }
 };
 </script>
 

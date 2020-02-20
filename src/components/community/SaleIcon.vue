@@ -3,7 +3,7 @@
     class="sale-icon_wrapper"
     :style="{ top: wrapperTop, left: wrapperLeft }"
   >
-    -{{ getSalePercentage }}%
+    -{{ discount }}%
   </section>
 </template>
 
@@ -19,15 +19,9 @@ export default {
       type: String,
       default: "0px"
     },
-    saleArray: {
-      type: Array,
+    discount: {
+      type: String,
       required: true
-    }
-  },
-  computed: {
-    // 用于计算商品的打折信息的方法。
-    getSalePercentage() {
-      return Math.ceil((this.saleArray[1] - this.saleArray[0]) / 100);
     }
   }
 };

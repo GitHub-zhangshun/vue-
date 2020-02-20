@@ -130,9 +130,10 @@ export default {
     // 模拟登陆获取用户 token 。
     async login() {
       let res = await getUserToken({
-        username: '925614389@qq.com',
-        password: '123456'
-      }),
+          username: "925614389@qq.com", // self
+          // username: "974331694@qq.com",
+          password: "123456"
+        }),
         userToken = res.data.token;
       // 显示提交，存储 token 到 localStorage、vuex 中。
       this.$store.commit(types.USER_LOG_IN, userToken);

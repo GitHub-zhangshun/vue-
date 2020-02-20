@@ -23,7 +23,8 @@
     <section class="name-des_wrapper">
       <div>{{ personalInfo.nickname }}</div>
       <div>{{ personalInfo.summary }}</div>
-      <!-- <div v-show="personalInfo.id">フォロー中</div> -->
+      <div v-show="personalInfo.is_follow === 1 ? true : false" @click="handleClickUnfollowUser(personalInfo.id)">フォロー中</div>
+      <div v-show="personalInfo.is_follow === 0 ? true : false" @click="handleClickFollowUser(personalInfo.id)">フォローする</div>
       <div>
         <section @click="handleClick2AttentionPage(personalInfo.id)">
           <span class="interaction-num">{{ personalInfo.followings }} </span
@@ -62,9 +63,9 @@
 import editPersonalInfoIcon from "@assets/img/edit-personal-info.png";
 import BlockInterval from "@components/community/BlockInterval";
 import ShowDetailsContent from "@components/ShowDetailsContent";
-import { personalInfoData } from "@/api/common";
+import { othersInfoData, unFollowUser } from "@/api/common";
 export default {
-  name: "UserInfo",
+  name: 'othersHomepage',
   data() {
     return {
       // 编辑个人信息的图标。
@@ -90,6 +91,7 @@ export default {
     BlockInterval,
     ShowDetailsContent
   },
+  inject: ['reload'],
   computed: {
     // 实时改变用于请求数据的 id ，进行参数传递。
     computedTabId() {
@@ -97,7 +99,7 @@ export default {
     }
   },
   mounted() {
-    this.getPersonalInfoData();
+    this.getOthersInfoData();
   },
   methods: {
     // 背景为空展示默认图片。
@@ -120,10 +122,19 @@ export default {
         name: "changePersonalInfo"
       });
     },
+    // 关注、取关操作。
+    handleClickUnfollowUser(id) {
+      unFollowUser(id);
+      this.reload();
+    },
+    handleClickFollowUser(id) {
+      unFollowUser(id);
+      this.reload();
+    },
     // 点击跳转我的关注页面。
     handleClick2AttentionPage(id) {
       this.$router.push({
-        name: "personalInteraction",
+        name: "othersInteraction",
         params: {
           userId: id,
           tabId: 0
@@ -133,7 +144,7 @@ export default {
     // 点击跳转我的粉丝页面。
     handleClick2FansPage(id) {
       this.$router.push({
-        name: "personalInteraction",
+        name: "othersInteraction",
         params: {
           userId: id,
           tabId: 1
@@ -145,12 +156,13 @@ export default {
       this.pushTabId = name;
     },
     // 获取个人信息数据的方法。
-    async getPersonalInfoData() {
-      let res = await personalInfoData();
+    async getOthersInfoData() {
+      let res = await othersInfoData(this.$route.params.user_id);
       this.personalInfo = res.data;
+      console.info(this.personalInfo);
     }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>
@@ -209,21 +221,32 @@ export default {
       text-align: center;
       color: rgba(144, 144, 144, 1);
     }
-    // div:nth-child(3) {
-    //   width: 102px;
-    //   height: 34px;
-    //   margin: 0px 0px 23.5px 136.5px;
-    //   font-size: 13px;
-    //   text-align: center;
-    //   line-height: 34px;
-    //   color: rgba(21, 21, 21, 1);
-    //   @include border(
-    //     $width: 1px,
-    //     $border-color: rgba(23, 23, 23, 1),
-    //     $border-radius: 2px
-    //   );
-    // }
     div:nth-child(3) {
+      width: 102px;
+      height: 34px;
+      margin: 0px 0px 23.5px 136.5px;
+      font-size: 13px;
+      text-align: center;
+      line-height: 34px;
+      color: rgba(21, 21, 21, 1);
+      @include border(
+        $width: 1px,
+        $border-color: rgba(23, 23, 23, 1),
+        $border-radius: 2px
+      );
+    }
+    div:nth-child(4) {
+      width: 102px;
+      height: 34px;
+      margin: 0px 0px 23.5px 136.5px;
+      font-size: 13px;
+      text-align: center;
+      line-height: 34px;
+      border-radius:2px;
+      color:rgba(255,255,255,1);
+      background:rgba(235,129,154,1);
+    }
+    div:nth-child(5) {
       display: grid;
       grid-template: 53px / repeat(3, 1fr);
       section {

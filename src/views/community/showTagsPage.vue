@@ -17,6 +17,7 @@ export default {
   name: "showTagsPage",
   data() {
     return {
+      loading: true,
       // 存放标签数据的数组。
       listTagsData: []
     };
@@ -29,12 +30,14 @@ export default {
     async getTagsListData() {
       let res = await listTagsData();
       this.listTagsData = res.data;
-      console.info(this.listTagsData);
+      setTimeout(() => {
+        this.loading = false;
+      }, 5000);
     },
     // 点击标签跳转对应详情页，并传递 id 。
     handleClick2TagDetailsPage(id) {
       this.$router.push({
-        name: 'tagDetailsPage',
+        name: "tagDetailsPage",
         params: {
           tag_id: id
         }
@@ -48,7 +51,7 @@ export default {
 .tags-list_wrapper {
   padding: 5.5px 15px 0px 15px;
   .tags-item_wrapper {
-    width: 100%; 
+    width: 100%;
     height: 120px;
     margin-bottom: 9.5px;
     img {

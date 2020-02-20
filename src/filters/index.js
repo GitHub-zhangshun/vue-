@@ -79,6 +79,17 @@ const formatFloat = (val, pos = 2) => {
   return s;
 }
 /**
+ * 去掉小数点（配合格式化小数使用）。
+ * @param val
+ * @return {String}
+ */
+const delDot = val => {
+  if(typeof val !== String) {
+    val = String(val);
+  }
+  return val.slice(0, val.length-1);
+}
+/**
  * 格式化时长
  * @param second
  * @returns {string}
@@ -105,5 +116,6 @@ export default {
   formatBank,
   toThousands,
   formatFloat,
+  delDot,
   realFormatSecond
 }

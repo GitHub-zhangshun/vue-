@@ -35,7 +35,7 @@
                 <span>{{ item.nickname }}</span>
                 <span>{{ item.summary }}</span>
               </div>
-              <div>
+              <div v-show="item.is_show === 1 ? false : true">
                 <div
                   v-show="
                     attentionUnfollowUserData.indexOf(item.id) === -1
@@ -101,12 +101,12 @@
                 >
                   フォローする
                 </div>
-                <div
+                <!-- <div
                   class="del-icon_wrapper"
                   @click="handleClickShowDelButton(item.id)"
                 >
                   <img :src="delIcon" alt="" />
-                </div>
+                </div> -->
               </div>
               <transition
                 enter-active-class="animated slideInRight"
@@ -128,7 +128,7 @@
 </template>
 
 <script>
-import delFansIcon from "@assets/img/delete-fans-icon.png";
+// import delFansIcon from "@assets/img/delete-fans-icon.png";
 import animate from "animate.css";
 import { Dialog } from "vant";
 import { delTheEleInArray } from "@/common/util";
@@ -139,7 +139,7 @@ import {
   deleteUser
 } from "@/api/common";
 export default {
-  name: "personalInteraction",
+  name: "othersInteraction",
   components: {
     "van-dialog": Dialog.Component
   },
@@ -147,7 +147,7 @@ export default {
   data() {
     return {
       // 删除粉丝的图标。
-      delIcon: delFansIcon,
+      // delIcon: delFansIcon,
       // 当前高亮的 tab item 。
       activeNavItem: this.$route.params.tabId,
       // 存放 tab item 的数组。
@@ -206,6 +206,7 @@ export default {
       });
       this.attentionOriginalData = res.data;
       this.attentionData = res.data.data;
+      console.info(this.attentionData);
       // 获取数据的时候更新我的关注中需要取关的用户 id 数组。
       this.attentionData.map(item => {
         if (item.is_follow === 0) {
@@ -302,49 +303,49 @@ export default {
       this.attentionUnfollowUserData.map(item => {
         unFollowUser(item);
       });
-    },
-    // 点击小叉弹出删除用户的按钮。
-    handleClickShowDelButton(id) {
-      this.fansDelUserData.push(id);
-    },
-    // 点击对应小叉其他部分隐藏删除用户按钮。
-    handleClickHideDelButton(id) {
-      delTheEleInArray(id, this.fansDelUserData);
-    },
-    // 点击右边弹出的删除按钮，进行弹窗。
-    handleClickShowDialog(id) {
-      Dialog.confirm({
-        title: "フォロワーを削除してもよろしいですか",
-        message: "削除後、彼女の投稿を確認できなくなります",
-        width: 250,
-        confirmButtonText: "はい",
-        confirmButtonColor: "#8B8B8B",
-        cancelButtonText: "いいえ",
-        cancelButtonColor: "#151515",
-        // 添加回调函数以异步关闭弹窗。
-        beforeClose: async (action, done) => {
-          if (action === "confirm") {
-            let res = await deleteUser(id);
-            // console.info(res);
-            if (res.code === 200) {
-              setTimeout(done, 1500);
-              this.reload();
-            }
-          } else if (action === "cancel") {
-            done();
-            this.handleClickHideDelButton(id);
-          } else {
-            done();
-          }
-        }
-      })
-        .then(() => {
-          // on confirm
-        })
-        .catch(() => {
-          // on cancel
-        });
     }
+    // 点击小叉弹出删除用户的按钮。
+    // handleClickShowDelButton(id) {
+    //   this.fansDelUserData.push(id);
+    // },
+    // 点击对应小叉其他部分隐藏删除用户按钮。
+    // handleClickHideDelButton(id) {
+    //   delTheEleInArray(id, this.fansDelUserData);
+    // },
+    // 点击右边弹出的删除按钮，进行弹窗。
+    // handleClickShowDialog(id) {
+    //   Dialog.confirm({
+    //     title: "フォロワーを削除してもよろしいですか",
+    //     message: "削除後、彼女の投稿を確認できなくなります",
+    //     width: 250,
+    //     confirmButtonText: "はい",
+    //     confirmButtonColor: "#8B8B8B",
+    //     cancelButtonText: "いいえ",
+    //     cancelButtonColor: "#151515",
+    //     // 添加回调函数以异步关闭弹窗。
+    //     beforeClose: async (action, done) => {
+    //       if (action === "confirm") {
+    //         let res = await deleteUser(id);
+    //         // console.info(res);
+    //         if (res.code === 200) {
+    //           setTimeout(done, 1500);
+    //           this.reload();
+    //         }
+    //       } else if (action === "cancel") {
+    //         done();
+    //         this.handleClickHideDelButton(id);
+    //       } else {
+    //         done();
+    //       }
+    //     }
+    //   })
+    //     .then(() => {
+    //       // on confirm
+    //     })
+    //     .catch(() => {
+    //       // on cancel
+    //     });
+    // }
   }
 };
 </script>
@@ -479,15 +480,15 @@ export default {
         background-color: rgba(235, 129, 154, 1);
         border-radius: 2px;
       }
-      .del-icon_wrapper {
-        width: 17px;
-        height: 17px;
-        margin-right: 12px;
-        img {
-          width: 100%;
-          height: 100%;
-        }
-      }
+      // .del-icon_wrapper {
+      //   width: 17px;
+      //   height: 17px;
+      //   margin-right: 12px;
+      //   img {
+      //     width: 100%;
+      //     height: 100%;
+      //   }
+      // }
     }
     div:nth-child(4) {
       position: absolute;

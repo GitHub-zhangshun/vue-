@@ -13,20 +13,23 @@
           <img
             v-if="item.thumb"
             :src="item.thumb"
-            @click="handleClick2DetailPage(item.del)"
+            @click="handleClick2DetailPage(item.id)"
             alt="読み込みエラー"
           />
           <div class="item-body">
             <div class="item-desc">{{ item.content }}</div>
             <div class="item-footer">
-              <div class="avatar">
+              <div
+                class="avatar"
+                @click="handleClick2OthersHomepage(item.user_id)"
+              >
                 <img
                   :src="item.user.avatar"
                   @error="defaultUserAvatar(item)"
                   alt="アバター"
                 />
               </div>
-              <div class="name">{{ item.user.name }}</div>
+              <div class="name">{{ item.user.nickname }}</div>
               <div class="like" :class="item.is_like === 1 ? 'active' : ''">
                 <i class="iconfont icon-zan"></i>
                 <div class="like-total">{{ item.likes }}</div>
@@ -68,7 +71,7 @@ export default {
   watch: {
     // 实时监听路由改变。
     $route(to, from) {
-      sessionSetItem('tabBar', 'community');
+      sessionSetItem("tabBar", "community");
       this.getWaterFallData();
     }
   },
@@ -109,19 +112,25 @@ export default {
       }, 1500);
       // 强制更新展示 show 的数据，并重绘板式。
       this.$waterfall.forceUpdate();
-      this.$waterfall.resize();
+      // this.$waterfall.resize();
     },
     // 点击跳转详 show 情页面。
-    handleClick2DetailPage(delFlag) {
-      if (delFlag) {
-        this.$router.push({
-          name: "shield"
-        });
-      } else {
-        this.$router.push({
-          name: "showDetailsPage"
-        });
-      }
+    handleClick2DetailPage(id) {
+      this.$router.push({
+        name: "showDetailsPage",
+        params: {
+          id: id
+        }
+      });
+    },
+    // 点击头像跳转他人主页。
+    handleClick2OthersHomepage(id) {
+      this.$router.push({
+        name: "othersHomepage",
+        params: {
+          user_id: id
+        }
+      });
     },
     // 获取瀑布流 show 详情数据的方法。
     async getWaterFallData() {

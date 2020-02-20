@@ -33,10 +33,9 @@
           class="tags-checkbox_item"
           v-for="(item, idx) in tagsData"
           :key="idx"
-          v-show="item.isShown"
         >
           <input class="input" type="checkbox" name="colors" value="1" />
-          <div class="colors">#{{ item.text }}</div>
+          <div class="colors">#{{ item.name }}</div>
         </div>
       </div>
     </section>
@@ -112,10 +111,10 @@
                 :key="idx"
               >
                 <div>
-                  <img :src="item.img" alt="製品写真" />
+                  <img :src="item.thumb" alt="製品写真" />
                 </div>
                 <div>
-                  <span class="product-des">{{ item.des }}</span>
+                  <span class="product-des">{{ item.name }}</span>
                   <span class="product-price_unit">¥</span>
                   <span class="product-price">{{ item.price }}</span>
                 </div>
@@ -169,6 +168,8 @@ export default {
       isShownFlag: false,
       // 当前选中的高亮导航。
       activeNavItem: 0,
+      // 用于请求产品数据的 type 。
+      requestType: 'cart',
       // 存放 tab item 的数组。
       tabList: [
         {
@@ -219,7 +220,8 @@ export default {
     },
     // 获取可选标签数据的方法。
     async getEditShowTagsData() {
-      this.tagsData = await editShowTagsData();
+      let res = await editShowTagsData();
+      this.tagsData = res.data;
     },
     // 点击显示、隐藏选择产品图弹窗。
     handleClickShowProductSelectPopup() {
@@ -229,13 +231,33 @@ export default {
       this.isShownFlag = !this.isShownFlag;
     },
     // 获取产品图详细数据。
-    async getProductImageData() {
-      let res = await productImageData({ type: 'cart' });
-      console.info(res);
+    async getProductImageData(type) {
+      let res = await productImageData({
+        type: type,
+        page: 1
+      });
+      this.productData.splice(0, this.productData.length);
+      res.data.data.map((item) => {
+        this.productData.push(item);
+      });
     },
     // 点击 tab item 切换显示不同数据。
     async handleClickTheTab(id) {
-      this.productData = await productImageData(id);
+      switch(id) {
+        case 0:
+          this.requestType = 'cart';
+          break;
+        case 1:
+          this.requestType = 'order';
+          break;
+        case 2:
+          this.requestType = 'collect';
+          break;
+        case 3:
+          this.requestType = 'browse';
+          break;
+      }
+      this.getProductImageData(this.requestType);
     },
     // 点击获取到产品 id 和图片 src 。
     handleClickGetIdAndSrc() {
@@ -256,7 +278,7 @@ export default {
   },
   mounted() {
     this.getEditShowTagsData();
-    this.getProductImageData();
+    this.getProductImageData(this.requestType);
   }
 };
 </script>
@@ -290,7 +312,7 @@ export default {
       margin-right: 12px;
       font-size: 14px;
       font-family: Source Han Sans CN;
-      color: rgba(201,201,201,1);
+      color: rgba(201, 201, 201, 1);
     }
   }
   .tags-switch_wrapper {
@@ -341,6 +363,7 @@ export default {
           line-height: 36px;
           border-radius: 16.5px;
           color: rgba(228, 192, 91, 1);
+          @include ellipsis($line: 1, $line-height: 36px);
         }
         .input:checked + .colors {
           background-color: rgba(228, 192, 91, 1);
@@ -397,7 +420,7 @@ export default {
         margin-right: 12px;
         font-size: 14px;
         font-family: Source Han Sans CN;
-        color: rgba(201,201,201,1);
+        color: rgba(201, 201, 201, 1);
       }
     }
     .contriute-button {

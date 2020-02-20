@@ -22,6 +22,10 @@ const PersonalHomepage = () =>
   import(
     /* webpackChunkName: "personalHomepage" */ "../views/community/personalHomepage"
   );
+const OthersHomepage = () =>
+  import(
+    /* webpackChunkName: "othersHomepage" */ "../views/community/othersHomepage"
+  );
 const ChangePersonalPageBg = () =>
   import(
     /* webpackChunkName: "changePersonalPageBg" */ "../views/community/changePersonalPageBg"
@@ -33,6 +37,10 @@ const ChangePersonalInfo = () =>
 const PersonalInteraction = () =>
   import(
     /* webpackChunkName: "personalInteraction" */ "../views/community/personalInteraction"
+  );
+const OthersInteraction = () =>
+  import(
+    /* webpackChunkName: "othersInteraction" */ "../views/community/othersInteraction"
   );
 const ShowTagsPage = () =>
   import(
@@ -79,6 +87,11 @@ const router = new Router({
       }
     },
     {
+      path: "/othersHomepage/?userId=:user_id",
+      name: "othersHomepage",
+      component: OthersHomepage
+    },
+    {
       path: "/changePersonalPageBg",
       name: "changePersonalPageBg",
       component: ChangePersonalPageBg
@@ -94,7 +107,12 @@ const router = new Router({
       component: PersonalInteraction
     },
     {
-      path: "/showDetailsPage",
+      path: "/othersInteraction/?userId=:userId",
+      name: "othersInteraction",
+      component: OthersInteraction
+    },
+    {
+      path: "/showDetailsPage/?id=:id",
       name: "showDetailsPage",
       component: ShowDetailsPage
     },

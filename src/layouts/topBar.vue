@@ -33,7 +33,9 @@ export default {
         "personalHomepage",
         "changePersonalPageBg",
         "changePersonalInfo",
-        "personalInteraction"
+        "personalInteraction",
+        "othersHomepage",
+        "othersInteraction"
       ],
         flag = new Boolean();
       isShownTheBackButton.includes(this.$route.name)
@@ -49,7 +51,9 @@ export default {
         "show-details-content/attention",
         "shield",
         "showTagsPage",
-        "tagDetailsPage"
+        "tagDetailsPage",
+        "othersHomepage",
+        "othersInteraction"
       ],
         flag = new Boolean();
       isShownTheUserButton.includes(this.$route.name)
