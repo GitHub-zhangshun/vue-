@@ -4,7 +4,6 @@
       <div>
         <img
           :src="personalInfo.background_image"
-          @click="handleClick2ChangePage"
           @error="defaultBgImg(personalInfo)"
           alt="背景画像"
         />
@@ -15,9 +14,6 @@
           @error="defaultAvatarImg(personalInfo)"
           alt="アバター"
         />
-      </div>
-      <div>
-        <img :src="editIcon" alt="変更する" @click="handleClick2ChangeInfo" />
       </div>
     </section>
     <section class="name-des_wrapper">
@@ -110,18 +106,6 @@ export default {
     defaultAvatarImg(item) {
       item.avatar = require("../../assets/img/default-user-avatar.png");
     },
-    // 点击跳转切换背景页面。
-    handleClick2ChangePage() {
-      this.$router.push({
-        name: "changePersonalPageBg"
-      });
-    },
-    // 点击跳转编辑个人信息页面。
-    handleClick2ChangeInfo() {
-      this.$router.push({
-        name: "changePersonalInfo"
-      });
-    },
     // 关注、取关操作。
     handleClickUnfollowUser(id) {
       unFollowUser(id);
@@ -131,7 +115,7 @@ export default {
       unFollowUser(id);
       this.reload();
     },
-    // 点击跳转我的关注页面。
+    // 点击跳转关注页面。
     handleClick2AttentionPage(id) {
       this.$router.push({
         name: "othersInteraction",
@@ -141,7 +125,7 @@ export default {
         }
       });
     },
-    // 点击跳转我的粉丝页面。
+    // 点击跳转粉丝页面。
     handleClick2FansPage(id) {
       this.$router.push({
         name: "othersInteraction",
@@ -159,6 +143,11 @@ export default {
     async getOthersInfoData() {
       let res = await othersInfoData(this.$route.params.user_id);
       this.personalInfo = res.data;
+      if(this.personalInfo.is_show === 1) {
+        this.$router.push({
+          name: 'personalHomepage'
+        })
+      }
       console.info(this.personalInfo);
     }
   }
@@ -191,22 +180,9 @@ export default {
         border-radius: 50%;
       }
     }
-    div:nth-child(3) {
-      position: absolute;
-      top: 179px;
-      left: 214px;
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      img {
-        width: 100%;
-        height: 100%;
-      }
-    }
   }
   .name-des_wrapper {
     width: 100%;
-    // height: 145px;
     font-family: Source Han Sans CN;
     div:nth-child(1) {
       padding: 10px 0px 10.5px 0px;

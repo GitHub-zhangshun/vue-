@@ -1,53 +1,63 @@
 <template>
   <div class="container-water-fall">
     <h1 class="details-title_wrapper" v-show="title">{{ title }}</h1>
-    <waterfall
-      :col="2"
-      :data="data"
-      @loadmore="handleScrollLoadmore"
-      @scroll="handleScroll"
-      @finish="handleScrollFinish"
+    <van-list
+      v-model="loading"
+      :finished="finished"
+      :immediate-check="false"
+      :offset="300"
+      finished-text="END"
+      @load="onLoad"
     >
-      <template>
-        <div class="cell-item" v-for="(item, index) in data" :key="index">
-          <img
-            v-if="item.thumb"
-            :src="item.thumb"
-            @click="handleClick2DetailPage(item.id)"
-            alt="読み込みエラー"
-          />
-          <div class="item-body">
-            <div class="item-desc">{{ item.content }}</div>
-            <div class="item-footer">
-              <div
-                class="avatar"
-                @click="handleClick2OthersHomepage(item.user_id)"
-              >
-                <img
-                  :src="item.user.avatar"
-                  @error="defaultUserAvatar(item)"
-                  alt="アバター"
-                />
-              </div>
-              <div class="name">{{ item.user.nickname }}</div>
-              <div class="like" :class="item.is_like === 1 ? 'active' : ''">
-                <i class="iconfont icon-zan"></i>
-                <div class="like-total">{{ item.likes }}</div>
+      <waterfall
+        :col="2"
+        :data="showData"
+        @loadmore="handleScrollLoadmore"
+        @scroll="handleScroll"
+        @finish="handleScrollFinish"
+      >
+        <template>
+          <div class="cell-item" v-for="(item, index) in showData" :key="index">
+            <img
+              v-if="item.thumb"
+              :src="item.thumb"
+              @click="handleClick2DetailPage(item.id)"
+              alt="読み込みエラー"
+            />
+            <div class="item-body">
+              <div class="item-desc">{{ item.content }}</div>
+              <div class="item-footer">
+                <div
+                  class="avatar"
+                  @click="handleClick2OthersHomepage(item.user_id)"
+                >
+                  <img
+                    :src="item.user.avatar"
+                    @error="defaultUserAvatar(item)"
+                    alt="アバター"
+                  />
+                </div>
+                <div class="name">{{ item.user.nickname }}</div>
+                <div
+                  class="like"
+                  :class="item.is_like === 1 ? 'active' : ''"
+                  @click="handleClickLikeShow(item.id)"
+                >
+                  <i class="iconfont icon-zan"></i>
+                  <div class="like-total">{{ item.likes }}</div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </template>
-    </waterfall>
-    <div class="show-details--bottom_area" v-show="isShownTheEndFlag">
-      <span class="show-details--bottom_area__text">END</span>
-    </div>
+        </template>
+      </waterfall>
+    </van-list>
   </div>
 </template>
 
 <script>
 import { sessionSetItem } from "@/common/util";
-import { waterFallData } from "@/api/common";
+import { waterFallData, likeUnlikeShow } from "@/api/common";
 export default {
   name: "ShowDetailsContentAttention",
   props: {
@@ -58,14 +68,16 @@ export default {
       type: String
     }
   },
+  inject: ["reload"],
   data() {
     return {
+      // 用于请求的页数。
+      currentPage: 1,
+      lastPage: 0,
       // 瀑布流数据数组。
-      data: [],
-      // 用于懒加载的定时器 ID 。
-      loadMoreId: "",
-      // 是否显示数据完结的标志布尔值。
-      isShownTheEndFlag: false
+      showData: [],
+      loading: false,
+      finished: false
     };
   },
   watch: {
@@ -88,31 +100,38 @@ export default {
   mounted() {
     this.getWaterFallData();
   },
-  beforeDestroy() {
-    // 离开页面清除用于加载更多的定时器。
-    clearTimeout(this.loadMoreId);
-  },
   methods: {
+    // 获取瀑布流 show 详情数据的方法。
+    async getWaterFallData() {
+      let res = await waterFallData(this.$route.params);
+      this.showData = res.data.data;
+      this.lastPage = res.data.last_page;
+      // 强制更新展示 show 的数据。
+      this.$waterfall.forceUpdate();
+    },
+    // 滚动加载。
+    async onLoad() {
+      this.loading = true;
+      if (this.currentPage < this.lastPage) {
+        this.currentPage++;
+        let res = await waterFallData({
+          stadium_id: this.$route.params.stadium_id,
+          page: this.currentPage
+        });
+        res.data.data.map(item => {
+          this.showData.push(item);
+        });
+        this.loading = false;
+        this.finished = true;
+      }
+      else {
+        this.loading = false;
+        this.finished = true;
+      }
+    },
     // 头像为空显示默认图片。
     defaultUserAvatar(item) {
       item.user.avatar = require("../assets/img/default-user-avatar.png");
-    },
-    // 判断是否加载完毕数据的方法。
-    handleScrollFinish() {
-      this.isShownTheEndFlag = !this.isShownTheEndFlag;
-    },
-    // 滚动加载数据信息的方法。
-    handleScroll(scrollData) {
-      // console.info(scrollData);
-    },
-    // 滚动加载更多数据的方法。
-    handleScrollLoadmore() {
-      this.loadMoreId = setTimeout(() => {
-        this.data = this.data.concat(waterFallData(this.requestObj));
-      }, 1500);
-      // 强制更新展示 show 的数据，并重绘板式。
-      this.$waterfall.forceUpdate();
-      // this.$waterfall.resize();
     },
     // 点击跳转详 show 情页面。
     handleClick2DetailPage(id) {
@@ -132,14 +151,20 @@ export default {
         }
       });
     },
-    // 获取瀑布流 show 详情数据的方法。
-    async getWaterFallData() {
-      this.data = [];
-      let res = await waterFallData(this.requestObj);
-      this.data = res.data.data;
-      // 强制更新展示 show 的数据。
-      this.$waterfall.forceUpdate();
-    }
+    // 点赞。
+    async handleClickLikeShow(id) {
+      let res = await likeUnlikeShow(id);
+      if (res.code !== 200) {
+        this.$toast("もう一度やり直してください！");
+      }
+      this.reload();
+    },
+    // 判断是否加载完毕数据的方法。
+    handleScrollFinish() {},
+    // 滚动加载数据信息的方法。
+    handleScroll(scrollData) {},
+    // 滚动加载更多数据的方法。
+    handleScrollLoadmore() {},
   }
 };
 </script>

@@ -276,7 +276,6 @@ export default {
       res.data.data.map(item => {
         this.productData.push(item);
       });
-      console.info(res);
     },
     // 滚动触底获取更多产品详细数据功能。
     async getMoreProductImageData(type) {
@@ -284,7 +283,6 @@ export default {
         type: type,
         page: this.currentPage
       });
-      console.info(res);
       res.data.data.map(item => {
         this.productData.push(item);
       });
@@ -308,7 +306,7 @@ export default {
       this.getProductImageData(this.requestType);
     },
     // 下滑加载更多产品数据。
-    async handleScrollGetMoreProduct() {
+    handleScrollGetMoreProduct() {
       this.prLoading = true;
       if (this.currentPage < this.lastPage) {
         this.currentPage++;
