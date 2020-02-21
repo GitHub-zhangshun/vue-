@@ -177,7 +177,6 @@ export default {
     // 获取 show 详细数据方法。
     async getShowDetailsData(id) {
       let res = await showDetailsData(id);
-      console.info(res);
       this.productImg = res.data.images;
       this.productTags = res.data.tags;
       this.relatedGoodsData = res.data.products;
@@ -216,7 +215,6 @@ export default {
         beforeClose: async (action, done) => {
           if (action === "confirm") {
             let res = await deleteShow(id);
-            console.info(res);
             if (res && res.code === 200) {
               this.$toast("削除しました！");
               done();
@@ -452,6 +450,7 @@ export default {
     position: fixed;
     bottom: 0;
     width: 100%;
+    height: 52px;
     text-align: center;
     span {
       display: block;

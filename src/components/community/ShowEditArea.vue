@@ -34,7 +34,7 @@
           v-for="(item, idx) in tagsData"
           :key="idx"
         >
-          <input class="input" type="checkbox" name="colors" value="1" />
+          <input class="input" type="checkbox" name="colors" :value="item.id" v-model="checkedTagId" />
           <div class="colors">#{{ item.name }}</div>
         </div>
       </div>
@@ -46,7 +46,7 @@
       </div>
       <div class="product-image_area">
         <div
-          class="select-product--image_wrapper"
+          class="select-product--image_show__wrapper"
           v-for="(item, idx) in checkedSrc"
           :key="idx"
         >
@@ -64,7 +64,7 @@
       <div class="select-product--num_wrapper">
         <p>{{ this.checkedId.length }}/6</p>
       </div>
-      <div class="contriute-button">
+      <div class="contriute-button" @click="handleClickSubmit">
         <span class="text">投稿</span>
         <span class="reward-text_wrapper" v-show="isProductImg">
           <span>+</span>
@@ -105,36 +105,45 @@
               :key="idx"
               :title="item.title"
             >
-              <div
-                class="product-item_wrapper"
-                v-for="(item, idx) in productData"
-                :key="idx"
+              <van-list
+                v-model="prLoading"
+                :finished="prFinished"
+                :immediate-check="false"
+                :offset="300"
+                finished-text="END"
+                @load="handleScrollGetMoreProduct"
               >
-                <div>
-                  <img :src="item.thumb" alt="製品写真" />
+                <div
+                  class="product-item_wrapper"
+                  v-for="(item, idx) in productData"
+                  :key="idx"
+                >
+                  <div>
+                    <img :src="item.thumb" alt="製品写真" />
+                  </div>
+                  <div>
+                    <span class="product-des">{{ item.name }}</span>
+                    <span class="product-price_unit">¥</span>
+                    <span class="product-price">{{ item.price }}</span>
+                  </div>
+                  <div>
+                    <input
+                      type="checkbox"
+                      :id="item.id"
+                      :value="item.id"
+                      v-model="checkedId"
+                    />
+                    <label
+                      :class="{
+                        forbidden:
+                          checkedId.length > 5 &&
+                          checkedId.indexOf(item.id) === -1
+                      }"
+                      :for="item.id"
+                    ></label>
+                  </div>
                 </div>
-                <div>
-                  <span class="product-des">{{ item.name }}</span>
-                  <span class="product-price_unit">¥</span>
-                  <span class="product-price">{{ item.price }}</span>
-                </div>
-                <div>
-                  <input
-                    type="checkbox"
-                    :id="item.id"
-                    :value="item.id"
-                    v-model="checkedId"
-                  />
-                  <label
-                    :class="{
-                      forbidden:
-                        checkedId.length > 5 &&
-                        checkedId.indexOf(item.id) === -1
-                    }"
-                    :for="item.id"
-                  ></label>
-                </div>
-              </div>
+              </van-list>
             </van-tab>
           </van-tabs>
         </nav>
@@ -147,7 +156,12 @@
 import uploadMirror from "@/assets/img/upload-mirror.png";
 import selectProduct from "@/assets/img/select-product.png";
 import PopupDialog from "@components/community/PopupDialog";
-import { editShowTagsData, productImageData } from "@/api/common";
+import {
+  editShowTagsData,
+  productImageData,
+  commonUploadMultipleImgs,
+  releaseShow
+} from "@/api/common";
 export default {
   name: "ShowEditArea",
   components: {
@@ -169,7 +183,7 @@ export default {
       // 当前选中的高亮导航。
       activeNavItem: 0,
       // 用于请求产品数据的 type 。
-      requestType: 'cart',
+      requestType: "cart",
       // 存放 tab item 的数组。
       tabList: [
         {
@@ -185,14 +199,28 @@ export default {
           title: "閲覧履歴"
         }
       ],
+      // 存放产品数据的源数组。
+      originalProductData: {},
       // 存放产品详细数据的数组。
       productData: [],
-      // 存放被选中的 checkbox id 数组。
+      // 存放选中的 tag 对应的 id 。
+      checkedTagId: [],
+      // 存放被选中的产品图对应的 id 。
       checkedId: [],
       // 点击确认按钮之后获取的 id 和 src 。
-      checkedSrc: []
+      checkedSrc: [],
+      // 获取更多产品数据的加载控制。
+      prLoading: false,
+      prFinished: false,
+      // 当前请求页数。
+      currentPage: 1,
+      // 对应 tab 下可请求的总页数。
+      lastPage: 0,
+      // 保存多张图片文件流的数组。
+      imagesArr: []
     };
   },
+  inject: ['reload'],
   computed: {
     // 根据是否选择产品图，改变提交按钮文字。
     isProductImg() {
@@ -215,8 +243,15 @@ export default {
   },
   methods: {
     // 上传图片之后的回调函数。
-    afterUploading(file) {
-      // 这里通过接口将图片上传至服务器。
+    async afterUploading(file) {
+      // 获取上传文件的文件对象，并存在数组中。
+      if (Array.isArray(file) === true) {
+        file.map(item => {
+          this.imagesArr.push(item.file);
+        });
+      } else {
+        this.imagesArr.push(file.file);
+      }
     },
     // 获取可选标签数据的方法。
     async getEditShowTagsData() {
@@ -236,28 +271,54 @@ export default {
         type: type,
         page: 1
       });
+      this.lastPage = res.data.last_page;
       this.productData.splice(0, this.productData.length);
-      res.data.data.map((item) => {
+      res.data.data.map(item => {
+        this.productData.push(item);
+      });
+      console.info(res);
+    },
+    // 滚动触底获取更多产品详细数据功能。
+    async getMoreProductImageData(type) {
+      let res = await productImageData({
+        type: type,
+        page: this.currentPage
+      });
+      console.info(res);
+      res.data.data.map(item => {
         this.productData.push(item);
       });
     },
     // 点击 tab item 切换显示不同数据。
     async handleClickTheTab(id) {
-      switch(id) {
+      switch (id) {
         case 0:
-          this.requestType = 'cart';
+          this.requestType = "cart";
           break;
         case 1:
-          this.requestType = 'order';
+          this.requestType = "order";
           break;
         case 2:
-          this.requestType = 'collect';
+          this.requestType = "collect";
           break;
         case 3:
-          this.requestType = 'browse';
+          this.requestType = "browse";
           break;
       }
       this.getProductImageData(this.requestType);
+    },
+    // 下滑加载更多产品数据。
+    async handleScrollGetMoreProduct() {
+      this.prLoading = true;
+      if (this.currentPage < this.lastPage) {
+        this.currentPage++;
+        this.getMoreProductImageData(this.requestType);
+        this.prLoading = false;
+        this.prFinished = true;
+      } else {
+        this.prLoading = false;
+        this.prFinished = true;
+      }
     },
     // 点击获取到产品 id 和图片 src 。
     handleClickGetIdAndSrc() {
@@ -268,11 +329,41 @@ export default {
         for (let i = 0; i < this.checkedId.length; i++) {
           for (let j = 0; j < this.productData.length; j++) {
             if (this.productData[j].id === this.checkedId[i]) {
-              this.checkedSrc.push(this.productData[j].img);
+              this.checkedSrc.push(this.productData[j].thumb);
             }
           }
         }
         this.isShownFlag = !this.isShownFlag;
+      }
+    },
+    // 点击提交按钮的操作。
+    async handleClickSubmit() {
+      // 上传图片到服务器并获取对应 id 。
+      let formData = new FormData();
+      this.imagesArr.map(item => {
+        formData.append("images[]", item);
+      });
+      let imgIdRes = await commonUploadMultipleImgs(1, formData);
+      if (imgIdRes.code === 200) {
+        this.imagesArr = [];
+      }
+      // 组装提交所需的数据。
+      let submitObj = {
+        images: imgIdRes.data,
+        tags: this.checkedTagId,
+        products: this.checkedId,
+        content: this.message
+      }
+      let submitRes = await releaseShow(submitObj);
+      if(submitRes.code === 200) {
+        this.$toast('正常に公開されました！');
+        this.reload();
+      }
+      else {
+        this.$toast('公開に失敗しました。もう一度入力してください！');
+        this.checkedTagId = [];
+        this.checkedId = [];
+        this.message = '';
       }
     }
   },
@@ -390,8 +481,10 @@ export default {
       padding: 0px 15.5px;
       overflow-x: scroll;
       overflow-y: hidden;
-      .select-product--image_wrapper {
+      .select-product--image_show__wrapper {
         img {
+          width: 100%;
+          height: 100%;
           border-radius: 10px;
         }
       }

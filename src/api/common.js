@@ -20,6 +20,9 @@ import Request from '../common/request';
  * @param showDetailsData show 详情数据。
  * @param editShowTagsData 社区编辑 show 标签数据。
  * @param productImageData 社区选择产品图详细数据。
+ * @param deleteUser 通用删除粉丝接口。
+ * @param deleteShow 通用删除 show 接口。
+ * @param releaseShow 通用发布 show 接口。
  */
 export const getUserToken = userInfo => Request.post(`/api/v1/show/login`, userInfo);
 export const personalInfoData = data => Request.get(`/api/v1/show/getUser`);
@@ -37,16 +40,17 @@ export const waterFallData = (param, headers) => Request.get(`/api/v1/show/list`
 export const showDetailsData = id => Request.get(`/api/v1/show/getShow/${id}`, id);
 export const editShowTagsData = data => Request.get(`/api/v1/show/create-tags`);
 export const productImageData = data => Request.get(`/api/v1/show/create-products/${data.type}`, data);
+export const deleteUser = userId => Request.post(`/api/v1/show/del-fans/${userId}`, userId);
+export const deleteShow = showId => Request.post(`/api/v1/show/show-del/${showId}`, showId);
+export const releaseShow = data => Request.post(`/api/v1/show/show-create`, data);
 /**
  * Common api.
  * @param commonUploadSingleImg 通用上传单张图片接口。
+ * @param commonUploadMultipleImgs 通用上传多张图片接口。
  * @param unFollowUser 通用关注、取关用户接口。
- * @param deleteUser 通用删除粉丝接口。
- * @param deleteShow 通用删除 show 接口。
  * @param likeUnlikeShow 通用点赞 show 接口。
  */
 export const commonUploadSingleImg = (status, imgFile) => Request.file(`/api/v1/show/upload-image?status=${status}`, imgFile);
+export const commonUploadMultipleImgs = (status, imgFiles) => Request.file(`/api/v1/show/upload-images?status=${status}`, imgFiles);
 export const unFollowUser = userId => Request.post(`/api/v1/show/follow/${userId}`, userId);
-export const deleteUser = userId => Request.post(`/api/v1/show/del-fans/${userId}`, userId);
-export const deleteShow = showId => Request.post(`/api/v1/show/show-del/${showId}`, showId);
 export const likeUnlikeShow = showId => Request.post(`/api/v1/show/user-like/${showId}`, showId);

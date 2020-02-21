@@ -64,11 +64,13 @@ export default {
     async afterUploading(file) {
       this.bgImgSrc = this.fileList[0].content;
       this.fileList = [];
-      this.whichButtonShown = !this.whichButtonShown;
       // 上传文件到服务器，并获取 id 。
       let formData = new FormData();
       formData.append("image", file.file);
       let res = await commonUploadSingleImg(1, formData);
+      if(res.code === 200) {
+        this.whichButtonShown = !this.whichButtonShown;
+      }
       this.bgCode = res.data;
     },
     // 点击取消回退页面。
@@ -82,6 +84,9 @@ export default {
       });
       if(res.code === 200) {
         this.$toast('個人情報が正常に変更されました！');
+        this.$router.push({
+          name: 'personalHomepage'
+        });
       }
       else {
         this.$toast('個人情報の変更に失敗しました。再編集してください！');

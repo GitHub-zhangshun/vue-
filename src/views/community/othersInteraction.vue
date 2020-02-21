@@ -249,7 +249,6 @@ export default {
       });
       this.fansOriginalData = res.data;
       this.fansData = res.data.data;
-      // console.info(this.fansData);
     },
     // 粉丝分页请求数据拼接。
     async getMoreFansData(curPage) {

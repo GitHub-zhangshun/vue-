@@ -53,7 +53,8 @@ export default {
         "showTagsPage",
         "tagDetailsPage",
         "othersHomepage",
-        "othersInteraction"
+        "othersInteraction",
+        "showDetailsPage"
       ],
         flag = new Boolean();
       isShownTheUserButton.includes(this.$route.name)

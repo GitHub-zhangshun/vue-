@@ -80,6 +80,9 @@ export default {
       });
       if(res.code === 200) {
         this.$toast('個人情報が正常に変更されました！');
+        this.$router.push({
+          name: 'personalHomepage'
+        });
       }
       else {
         this.$toast('個人情報の変更に失敗しました。再編集してください！');
