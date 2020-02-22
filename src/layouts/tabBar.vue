@@ -3,16 +3,20 @@
     <div
       v-for="(item, idx) in tabs"
       :key="idx"
-      :class="['bar-item', tabBar === item.name ? 'active' : '']"
+      class="bar-item"
       @click="handleClick2TabDetails(item.name)"
     >
-      <i :class="['iconfont', item.icon]"></i>
-      <div class="label">{{ item.label }}</div>
+      <img :src="item.icon" alt="tabIcon">
     </div>
   </section>
 </template>
 
 <script>
+import homeIconNs from "@/assets/img/home-noselect.png";
+import navbarIconNs from "@/assets/img/navbar-noselect.png";
+import communityIconS from "@/assets/img/zone-selected.png";
+import shopCartIconNs from "@/assets/img/shop-cart-noselect.png";
+import myIconNs from "@/assets/img/my-noselect.png";
 import { sessionGetItem } from "../common/util";
 export default {
   name: "TabBar",
@@ -20,55 +24,50 @@ export default {
     return {
       tabs: [
         {
-          label: "主页",
-          icon: "icon-shouye",
+          icon: homeIconNs,
           name: "home"
         },
         {
-          label: "社区",
-          icon: "icon-shequ",
+          icon: navbarIconNs,
+          name: "menu"
+        },
+        {
+          icon: communityIconS,
           name: "community"
         },
         {
-          label: "购物车",
-          icon: "icon-gouwuche",
+          icon: shopCartIconNs,
           name: "shop-cart"
         },
         {
-          label: "个人中心",
-          icon: "icon-gerenzhongxin",
+          icon: myIconNs,
           name: "my"
         }
-      ],
-      // 进入该项目就高亮社区。
-      tabBar: "community"
+      ]
     };
-  },
-  watch: {
-    // 判断 tabBar 中存在的路由，进行对应跳转。
-    $route(to, from) {
-      if (["home", "community", "shop-cart", "my"].includes(to.name)) {
-        this.tabBar = to.name;
-      }
-    }
   },
   methods: {
     // 点击 tabBar 切换项。
     handleClick2TabDetails(routerName) {
       this.tabBar = routerName;
-      if (routerName === "community") {
-        this.$router.push({
-          name: "show-details-content/recommend"
-        });
-      }
-      else if(routerName === "home") {
-        window.location.href = "https://m.sisilily.com";
-      }
-      else if(routerName === "shop-cart") {
-        window.location.href = "https://m.sisilily.com/checkout/cart.html";
-      }
-      else if(routerName === "my") {
-        window.location.href = "https://m.sisilily.com/account/dashboard.html";
+      switch (routerName) {
+        case 'home':
+          window.location.href = "https://m-test.sisilily.com/";
+          break;
+        case 'menu':
+          window.location.href = "https://m-test.sisilily.com/sidebar-page.html";
+          break;
+        case 'community':
+          this.$router.push({
+            name: "show-details-content/recommend"
+          });
+          break;
+        case 'shop-cart':
+          window.location.href = "https://m-test.sisilily.com/checkout/cart.html";
+          break;
+        case 'my':
+          window.location.href = "https://m-test.sisilily.com/account/dashboard.html";
+          break;
       }
     }
   }
@@ -80,18 +79,15 @@ export default {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  height: 60px;
-  @include border-top();
+  height: 55px;
   .bar-item {
     flex: 1;
     font-size: 14px;
     text-align: center;
-    .iconfont {
-      font-size: 24px;
+    img {
+      width: 100%;
+      height: 100%;
     }
-  }
-  .bar-item.active {
-    color: red;
   }
 }
 </style>

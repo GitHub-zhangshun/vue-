@@ -2,7 +2,6 @@ import Vue from "vue";
 import Router from "vue-router";
 import loginStore from "@/store/community/login";
 import community from "./routes/community";
-import { sessionSetItem } from "../common/util";
 // 解决 3.0.0 以上版本 vue-router 报错。
 const originalPush = Router.prototype.push;
 Router.prototype.push = function push(location) {
@@ -12,12 +11,8 @@ Router.prototype.push = function push(location) {
  * 按需（懒）加载路由。
  * @param { String } webpackChunkName 打包之后的包名。
  */
-const Home = () => import(/* webpackChunkName: "home" */ "../views/home/index");
 const Community = () =>
   import(/* webpackChunkName: "community" */ "../views/community/index");
-const ShopCart = () =>
-  import(/* webpackChunkName: "shopCart" */ "../views/shopCart/index");
-const My = () => import(/* webpackChunkName: "my" */ "../views/my/index");
 const PersonalHomepage = () =>
   import(
     /* webpackChunkName: "personalHomepage" */ "../views/community/personalHomepage"
@@ -68,14 +63,7 @@ const router = new Router({
   routes: [
     {
       path: "/",
-      name: "home",
-      // redirect: "/community/show-details-content/recommend",
-      component: Home
-    },
-    {
-      path: "/community",
       component: Community,
-      redirect: "/community/show-details-content/recommend",
       children: community
     },
     {
@@ -132,16 +120,6 @@ const router = new Router({
       component: Shield
     },
     {
-      path: "/shop-cart",
-      name: "shop-cart",
-      component: ShopCart
-    },
-    {
-      path: "/my",
-      name: "my",
-      component: My
-    },
-    {
       path: "*",
       redirect: "/"
     }
@@ -160,16 +138,9 @@ const router = new Router({
 });
 /**
  * 全局导航守卫。
- * * 1. 把 tabBar 中的当前选项存在 session 中，防止刷新丢失当前高亮 tabBar 项。
- * * 2. 根据 meta.requiresAuth 来判断页面是否需要鉴权。
+ * * 1. 根据 meta.requiresAuth 来判断页面是否需要鉴权。
  */
 router.beforeEach((to, from, next) => {
-  // 对子路由做单独判断，防止子路由情况下刷新 tabBar 没有高亮当前项。
-  if (to.name === "show-details-content") {
-    sessionSetItem("tabBar", "community");
-  } else {
-    sessionSetItem("tabBar", to.name);
-  }
   // 根据路由 meta.requiresAuth 判断页面是否需要鉴权。
   if (to.matched.some(record => record.meta.requiresAuth)) {
     // 判断当前是否有登录的权限。

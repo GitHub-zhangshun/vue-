@@ -83,10 +83,10 @@ export default {
       this.$router.go(-1);
     },
     handleClick2Sidebar() {
-      window.location.href = "https://m.sisilily.com/sidebar-page.html";
+      window.location.href = "https://m-test.sisilily.com/sidebar-page.html";
     },
     handleClick2HomePage() {
-      window.location = "http://m.sisilily.com";
+      window.location.href = "https://m-test.sisilily.com/";
     },
     handleClick2UserPage() {
       this.$router.push({

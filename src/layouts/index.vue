@@ -90,7 +90,7 @@ export default {
 .layout-container {
   height: 100vh;
   .content-container {
-    height: calc(100vh - 107px);
+    height: calc(100vh - 102px);
     overflow-x: hidden;
     overflow-y: scroll;
   }
@@ -100,7 +100,7 @@ export default {
     overflow-y: scroll;
   }
   .content-container--no_top {
-    height: calc(100vh - 60px);
+    height: calc(100vh - 55px);
     overflow-x: hidden;
     overflow-y: scroll;
   }

@@ -1,6 +1,5 @@
 <template>
   <div class="container-water-fall">
-    <h1 class="details-title_wrapper" v-show="title">{{ title }}</h1>
     <van-list
       v-model="loading"
       :finished="finished"
@@ -20,7 +19,6 @@
         <template>
           <div class="cell-item" v-for="(item, index) in showData" :key="index">
             <img
-              v-if="item.thumb"
               :src="item.thumb"
               @click="handleClick2DetailPage(item.id)"
               alt="読み込みエラー"
@@ -64,9 +62,6 @@ export default {
   props: {
     requestObj: {
       type: Object
-    },
-    title: {
-      type: String
     }
   },
   inject: ["reload"],
@@ -215,9 +210,6 @@ export default {
           .avatar {
             width: 18px;
             height: 18px;
-            // border-radius: 50%;
-            // background-repeat: no-repeat;
-            // background-size: contain;
             img {
               width: 100%;
               height: 100%;
@@ -257,24 +249,6 @@ export default {
           }
         }
       }
-    }
-  }
-  .loading-show_flag {
-    width: 100px;
-    height: 35px;
-    margin: 0 auto;
-  }
-  .show-details--bottom_area {
-    width: 100%;
-    height: 30px;
-    text-align: center;
-    background: rgba(250, 250, 250, 1);
-    .show-details--bottom_area__text {
-      width: 29px;
-      height: 11px;
-      font-size: 13px;
-      line-height: 30px;
-      color: rgba(177, 177, 177, 1);
     }
   }
 }

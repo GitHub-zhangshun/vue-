@@ -4,7 +4,18 @@
  */
 import Request from '../common/request';
 /**
- * Community module's api.
+ * Common api.
+ * @param commonUploadSingleImg 通用上传单张图片接口。
+ * @param commonUploadMultipleImgs 通用上传多张图片接口。
+ * @param unFollowUser 通用关注、取关用户接口。
+ * @param likeUnlikeShow 通用点赞 show 接口。
+ */
+export const commonUploadSingleImg = (status, imgFile) => Request.file(`/api/v1/show/upload-image?status=${status}`, imgFile);
+export const commonUploadMultipleImgs = (status, imgFiles) => Request.file(`/api/v1/show/upload-images?status=${status}`, imgFiles);
+export const unFollowUser = userId => Request.post(`/api/v1/show/follow/${userId}`, userId);
+export const likeUnlikeShow = showId => Request.post(`/api/v1/show/user-like/${showId}`, showId);
+/**
+ * Community module api.
  * @param getUserToken 模拟登陆获取用户 token 。
  * @param personalInfoData 用户个人主页数据。
  * @param editPersonalInfo 用户个人主页数据。
@@ -14,9 +25,7 @@ import Request from '../common/request';
  * @param indexTagListData 社区主页标签数据。
  * @param listTagsData 列表标签数据。
  * @param tagDetailsData 标签详情页数据。
- * @param showDataBelowTagDetails 标签详情页下 show 数据。
  * @param indexStadiumData 社区主页场馆 item 数据。
- * @param waterFallData 社区瀑布流数据。
  * @param showDetailsData show 详情数据。
  * @param editShowTagsData 社区编辑 show 标签数据。
  * @param productImageData 社区选择产品图详细数据。
@@ -34,9 +43,7 @@ export const indexBannerData = data => Request.get(`/api/v1/show/banners`);
 export const indexTagListData = data => Request.get(`/api/v1/show/preview-tags`);
 export const listTagsData = data => Request.get(`/api/v1/show/tags`);
 export const tagDetailsData = data => Request.get(`/api/v1/show/tags/${data}`);
-export const showDataBelowTagDetails = data => Request.get(`/api/v1/show/tags/${data}/shows`);
 export const indexStadiumData = data => Request.get(`/api/v1/show/stadiums`);
-export const waterFallData = (param, headers) => Request.get(`/api/v1/show/list`, param, headers);
 export const showDetailsData = id => Request.get(`/api/v1/show/getShow/${id}`, id);
 export const editShowTagsData = data => Request.get(`/api/v1/show/create-tags`);
 export const productImageData = data => Request.get(`/api/v1/show/create-products/${data.type}`, data);
@@ -44,13 +51,15 @@ export const deleteUser = userId => Request.post(`/api/v1/show/del-fans/${userId
 export const deleteShow = showId => Request.post(`/api/v1/show/show-del/${showId}`, showId);
 export const releaseShow = data => Request.post(`/api/v1/show/show-create`, data);
 /**
- * Common api.
- * @param commonUploadSingleImg 通用上传单张图片接口。
- * @param commonUploadMultipleImgs 通用上传多张图片接口。
- * @param unFollowUser 通用关注、取关用户接口。
- * @param likeUnlikeShow 通用点赞 show 接口。
+ * Show api.
+ * @param waterFallData 社区主页 show 数据。
+ * @param userReleaseShowData 社区用户发布的 show 数据。
+ * @param userLikeShowData 社区用户点赞的 show 数据。
+ * @param detailsRelatedShowData 社区 show 详情相关的 show 数据。
+ * @param tagRelatedShowData 标签详情相关的 show 数据。
  */
-export const commonUploadSingleImg = (status, imgFile) => Request.file(`/api/v1/show/upload-image?status=${status}`, imgFile);
-export const commonUploadMultipleImgs = (status, imgFiles) => Request.file(`/api/v1/show/upload-images?status=${status}`, imgFiles);
-export const unFollowUser = userId => Request.post(`/api/v1/show/follow/${userId}`, userId);
-export const likeUnlikeShow = showId => Request.post(`/api/v1/show/user-like/${showId}`, showId);
+export const waterFallData = (param, headers) => Request.get(`/api/v1/show/list`, param, headers);
+export const userReleaseShowData = data => Request.get(`/api/v1/show/user-shows/${data.id}`, data);
+export const userLikeShowData = data => Request.get(`/api/v1/show/like-shows/${data.id}`, data);
+export const detailsRelatedShowData = data =>Request.get(`/api/v1/show/getRelation-shows/${data.id}`, data);
+export const tagRelatedShowData = data => Request.get(`/api/v1/show/tags/${data.tag_id}/shows`, data);

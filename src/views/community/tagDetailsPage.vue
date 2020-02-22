@@ -53,13 +53,65 @@
         line-height="3"
         animated
         :swipeable="true"
-        @click="handleClickGetId"
+        @click="handleClickGetType"
       >
         <van-tab v-for="(item, idx) in tabList" :key="idx" :title="item.title">
-          <ShowDetailsContent
-            v-show="tagDetailsData.is_period_enabled === 1 ? true : false"
-            :tabId="computedTabId"
-          />
+          <van-list
+            v-if="tagDetailsData.is_period_enabled === 1 ? true : false"
+            v-model="loading"
+            :finished="finished"
+            :immediate-check="false"
+            :offset="300"
+            finished-text="END"
+            @load="onLoad"
+          >
+            <waterfall
+              :col="2"
+              :data="showData"
+              height="559"
+              @loadmore="handleScrollLoadmore"
+              @scroll="handleScroll"
+              @finish="handleScrollFinish"
+            >
+              <template>
+                <div
+                  class="cell-item"
+                  v-for="(item, index) in showData"
+                  :key="index"
+                >
+                  <img
+                    :src="item.thumb"
+                    @click="handleClick2DetailPage(item.id)"
+                    alt="読み込みエラー"
+                  />
+                  <div class="item-body">
+                    <div class="item-desc">{{ item.content }}</div>
+                    <div class="item-footer">
+                      <div
+                        class="avatar"
+                        @click="handleClick2OthersHomepage(item.user_id)"
+                      >
+                        <img
+                          :src="item.user.avatar"
+                          @error="defaultUserAvatar(item)"
+                          alt="アバター"
+                        />
+                      </div>
+                      <div class="name">{{ item.user.nickname }}</div>
+                      <div
+                        class="like"
+                        :class="item.is_like === 1 ? 'active' : ''"
+                        @click="handleClickLikeShow(item.id)"
+                      >
+                        <i class="iconfont icon-zan"></i>
+                        <div class="like-total">{{ item.likes }}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </waterfall>
+          </van-list>
           <section
             v-show="tagDetailsData.is_period_enabled === 0 ? true : false"
             class="no-activity_wrapper"
@@ -121,7 +173,7 @@ import ShowDetailsContent from "@components/ShowDetailsContent";
 import CountDown from "@components/CountDown.vue";
 import EditShowButton from "@components/community/EditShowButton";
 import PopupDialog from "@components/community/PopupDialog";
-import { tagDetailsData } from "@/api/common";
+import { tagDetailsData, tagRelatedShowData, likeUnlikeShow } from "@/api/common";
 export default {
   name: "tagDetailsPage",
   components: {
@@ -146,8 +198,8 @@ export default {
       ],
       // 没有活动的图标。
       noActIcon: noActivityIcon,
-      // 用来请求数据的 id 。
-      pushTabId: 0,
+      // 用来请求 show 数据的 type 。
+      type: 'hot',
       // 显示标签解释弹窗的标志布尔值。
       isCommentDialog: false,
       // 存放标签详细数据的数组。
@@ -155,25 +207,62 @@ export default {
       // 存放轮播图片数据。
       bannerImg: [],
       // 活动开始和结束时间。
-      start_at: '',
-      end_at: '',
+      start_at: "",
+      end_at: "",
       // 是否展示弹窗的标志变量。
-      isShownTheEditShowDialog: false
+      isShownTheEditShowDialog: false,
+      // show 列表数据。
+      showData: [],
+      // 加载更多数据的标志。
+      currentPage: 1,
+      lastPage: 0,
+      loading: false,
+      finished: false
     };
-  },
-  computed: {
-    // 实时改变用于请求数据的 id ，进行参数传递。
-    computedTabId() {
-      return this.pushTabId;
-    }
   },
   mounted() {
     this.getTagDetailsData();
+    this.getTagRelatedShowData();
   },
   methods: {
     // 点击 tab item 改变用于请求数据的 id 。
-    handleClickGetId(name) {
-      this.pushTabId = name;
+    handleClickGetType(name) {
+      if(name === 0) {
+        this.type = 'hot';
+      }
+      else if(name === 1) {
+        this.type = 'new';
+      }
+    },
+    // 点击跳转详 show 情页面。
+    handleClick2DetailPage(id) {
+      this.$router.push({
+        name: "showDetailsPage",
+        params: {
+          id: id
+        }
+      });
+    },
+    // 点击头像跳转他人主页。
+    handleClick2OthersHomepage(id) {
+      this.$router.push({
+        name: "othersHomepage",
+        params: {
+          user_id: id
+        }
+      });
+    },
+    // 点赞。
+    async handleClickLikeShow(id) {
+      let res = await likeUnlikeShow(id);
+      if (res.code !== 200) {
+        this.$toast("もう一度やり直してください！");
+      }
+      this.reload();
+    },
+    // 头像为空显示默认图片。
+    defaultUserAvatar(item) {
+      item.user.avatar = require("../../assets/img/default-user-avatar.png");
     },
     // 显示、关闭标签解释弹窗的方法。
     handleClickShowCommentDialog() {
@@ -185,11 +274,11 @@ export default {
     // 获取 tag 详细数据方法。
     async getTagDetailsData() {
       let res = await tagDetailsData(this.$route.params.tag_id);
+      // console.info(res);
       this.tagDetailsData = res.data;
       this.bannerImg = res.data.show_image;
       this.start_at = String(res.data.start_at);
       this.end_at = String(res.data.end_at);
-      // console.info(typeof this.start_at, this.end_at);
     },
     // 显示、关闭编辑 show 弹窗的方法。
     handleClick2ShowEditShowDialog() {
@@ -197,7 +286,49 @@ export default {
     },
     handleClick2CloseEditShowDialog() {
       this.isShownTheEditShowDialog = !this.isShownTheEditShowDialog;
-    }
+    },
+    // 获取标签下 show 列表数据。
+    async getTagRelatedShowData() {
+      let res = await tagRelatedShowData({
+        tag_id: this.$route.params.tag_id,
+        type: this.type,
+        page: this.currentPage
+      });
+      this.lastPage = res.data.last_page;
+      this.showData = res.data.data;
+    },
+    // 获取更多 show 数据。
+    async getMoreShowData() {
+      let res = await tagRelatedShowData({
+        tag_id: this.$route.params.tag_id,
+        type: this.type,
+        page: this.currentPage
+      });
+      if(res.data.data) {
+        res.data.data.map(item => {
+          this.showData.push(item);
+        });
+      }
+    },
+    // 触底加载更多方法。
+    onLoad() {
+      this.loading = true;
+      if(this.currentPage < this.lastPage) {
+        this.getMoreShowData();
+        this.loading = false;
+        this.finished = true;
+      }
+      else {
+        this.loading = false;
+        this.finished = true;
+      }
+    },
+    // 判断是否加载完毕数据的方法。
+    handleScrollFinish() {},
+    // 滚动加载数据信息的方法。
+    handleScroll(scrollData) {},
+    // 滚动加载更多数据的方法。
+    handleScrollLoadmore() {}
   }
 };
 </script>

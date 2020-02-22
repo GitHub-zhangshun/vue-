@@ -1,8 +1,6 @@
 import axios from "axios";
 import env from "@/config/env";
 import loginStore from "@/store/community/login";
-// mock 数据地址。
-const MOCKURL = "";
 /**
  * 自定义 Axios 实例。
  * @param baseURL 接口地址前缀。 PS. 可以直接填写，也可以在 .env 文件中进行配置。
@@ -11,17 +9,12 @@ const MOCKURL = "";
  */
 const AJAX = axios.create({
   baseURL: process.env.VUE_APP_API,
-  timeout: 30000
-  // withCredentials: env.credential
+  timeout: 30000,
+  withCredentials: env.credential
 });
 // 添加请求拦截器。
 AJAX.interceptors.request.use(
   function(config) {
-    // 在发送请求之前的操作，例如对每个请求添加 token 。
-    // if (process.env.NODE_ENV === 'development') {
-    // 自定义反向代理，可以在 demo 阶段打开看下请求效果。
-    //   config.url = `http://${location.host}` + config.url;
-    // }
     if (loginStore.state.token) {
       // 判断是否存在 token，如果存在的话，则每个 http header 都加上 token 。
       config.headers.Authorization = `${loginStore.state.token}`;

@@ -103,7 +103,59 @@
       </div>
     </section>
     <BlockInterval />
-    <ShowDetailsContent title="関連SHOW" :tabId="2" />
+    <van-list
+      v-if="total === 0 ? false : true"
+      v-model="loading"
+      :finished="finished"
+      :immediate-check="false"
+      :offset="300"
+      finished-text="END"
+      @load="onLoad"
+    >
+      <h1 class="details-title_wrapper">関連SHOW</h1>
+      <waterfall
+        :col="2"
+        :data="showListData"
+        height="559"
+        @loadmore="handleScrollLoadmore"
+        @scroll="handleScroll"
+        @finish="handleScrollFinish"
+      >
+        <template>
+          <div class="cell-item" v-for="(item, index) in showListData" :key="index">
+            <img
+              :src="item.thumb"
+              @click="handleClick2DetailPage(item.id)"
+              alt="読み込みエラー"
+            />
+            <div class="item-body">
+              <div class="item-desc">{{ item.content }}</div>
+              <div class="item-footer">
+                <div
+                  class="avatar"
+                  @click="handleClick2OthersHomepage(item.user_id)"
+                >
+                  <img
+                    :src="item.user.avatar"
+                    @error="defaultUserAvatar(item)"
+                    alt="アバター"
+                  />
+                </div>
+                <div class="name">{{ item.user.nickname }}</div>
+                <div
+                  class="like"
+                  :class="item.is_like === 1 ? 'active' : ''"
+                  @click="handleClickLikeShowInList(item.id)"
+                >
+                  <i class="iconfont icon-zan"></i>
+                  <div class="like-total">{{ item.likes }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </template>
+      </waterfall>
+    </van-list>
     <section class="like-wrapper" v-if="showData.is_show === 0 ? true : false">
       <div
         v-if="showData.is_like === 0 ? true : false"
@@ -129,20 +181,19 @@ import beforeLikeIcon from "@/assets/img/before-like-icon.png";
 import afterLikeIcon from "@/assets/img/after-like-icon.png";
 import SaleIcon from "@components/community/SaleIcon";
 import BlockInterval from "@components/community/BlockInterval";
-import ShowDetailsContent from "@components/ShowDetailsContent";
 import { Dialog } from "vant";
 import {
   showDetailsData,
   unFollowUser,
   deleteShow,
-  likeUnlikeShow
+  likeUnlikeShow,
+  detailsRelatedShowData
 } from "@/api/common";
 export default {
   name: "ShowDetailsPage",
   components: {
     BlockInterval,
     SaleIcon,
-    ShowDetailsContent,
     "van-dialog": Dialog.Component
   },
   data() {
@@ -159,7 +210,16 @@ export default {
       // show 关联商品数据。
       relatedGoodsData: [],
       // show 详细数据。
-      showData: {}
+      showData: {},
+      // show 列表数据。
+      showListData: [],
+      // 是否显示关联 show 区域。
+      total: 1,
+      // 加载更多所需数据。
+      currentPage: 1,
+      lastPage: 0,
+      loading: false,
+      finished: false
     };
   },
   inject: ["reload"],
@@ -167,11 +227,13 @@ export default {
     // 当前页面点击 show 详情，数据重新获取。
     $route(to, from) {
       this.getShowDetailsData(to.params.id);
+      this.getDetailsRelatedShowData(to.params.id);
       next();
     }
   },
   mounted() {
     this.getShowDetailsData(this.$route.params.id);
+    this.getDetailsRelatedShowData(this.$route.params.id);
   },
   methods: {
     // 获取 show 详细数据方法。
@@ -199,6 +261,36 @@ export default {
     },
     handleClickFollowUser(id) {
       unFollowUser(id);
+      this.reload();
+    },
+    // 点击列表 show 跳转详 show 情页面。
+    handleClick2DetailPage(id) {
+      this.$router.push({
+        name: "showDetailsPage",
+        params: {
+          id: id
+        }
+      });
+    },
+    // 点击头像跳转他人主页。
+    handleClick2OthersHomepage(id) {
+      this.$router.push({
+        name: "othersHomepage",
+        params: {
+          user_id: id
+        }
+      });
+    },
+    // 头像为空显示默认图片。
+    defaultUserAvatar(item) {
+      item.user.avatar = require('../../assets/img/default-user-avatar.png');
+    },
+    // 点赞 show 列表。
+    async handleClickLikeShowInList(id) {
+      let res = await likeUnlikeShow(id);
+      if (res.code !== 200) {
+        this.$toast("もう一度やり直してください！");
+      }
       this.reload();
     },
     // 点击删除按钮方法。
@@ -239,7 +331,48 @@ export default {
     handleClickUnlikeShow(id) {
       likeUnlikeShow(id);
       this.reload();
-    }
+    },
+    // 获取产品详情相关 show 列表数据。
+    async getDetailsRelatedShowData(id) {
+      let res = await detailsRelatedShowData({
+        id: id,
+        page: this.currentPage
+      });
+      this.lastPage = res.data.last_page;
+      this.total = res.data.total;
+      this.showListData = res.data.data;
+    },
+    // 获取更多产品详情相关 show 列表数据。
+    async getMoreShowData(id) {
+      let res = await detailsRelatedShowData({
+        id: id,
+        page: this.currentPage
+      });
+      if(res.data.data) {
+        res.data.data.map(item => {
+          this.showListData.push(item);
+        });
+      }
+    },
+    // 触底加载更多数据。
+    onLoad() {
+      this.loading = true;
+      if(this.currentPage < this.lastPage) {
+        this.getMoreShowData(this.$route.params.id);
+        this.loading = false;
+        this.finished = true;
+      }
+      else {
+        this.loading = false;
+        this.finished = true;
+      }
+    },
+    // 判断是否加载完毕数据的方法。
+    handleScrollFinish() {},
+    // 滚动加载数据信息的方法。
+    handleScroll(scrollData) {},
+    // 滚动加载更多数据的方法。
+    handleScrollLoadmore() {}
   }
 };
 </script>
@@ -445,6 +578,87 @@ export default {
       }
     }
   }
+  .details-title_wrapper {
+    height: 15px;
+    padding: 14px 0px 0px 14.5px;
+    margin-bottom: 22.5px;
+    font-size: 15px;
+    font-family: Source Han Sans CN;
+    font-weight: 500;
+    color: rgba(21, 21, 21, 1);
+  }
+  .vue-waterfall {
+    padding: 12.5px 7px 28.5px;
+    .cell-item {
+      width: 100%;
+      padding: 0px 5px 5px;
+      overflow: hidden;
+      box-sizing: border-box;
+      img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-radius: 10px;
+      }
+      .item-body {
+        padding: 13.5px 14.5px 13px 0px;
+        .item-desc {
+          width: 157px;
+          height: 32px;
+          font-size: 12px;
+          line-height: 16px;
+          @include ellipsis($line: 2, $line-height: 16px);
+          color: rgba(44, 44, 44, 1);
+        }
+        .item-footer {
+          position: relative;
+          display: flex;
+          align-items: center;
+          margin-top: 13px;
+          .avatar {
+            width: 18px;
+            height: 18px;
+            img {
+              width: 100%;
+              height: 100%;
+              border-radius: 50%;
+            }
+          }
+          .name {
+            width: 85px;
+            margin-left: 3px;
+            font-size: 13px;
+            color: rgba(165, 165, 165, 1);
+            @include ellipsis($line: 1, $line-height: 1.2);
+          }
+          .like {
+            position: absolute;
+            right: 0;
+            display: flex;
+            align-items: center;
+            &.active {
+              i {
+                color: #e26a9a;
+              }
+              .like-total {
+                color: #e26a9a;
+              }
+            }
+            i {
+              display: block;
+              width: 17.5px;
+              font-size: 12px;
+            }
+            .like-total {
+              width: 22px;
+              font-size: 12px;
+              color: rgba(21, 21, 21, 1);
+            }
+          }
+        }
+      }
+    }
+  }
   .like-wrapper {
     @include flr();
     position: fixed;
@@ -467,8 +681,8 @@ export default {
       box-shadow: 0px -1px 7px 0px rgba(249, 229, 235, 1);
       border-radius: 50%;
       img {
-        width: 100%;
-        height: 100%;
+        width: 20px;
+        height: 20px;
       }
       span {
         color: rgba(219, 153, 168, 1);
@@ -482,8 +696,8 @@ export default {
       box-shadow: 0px -1px 7px 0px rgba(249, 229, 235, 1);
       border-radius: 50%;
       img {
-        width: 100%;
-        height: 100%;
+        width: 20px;
+        height: 20px;
       }
       span {
         color: rgba(226, 106, 154, 1);
