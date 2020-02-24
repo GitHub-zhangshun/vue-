@@ -31,7 +31,7 @@ export default {
   computed: {
     // 是否显示更多按钮。
     isShownMoreButton() {
-      return this.tagsListData.length >= 5 ? true : false;
+      return this.tagsListData.length >= 6 ? true : false;
     },
   },
   mounted() {

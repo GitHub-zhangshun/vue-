@@ -7,7 +7,7 @@
         autosize
         type="textarea"
         maxlength="1000"
-        placeholder="写点什么和大家分享下？（1000字以内）"
+        placeholder="投稿説明を入力してください（１０００字以内）"
         show-word-limit
       />
     </section>
@@ -27,7 +27,7 @@
       <p>{{ fileList.length }}/9</p>
     </section>
     <section class="tags-switch_wrapper">
-      <p>标签选择<span>有机会赢好礼</span></p>
+      <p>tagを選ぶ<span>プレゼントGET</span></p>
       <div class="tags-area">
         <div
           class="tags-checkbox_item"

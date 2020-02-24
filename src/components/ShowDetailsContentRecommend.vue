@@ -38,8 +38,8 @@
                 <div class="name">{{ item.user.nickname }}</div>
                 <div
                   class="like"
+                  @click="handleClickLikeShow(item.id, item)"
                   :class="item.is_like === 1 ? 'active' : ''"
-                  @click="handleClickLikeShow(item.id)"
                 >
                   <i class="iconfont icon-zan"></i>
                   <div class="like-total">{{ item.likes }}</div>
@@ -147,12 +147,15 @@ export default {
       });
     },
     // 点赞。
-    async handleClickLikeShow(id) {
+    async handleClickLikeShow(id, item) {
       let res = await likeUnlikeShow(id);
-      if (res.code !== 200) {
-        this.$toast("もう一度やり直してください！");
+      if (res.code === 200) {
+        item.is_liked = res.data.is_liked;
+        item.likes = res.data.likes;
       }
-      this.reload();
+      else {
+        this.$toast("操作に失敗しました！");
+      }
     },
     // 判断是否加载完毕数据的方法。
     handleScrollFinish() {},
