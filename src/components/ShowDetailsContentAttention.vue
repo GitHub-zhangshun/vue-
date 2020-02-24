@@ -39,7 +39,7 @@
                 <div
                   class="like"
                   :class="item.is_like === 1 ? 'active' : ''"
-                  @click="handleClickLikeShow(item.id)"
+                  @click="handleClickLikeShow(item)"
                 >
                   <i class="iconfont icon-zan"></i>
                   <div class="like-total">{{ item.likes }}</div>
@@ -63,7 +63,6 @@ export default {
       type: Object
     }
   },
-  inject: ["reload"],
   data() {
     return {
       // 用于请求的页数。
@@ -147,12 +146,15 @@ export default {
       });
     },
     // 点赞。
-    async handleClickLikeShow(id) {
-      let res = await likeUnlikeShow(id);
-      if (res.code !== 200) {
-        this.$toast("もう一度やり直してください！");
+    async handleClickLikeShow(item) {
+      let res = await likeUnlikeShow(item.id);
+      if (res.code === 200) {
+        item.is_like = res.data.is_liked;
+        item.likes = res.data.likes;
       }
-      this.reload();
+      else {
+        this.$toast("操作に失敗しました！");
+      }
     },
     // 判断是否加载完毕数据的方法。
     handleScrollFinish() {},

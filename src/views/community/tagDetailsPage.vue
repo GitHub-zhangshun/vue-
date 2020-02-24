@@ -57,7 +57,7 @@
       >
         <van-tab v-for="(item, idx) in tabList" :key="idx" :title="item.title">
           <van-list
-            v-if="tagDetailsData.is_period_enabled === 1 ? true : false"
+            v-if="showData.length > 0 ? true : false"
             v-model="loading"
             :finished="finished"
             :immediate-check="false"
@@ -113,7 +113,7 @@
             </waterfall>
           </van-list>
           <section
-            v-show="tagDetailsData.is_period_enabled === 0 ? true : false"
+            v-if="showData.length > 0 ? false : true"
             class="no-activity_wrapper"
           >
             <div>
@@ -173,7 +173,11 @@ import ShowDetailsContent from "@components/ShowDetailsContent";
 import CountDown from "@components/CountDown.vue";
 import EditShowButton from "@components/community/EditShowButton";
 import PopupDialog from "@components/community/PopupDialog";
-import { tagDetailsData, tagRelatedShowData, likeUnlikeShow } from "@/api/common";
+import {
+  tagDetailsData,
+  tagRelatedShowData,
+  likeUnlikeShow
+} from "@/api/common";
 export default {
   name: "tagDetailsPage",
   components: {
@@ -199,10 +203,10 @@ export default {
       // 没有活动的图标。
       noActIcon: noActivityIcon,
       // 用来请求 show 数据的 type 。
-      type: 'hot',
+      type: "hot",
       // 显示标签解释弹窗的标志布尔值。
       isCommentDialog: false,
-      // 存放标签详细数据的数组。
+      // 存放标签详细数据的对象。
       tagDetailsData: {},
       // 存放轮播图片数据。
       bannerImg: [],
@@ -227,11 +231,10 @@ export default {
   methods: {
     // 点击 tab item 改变用于请求数据的 id 。
     handleClickGetType(name) {
-      if(name === 0) {
-        this.type = 'hot';
-      }
-      else if(name === 1) {
-        this.type = 'new';
+      if (name === 0) {
+        this.type = "hot";
+      } else if (name === 1) {
+        this.type = "new";
       }
     },
     // 点击跳转详 show 情页面。
@@ -274,7 +277,6 @@ export default {
     // 获取 tag 详细数据方法。
     async getTagDetailsData() {
       let res = await tagDetailsData(this.$route.params.tag_id);
-      // console.info(res);
       this.tagDetailsData = res.data;
       this.bannerImg = res.data.show_image;
       this.start_at = String(res.data.start_at);
@@ -304,7 +306,7 @@ export default {
         type: this.type,
         page: this.currentPage
       });
-      if(res.data.data) {
+      if (res.data.data) {
         res.data.data.map(item => {
           this.showData.push(item);
         });
@@ -313,12 +315,11 @@ export default {
     // 触底加载更多方法。
     onLoad() {
       this.loading = true;
-      if(this.currentPage < this.lastPage) {
+      if (this.currentPage < this.lastPage) {
         this.getMoreShowData();
         this.loading = false;
         this.finished = true;
-      }
-      else {
+      } else {
         this.loading = false;
         this.finished = true;
       }
@@ -360,7 +361,8 @@ export default {
       font-family: Source Han Sans CN;
       text-align: center;
       div:nth-child(1) {
-        padding: 19px 0px 16px 0px;
+        // padding: 19px 0px 16px 0px;
+        margin: 19px 0px 16px 0px;
         font-size: 16px;
         font-weight: bold;
         color: rgba(21, 21, 21, 1);
@@ -397,6 +399,78 @@ export default {
           font-family: Source Han Sans CN;
           font-weight: 500;
           color: rgba(255, 255, 255, 1);
+        }
+      }
+    }
+  }
+  .vue-waterfall {
+    padding: 12.5px 7px 28.5px;
+    .cell-item {
+      width: 100%;
+      padding: 0px 5px 5px;
+      overflow: hidden;
+      box-sizing: border-box;
+      img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-radius: 10px;
+      }
+      .item-body {
+        padding: 13.5px 14.5px 13px 0px;
+        .item-desc {
+          width: 157px;
+          height: 32px;
+          font-size: 12px;
+          line-height: 16px;
+          @include ellipsis($line: 2, $line-height: 16px);
+          color: rgba(44, 44, 44, 1);
+        }
+        .item-footer {
+          position: relative;
+          display: flex;
+          align-items: center;
+          margin-top: 13px;
+          .avatar {
+            width: 18px;
+            height: 18px;
+            img {
+              width: 100%;
+              height: 100%;
+              border-radius: 50%;
+            }
+          }
+          .name {
+            width: 85px;
+            margin-left: 3px;
+            font-size: 13px;
+            color: rgba(165, 165, 165, 1);
+            @include ellipsis($line: 1, $line-height: 1.2);
+          }
+          .like {
+            position: absolute;
+            right: 0;
+            display: flex;
+            align-items: center;
+            &.active {
+              i {
+                color: #e26a9a;
+              }
+              .like-total {
+                color: #e26a9a;
+              }
+            }
+            i {
+              display: block;
+              width: 17.5px;
+              font-size: 12px;
+            }
+            .like-total {
+              width: 22px;
+              font-size: 12px;
+              color: rgba(21, 21, 21, 1);
+            }
+          }
         }
       }
     }

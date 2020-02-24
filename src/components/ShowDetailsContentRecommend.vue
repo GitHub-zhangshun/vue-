@@ -38,7 +38,7 @@
                 <div class="name">{{ item.user.nickname }}</div>
                 <div
                   class="like"
-                  @click="handleClickLikeShow(item.id, item)"
+                  @click="handleClickLikeShow(item)"
                   :class="item.is_like === 1 ? 'active' : ''"
                 >
                   <i class="iconfont icon-zan"></i>
@@ -63,7 +63,6 @@ export default {
       type: Object
     }
   },
-  inject: ["reload"],
   data() {
     return {
       // 用于请求的页数。
@@ -147,10 +146,10 @@ export default {
       });
     },
     // 点赞。
-    async handleClickLikeShow(id, item) {
-      let res = await likeUnlikeShow(id);
+    async handleClickLikeShow(item) {
+      let res = await likeUnlikeShow(item.id);
       if (res.code === 200) {
-        item.is_liked = res.data.is_liked;
+        item.is_like = res.data.is_liked;
         item.likes = res.data.likes;
       }
       else {

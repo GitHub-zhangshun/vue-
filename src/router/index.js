@@ -64,20 +64,27 @@ const router = new Router({
     {
       path: "/",
       component: Community,
-      children: community
+      children: community,
+      meta: {
+        savePosition: true
+      }
     },
     {
       path: "/personalHomepage",
       name: "personalHomepage",
       component: PersonalHomepage,
       meta: {
-        requiresAuth: true
+        requiresAuth: true,
+        savePosition: true
       }
     },
     {
       path: "/othersHomepage/?userId=:user_id",
       name: "othersHomepage",
-      component: OthersHomepage
+      component: OthersHomepage,
+      meta: {
+        savePosition: true
+      }
     },
     {
       path: "/changePersonalPageBg",
@@ -92,12 +99,18 @@ const router = new Router({
     {
       path: "/personalInteraction/?userId=:userId",
       name: "personalInteraction",
-      component: PersonalInteraction
+      component: PersonalInteraction,
+      meta: {
+        savePosition: true
+      }
     },
     {
       path: "/othersInteraction/?userId=:userId",
       name: "othersInteraction",
-      component: OthersInteraction
+      component: OthersInteraction,
+      meta: {
+        savePosition: true
+      }
     },
     {
       path: "/showDetailsPage/?id=:id",
@@ -107,12 +120,18 @@ const router = new Router({
     {
       path: "/showTagsPage",
       name: "showTagsPage",
-      component: ShowTagsPage
+      component: ShowTagsPage,
+      meta: {
+        savePosition: true
+      }
     },
     {
       path: "/tagDetailsPage/?tag_id=:tag_id",
       name: "tagDetailsPage",
-      component: TagDetailsPage
+      component: TagDetailsPage,
+      meta: {
+        savePosition: true
+      }
     },
     {
       path: "/shield",
@@ -126,9 +145,10 @@ const router = new Router({
   ],
   scrollBehavior(to, from, savedPosition) {
     // 如果存在记录位置，保持路由跳转页面位置不变。
-    if (savedPosition) {
+    if (savedPosition && to.meta.savePosition) {
       return savedPosition;
-    } else {
+    }
+    else {
       return {
         x: 0,
         y: 0

@@ -21,7 +21,7 @@
         <input type="text" v-model="name" placeholder="ニックネーム">
       </div>
       <div class="edit-info_wrapper">
-        <textarea name="" v-model="info" id="" placeholder="プロフィールを書く"></textarea>
+        <textarea name="" maxlength="20" v-model="info" id="" placeholder="プロフィールを書く"></textarea>
       </div>
     </section>
     <section class="submit-button" @click="handleClickSubmitPersonalInfo">確認</section>
