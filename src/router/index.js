@@ -169,7 +169,6 @@ router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
     // 判断当前是否有登录的权限。
     if (!loginStore.state.token) {
-      console.info('请登录');
       next({
         path: "/community/show-details-content/recommend"
         // query: { redirect: to.fullPath }

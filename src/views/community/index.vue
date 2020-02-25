@@ -138,9 +138,12 @@ export default {
       //   }),
       //   userToken = res.data.token;
       let url = window.location.href;
-      let userToken = url.split('?')[1];
-      // 显示提交，存储 token 到 localStorage、vuex 中。
-      this.$store.commit(types.USER_LOG_IN, userToken);
+      if(url.indexOf('token') !== -1) {
+        let txt = url.split('?')[1];
+        let userToken = txt.split('=')[1];
+        // 显示提交，存储 token 到 localStorage、vuex 中。
+        this.$store.commit(types.USER_LOG_IN, userToken);
+      }
     }
   }
 };
