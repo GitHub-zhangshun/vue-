@@ -14,6 +14,7 @@
           <img
             :src="showData.user.avatar"
             @error="defaultAvatarImg(showData)"
+            @click="handleClick2UserPage(showData)"
             alt="アバター"
           />
         </div>
@@ -37,14 +38,14 @@
           <div
             class="follow-button_wrapper"
             v-if="showData.is_follow === 1 ? true : false"
-            @click="handleClickUnfollowUser(showData.user_id)"
+            @click="handleClickUnfollowUser(showData)"
           >
             フォロー中
           </div>
           <div
             class="unfollow-button_wrapper"
             v-if="showData.is_follow === 0 ? true : false"
-            @click="handleClickFollowUser(showData.user_id)"
+            @click="handleClickFollowUser(showData)"
           >
             フォローする
           </div>
@@ -61,7 +62,7 @@
       <div class="info-extra_wrapper">
         <div>
           <i class="iconfont icon-eye"></i>{{ showData.views }}
-          <p :class="showData.is_like === 1 ? 'active' : ''">
+          <p>
             <i class="iconfont icon-zan"></i><span>{{ showData.likes }}</span>
           </p>
         </div>
@@ -80,7 +81,7 @@
           v-for="(item, idx) in relatedGoodsData"
           :key="idx"
         >
-          <div>
+          <div @click="handleClick2ProductPage">
             <img :src="item.product_thumb" alt="関連製品図" />
           </div>
           <div>
@@ -122,7 +123,11 @@
         @finish="handleScrollFinish"
       >
         <template>
-          <div class="cell-item" v-for="(item, index) in showListData" :key="index">
+          <div
+            class="cell-item"
+            v-for="(item, index) in showListData"
+            :key="index"
+          >
             <img
               :src="item.thumb"
               @click="handleClick2DetailPage(item.id)"
@@ -145,7 +150,7 @@
                 <div
                   class="like"
                   :class="item.is_like === 1 ? 'active' : ''"
-                  @click="handleClickLikeShowInList(item.id)"
+                  @click="handleClickLikeShowInList(item)"
                 >
                   <i class="iconfont icon-zan"></i>
                   <div class="like-total">{{ item.likes }}</div>
@@ -159,14 +164,14 @@
     <section class="like-wrapper" v-if="showData.is_show === 0 ? true : false">
       <div
         v-if="showData.is_like === 0 ? true : false"
-        @click="handleClickLikeShow(showData.id)"
+        @click="handleClickLikeShow(showData)"
       >
         <img :src="unLikeIcon" alt="いいね" />
         <span>{{ showData.likes }}</span>
       </div>
       <div
         v-if="showData.is_like === 1 ? true : false"
-        @click="handleClickUnlikeShow(showData.id)"
+        @click="handleClickUnlikeShow(showData)"
       >
         <img :src="likeIcon" alt="いいね" />
         <span>{{ showData.likes }}</span>
@@ -187,7 +192,8 @@ import {
   unFollowUser,
   deleteShow,
   likeUnlikeShow,
-  detailsRelatedShowData
+  detailsRelatedShowData,
+  productConfig
 } from "@/api/common";
 export default {
   name: "ShowDetailsPage",
@@ -222,7 +228,6 @@ export default {
       finished: false
     };
   },
-  inject: ["reload"],
   watch: {
     // 当前页面点击 show 详情，数据重新获取。
     $route(to, from) {
@@ -244,9 +249,9 @@ export default {
       this.relatedGoodsData = res.data.products;
       this.showData = res.data;
       // 如果 show 违规跳转页面。
-      if(res.code !== 200) {
+      if (res.code !== 200) {
         this.$router.push({
-          name: 'shield'
+          name: "shield"
         });
       }
     },
@@ -254,14 +259,38 @@ export default {
     defaultAvatarImg(item) {
       item.user.avatar = require("../../assets/img/default-user-avatar.png");
     },
-    // 关注、取关 show 所属用户操作。
-    handleClickUnfollowUser(id) {
-      unFollowUser(id);
-      this.reload();
+    // 点击头像跳转用户页。
+    handleClick2UserPage(item) {
+      if(item.is_show === 1) {
+        this.$router.push({
+          name: 'personalHomepage'
+        });
+      }
+      else {
+        this.$router.push({
+          name: "othersHomepage",
+          params: {
+            user_id: item.user.id
+          }
+        });
+      }
     },
-    handleClickFollowUser(id) {
-      unFollowUser(id);
-      this.reload();
+    // 关注、取关 show 所属用户操作。
+    async handleClickUnfollowUser(item) {
+      let res = await unFollowUser(item.id);
+      if (res.code === 200) {
+        item.is_follow = 0;
+      } else {
+        this.$toast("操作に失敗しました！");
+      }
+    },
+    async handleClickFollowUser(item) {
+      let res = await unFollowUser(item.id);
+      if (res.code === 200) {
+        item.is_follow = 1;
+      } else {
+        this.$toast("操作に失敗しました！");
+      }
     },
     // 点击列表 show 跳转详 show 情页面。
     handleClick2DetailPage(id) {
@@ -283,15 +312,17 @@ export default {
     },
     // 头像为空显示默认图片。
     defaultUserAvatar(item) {
-      item.user.avatar = require('../../assets/img/default-user-avatar.png');
+      item.user.avatar = require("../../assets/img/default-user-avatar.png");
     },
     // 点赞 show 列表。
-    async handleClickLikeShowInList(id) {
-      let res = await likeUnlikeShow(id);
-      if (res.code !== 200) {
-        this.$toast("もう一度やり直してください！");
+    async handleClickLikeShowInList(item) {
+      let res = await likeUnlikeShow(item.id);
+      if (res.code === 200) {
+        item.is_like = res.data.is_liked;
+        item.likes = res.data.likes;
+      } else {
+        this.$toast("操作に失敗しました！");
       }
-      this.reload();
     },
     // 点击删除按钮方法。
     handleClickDeleteShow(id) {
@@ -324,13 +355,23 @@ export default {
       });
     },
     // 点赞和取消点赞的操作。
-    handleClickLikeShow(id) {
-      likeUnlikeShow(id);
-      this.reload();
+    async handleClickLikeShow(item) {
+      let res = await likeUnlikeShow(item.id);
+      if (res.code === 200) {
+        item.is_like = res.data.is_liked;
+        item.likes = res.data.likes;
+      } else {
+        this.$toast("操作に失敗しました！");
+      }
     },
-    handleClickUnlikeShow(id) {
-      likeUnlikeShow(id);
-      this.reload();
+    async handleClickUnlikeShow(item) {
+      let res = await likeUnlikeShow(item.id);
+      if (res.code === 200) {
+        item.is_like = res.data.is_liked;
+        item.likes = res.data.likes;
+      } else {
+        this.$toast("操作に失敗しました！");
+      }
     },
     // 获取产品详情相关 show 列表数据。
     async getDetailsRelatedShowData(id) {
@@ -348,7 +389,7 @@ export default {
         id: id,
         page: this.currentPage
       });
-      if(res.data.data) {
+      if (res.data.data) {
         res.data.data.map(item => {
           this.showListData.push(item);
         });
@@ -357,14 +398,22 @@ export default {
     // 触底加载更多数据。
     onLoad() {
       this.loading = true;
-      if(this.currentPage < this.lastPage) {
+      if (this.currentPage < this.lastPage) {
         this.getMoreShowData(this.$route.params.id);
         this.loading = false;
         this.finished = true;
-      }
-      else {
+      } else {
         this.loading = false;
         this.finished = true;
+      }
+    },
+    // 点击关联产品跳转老系统产品详情。
+    async handleClick2ProductPage() {
+      let res = await productConfig({
+        key: 'show_web_url'
+      });
+      if(res.code === 200) {
+        window.location.href = `${res.data}`;
       }
     },
     // 判断是否加载完毕数据的方法。

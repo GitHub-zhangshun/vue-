@@ -1,7 +1,7 @@
 <template>
   <section class="change-info_wrapper">
     <section class="avatar-wrapper">
-      <img :src="avatarSrc" alt="" />
+      <img :src="avatarSrc" alt="アバター" @error="defaultAvatar(avatarSrc)" />
     </section>
     <van-uploader
       v-model="fileList"
@@ -52,6 +52,10 @@ export default {
     this.getPersonalInfoData();
   },
   methods: {
+    // 头像默认展示。
+    defaultAvatar(item) {
+      item = require('../../assets/img/default-user-avatar.png');
+    },
     // 获取个人信息数据的方法。
     async getPersonalInfoData() {
       let res = await personalInfoData();

@@ -32,6 +32,7 @@ export const likeUnlikeShow = showId => Request.post(`/api/v1/show/user-like/${s
  * @param deleteUser 通用删除粉丝接口。
  * @param deleteShow 通用删除 show 接口。
  * @param releaseShow 通用发布 show 接口。
+ * @param productConfig 通用获取商品配置信息接口。
  */
 export const getUserToken = userInfo => Request.post(`/api/v1/show/login`, userInfo);
 export const personalInfoData = data => Request.get(`/api/v1/show/getUser`);
@@ -50,6 +51,7 @@ export const productImageData = data => Request.get(`/api/v1/show/create-product
 export const deleteUser = userId => Request.post(`/api/v1/show/del-fans/${userId}`, userId);
 export const deleteShow = showId => Request.post(`/api/v1/show/show-del/${showId}`, showId);
 export const releaseShow = data => Request.post(`/api/v1/show/show-create`, data);
+export const productConfig = data => Request.get(`/api/v1/show/config`, data);
 /**
  * Show api.
  * @param waterFallData 社区主页 show 数据。

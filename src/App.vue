@@ -1,12 +1,12 @@
 <template>
   <div id="app">
     <Layout>
-      <transition
-        enter-active-class="animated fadeIn"
-        leave-active-class="animated fadeOut"
-      >
-        <router-view v-if="isRouterAlive" />
-      </transition>
+        <transition
+          enter-active-class="animated fadeIn"
+          leave-active-class="animated fadeOut"
+        >
+          <router-view v-if="isRouterAlive" />
+        </transition>
     </Layout>
   </div>
 </template>

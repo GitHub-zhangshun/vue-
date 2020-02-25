@@ -90,14 +90,14 @@
                 <div
                   v-show="item.is_follow === 1"
                   class="is-attention--button"
-                  @click="handleClickUnfollowFansUser(item.id)"
+                  @click="handleClickUnfollowFansUser(item)"
                 >
                   フォロー中
                 </div>
                 <div
                   v-show="item.is_follow !== 1"
                   class="non-attention--button"
-                  @click="handleClickFollowFansUser(item.id)"
+                  @click="handleClickFollowFansUser(item)"
                 >
                   フォローする
                 </div>
@@ -181,7 +181,6 @@ export default {
       fansFinished: false
     };
   },
-  inject: ["reload"],
   mounted() {
     this.getPersonalAttentionData();
     this.getPersonalFansData();
@@ -206,6 +205,7 @@ export default {
       });
       this.attentionOriginalData = res.data;
       this.attentionData = res.data.data;
+      this.tabList[0].title += `(${res.data.total})`;
       // 获取数据的时候更新我的关注中需要取关的用户 id 数组。
       this.attentionData.map(item => {
         if (item.is_follow === 0) {
@@ -246,9 +246,9 @@ export default {
         id: this.$route.params.userId,
         page: 1 
       });
+      this.tabList[1].title += `(${res.data.total})`;
       this.fansOriginalData = res.data;
       this.fansData = res.data.data;
-      // console.info(this.fansData);
     },
     // 粉丝分页请求数据拼接。
     async getMoreFansData(curPage) {
@@ -286,16 +286,24 @@ export default {
       delTheEleInArray(id, this.attentionUnfollowUserData);
     },
     // 点击按钮取消关注用户（我的粉丝中）。
-    handleClickUnfollowFansUser(id) {
-      console.info(id);
-      unFollowUser(id);
-      this.reload();
+    async handleClickUnfollowFansUser(item) {
+      let res = await unFollowUser(item.id);
+      if(res.code === 200) {
+        item.is_follow = 0;
+      }
+      else {
+        this.$toast("操作に失敗しました！");
+      }
     },
     // 点击按钮继续关注用户（我的粉丝中）。
-    handleClickFollowFansUser(id) {
-      console.info(id);
-      unFollowUser(id);
-      this.reload();
+    async handleClickFollowFansUser(item) {
+      let res = await unFollowUser(item.id);
+      if(res.code === 200) {
+        item.is_follow = 1;
+      }
+      else {
+        this.$toast("操作に失敗しました！");
+      }
     },
     // 调用取关接口进行用户取关操作。
     hanldeUnFollowUser() {
@@ -325,7 +333,6 @@ export default {
         beforeClose: async (action, done) => {
           if (action === "confirm") {
             let res = await deleteUser(id);
-            // console.info(res);
             if (res.code === 200) {
               setTimeout(done, 1500);
               this.reload();

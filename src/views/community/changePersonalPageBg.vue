@@ -62,6 +62,7 @@ export default {
     },
     // 背景图上传完毕之后的回调函数。
     async afterUploading(file) {
+      this.whichButtonShown = !this.whichButtonShown;
       this.bgImgSrc = this.fileList[0].content;
       this.fileList = [];
       // 上传文件到服务器，并获取 id 。
@@ -75,7 +76,7 @@ export default {
     },
     // 点击取消回退页面。
     handleClickCancelUpload() {
-      this.$router.go(-1);
+      history.go(-1);
     },
     // 点击修改个人信息页面背景图。
     async handleClickSubmitBg() {

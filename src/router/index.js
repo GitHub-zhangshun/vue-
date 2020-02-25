@@ -81,10 +81,7 @@ const router = new Router({
     {
       path: "/othersHomepage/?userId=:user_id",
       name: "othersHomepage",
-      component: OthersHomepage,
-      meta: {
-        savePosition: true
-      }
+      component: OthersHomepage
     },
     {
       path: "/changePersonalPageBg",

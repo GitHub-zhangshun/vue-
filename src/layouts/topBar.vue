@@ -80,7 +80,8 @@ export default {
   methods: {
     // 点击 topbar 中各项对应方法。
     handleClickGoBack() {
-      this.$router.go(-1);
+      // 舍弃路由返回，首先因为数据缓存的原因；其次就是嵌套路由导致的 Bug 。
+      history.go(-1);
     },
     handleClick2Sidebar() {
       window.location.href = "https://m-test.sisilily.com/sidebar-page.html";

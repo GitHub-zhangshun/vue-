@@ -19,8 +19,8 @@
     <section class="name-des_wrapper">
       <div>{{ personalInfo.nickname }}</div>
       <div>{{ personalInfo.summary }}</div>
-      <div v-show="personalInfo.is_follow === 1 ? true : false" @click="handleClickUnfollowUser(personalInfo.id)">フォロー中</div>
-      <div v-show="personalInfo.is_follow === 0 ? true : false" @click="handleClickFollowUser(personalInfo.id)">フォローする</div>
+      <div v-show="personalInfo.is_follow === 1 ? true : false" @click="handleClickUnfollowUser(personalInfo)">フォロー中</div>
+      <div v-show="personalInfo.is_follow === 0 ? true : false" @click="handleClickFollowUser(personalInfo)">フォローする</div>
       <div>
         <section @click="handleClick2AttentionPage(personalInfo.id)">
           <span class="interaction-num">{{ personalInfo.followings }} </span
@@ -107,13 +107,23 @@ export default {
       item.avatar = require("../../assets/img/default-user-avatar.png");
     },
     // 关注、取关操作。
-    handleClickUnfollowUser(id) {
-      unFollowUser(id);
-      this.reload();
+    async handleClickUnfollowUser(item) {
+      let res = await unFollowUser(item.id);
+      if(res.code === 200) {
+        item.is_follow = 0;
+      }
+      else {
+        this.$toast("操作に失敗しました！");
+      }
     },
-    handleClickFollowUser(id) {
-      unFollowUser(id);
-      this.reload();
+    async handleClickFollowUser(item) {
+      let res = await unFollowUser(item.id);
+      if(res.code === 200) {
+        item.is_follow = 1;
+      }
+      else {
+        this.$toast("操作に失敗しました！");
+      }
     },
     // 点击跳转关注页面。
     handleClick2AttentionPage(id) {
@@ -148,7 +158,6 @@ export default {
           name: 'personalHomepage'
         })
       }
-      console.info(this.personalInfo);
     }
   }
 }

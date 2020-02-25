@@ -130,8 +130,8 @@ export default {
     // 模拟登陆获取用户 token 。
     async login() {
       let res = await getUserToken({
-          // username: "925614389@qq.com",
-          username: "974331694@qq.com",
+          username: "925614389@qq.com",
+          // username: "974331694@qq.com",
           password: "123456"
         }),
         userToken = res.data.token;
@@ -162,11 +162,11 @@ export default {
 .van-list__finished-text {
   width: 100%;
   height: 30px;
-  font-size:13px;
+  font-size: 13px;
   font-family: ADAM PRO;
   text-align: center;
   line-height: 30px;
-  color: rgba(177,177,177,1);
-  background: rgba(250,250,250,1);
+  color: rgba(177, 177, 177, 1);
+  background: rgba(250, 250, 250, 1);
 }
 </style>

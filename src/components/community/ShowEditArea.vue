@@ -34,7 +34,13 @@
           v-for="(item, idx) in tagsData"
           :key="idx"
         >
-          <input class="input" type="checkbox" name="colors" :value="item.id" v-model="checkedTagId" />
+          <input
+            class="input"
+            type="checkbox"
+            name="colors"
+            :value="item.id"
+            v-model="checkedTagId"
+          />
           <div class="colors">#{{ item.name }}</div>
         </div>
       </div>
@@ -220,7 +226,7 @@ export default {
       imagesArr: []
     };
   },
-  inject: ['reload'],
+  inject: ["reload"],
   computed: {
     // 根据是否选择产品图，改变提交按钮文字。
     isProductImg() {
@@ -336,32 +342,41 @@ export default {
     },
     // 点击提交按钮的操作。
     async handleClickSubmit() {
-      // 上传图片到服务器并获取对应 id 。
-      let formData = new FormData();
-      this.imagesArr.map(item => {
-        formData.append("images[]", item);
-      });
-      let imgIdRes = await commonUploadMultipleImgs(1, formData);
-      if (imgIdRes.code === 200) {
-        this.imagesArr = [];
-      }
-      // 组装提交所需的数据。
-      let submitObj = {
-        images: imgIdRes.data,
-        tags: this.checkedTagId,
-        products: this.checkedId,
-        content: this.message
-      }
-      let submitRes = await releaseShow(submitObj);
-      if(submitRes.code === 200) {
-        this.$toast('正常に公開されました！');
-        this.reload();
-      }
-      else {
-        this.$toast('公開に失敗しました。もう一度入力してください！');
-        this.checkedTagId = [];
-        this.checkedId = [];
-        this.message = '';
+      // 先检查图片是否为空。
+      if (this.imagesArr.length <= 0) {
+        this.$toast("最初に写真をアップロードしてください！");
+      } else {
+        // 上传图片到服务器并获取对应 id 。
+        let formData = new FormData();
+        this.imagesArr.map(item => {
+          formData.append("images[]", item);
+        });
+        let imgIdRes = await commonUploadMultipleImgs(1, formData);
+        if (imgIdRes.code === 200) {
+          this.imagesArr = [];
+        }
+        // 组装提交所需的数据。
+        let submitObj = {
+          images: imgIdRes.data,
+          tags: this.checkedTagId,
+          products: this.checkedId,
+          content: this.message
+        };
+        let submitRes = await releaseShow(submitObj);
+        if (submitRes.code === 200) {
+          this.$toast(`${res.data.msg}！`);
+          this.$router.push({
+            name: 'showDetailsPage',
+            params: {
+              id: res.data.id
+            }
+          });
+        } else {
+          this.$toast("公開に失敗しました。もう一度入力してください！");
+          this.checkedTagId = [];
+          this.checkedId = [];
+          this.message = "";
+        }
       }
     }
   },

@@ -90,14 +90,14 @@
                 <div
                   v-show="item.is_follow === 1"
                   class="is-attention--button"
-                  @click="handleClickUnfollowFansUser(item.id)"
+                  @click="handleClickUnfollowFansUser(item)"
                 >
                   フォロー中
                 </div>
                 <div
                   v-show="item.is_follow !== 1"
                   class="non-attention--button"
-                  @click="handleClickFollowFansUser(item.id)"
+                  @click="handleClickFollowFansUser(item)"
                 >
                   フォローする
                 </div>
@@ -128,7 +128,6 @@
 </template>
 
 <script>
-// import delFansIcon from "@assets/img/delete-fans-icon.png";
 import animate from "animate.css";
 import { Dialog } from "vant";
 import { delTheEleInArray } from "@/common/util";
@@ -146,8 +145,6 @@ export default {
   inject: ["reload"],
   data() {
     return {
-      // 删除粉丝的图标。
-      // delIcon: delFansIcon,
       // 当前高亮的 tab item 。
       activeNavItem: this.$route.params.tabId,
       // 存放 tab item 的数组。
@@ -204,9 +201,9 @@ export default {
         id: this.$route.params.userId,
         page: 1
       });
+      this.tabList[0].title += `(${res.data.total})`;
       this.attentionOriginalData = res.data;
       this.attentionData = res.data.data;
-      console.info(this.attentionData);
       // 获取数据的时候更新我的关注中需要取关的用户 id 数组。
       this.attentionData.map(item => {
         if (item.is_follow === 0) {
@@ -247,6 +244,7 @@ export default {
         id: this.$route.params.userId,
         page: 1 
       });
+      this.tabList[1].title += `(${res.data.total})`;
       this.fansOriginalData = res.data;
       this.fansData = res.data.data;
     },
@@ -286,16 +284,24 @@ export default {
       delTheEleInArray(id, this.attentionUnfollowUserData);
     },
     // 点击按钮取消关注用户（我的粉丝中）。
-    handleClickUnfollowFansUser(id) {
-      console.info(id);
-      unFollowUser(id);
-      this.reload();
+    async handleClickUnfollowFansUser(item) {
+      let res = await unFollowUser(item.id);
+      if(res.code === 200) {
+        item.is_follow = 0;
+      }
+      else {
+        this.$toast("操作に失敗しました！");
+      }
     },
     // 点击按钮继续关注用户（我的粉丝中）。
-    handleClickFollowFansUser(id) {
-      console.info(id);
-      unFollowUser(id);
-      this.reload();
+    async handleClickFollowFansUser(item) {
+      let res = await unFollowUser(item.id);
+      if(res.code === 200) {
+        item.is_follow = 1;
+      }
+      else {
+        this.$toast("操作に失敗しました！");
+      }
     },
     // 调用取关接口进行用户取关操作。
     hanldeUnFollowUser() {
@@ -303,48 +309,6 @@ export default {
         unFollowUser(item);
       });
     }
-    // 点击小叉弹出删除用户的按钮。
-    // handleClickShowDelButton(id) {
-    //   this.fansDelUserData.push(id);
-    // },
-    // 点击对应小叉其他部分隐藏删除用户按钮。
-    // handleClickHideDelButton(id) {
-    //   delTheEleInArray(id, this.fansDelUserData);
-    // },
-    // 点击右边弹出的删除按钮，进行弹窗。
-    // handleClickShowDialog(id) {
-    //   Dialog.confirm({
-    //     title: "フォロワーを削除してもよろしいですか",
-    //     message: "削除後、彼女の投稿を確認できなくなります",
-    //     width: 250,
-    //     confirmButtonText: "はい",
-    //     confirmButtonColor: "#8B8B8B",
-    //     cancelButtonText: "いいえ",
-    //     cancelButtonColor: "#151515",
-    //     // 添加回调函数以异步关闭弹窗。
-    //     beforeClose: async (action, done) => {
-    //       if (action === "confirm") {
-    //         let res = await deleteUser(id);
-    //         // console.info(res);
-    //         if (res.code === 200) {
-    //           setTimeout(done, 1500);
-    //           this.reload();
-    //         }
-    //       } else if (action === "cancel") {
-    //         done();
-    //         this.handleClickHideDelButton(id);
-    //       } else {
-    //         done();
-    //       }
-    //     }
-    //   })
-    //     .then(() => {
-    //       // on confirm
-    //     })
-    //     .catch(() => {
-    //       // on cancel
-    //     });
-    // }
   }
 };
 </script>

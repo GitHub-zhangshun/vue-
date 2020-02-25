@@ -94,7 +94,7 @@
                       <div
                         class="like"
                         :class="item.is_like === 1 ? 'active' : ''"
-                        @click="handleClickLikeShow(item.id)"
+                        @click="handleClickLikeShow(item)"
                       >
                         <i class="iconfont icon-zan"></i>
                         <div class="like-total">{{ item.likes }}</div>
@@ -155,7 +155,6 @@ export default {
   components: {
     BlockInterval
   },
-  inject: ['reload'],
   computed: {
     // 实时改变用于请求数据的 id ，进行参数传递。
     computedTabId() {
@@ -232,13 +231,16 @@ export default {
       });
     },
     // 点赞。
-    async handleClickLikeShow(id) {
+    async handleClickLikeShow(item) {
       if(this.isLike) {
-        let res = await likeUnlikeShow(id);
-        if (res.code !== 200) {
-          this.$toast("もう一度やり直してください！");
+        let res = await likeUnlikeShow(item.id);
+        if (res.code === 200) {
+          item.is_like = res.data.is_liked;
+          item.likes = res.data.likes;
         }
-        this.reload();
+        else {
+          this.$toast("操作に失敗しました！");
+        }
       }
     },
     // 点击 tab item 改变请求的 show 数据。
@@ -262,7 +264,6 @@ export default {
       res.data.data.map(item => {
         this.showData.push(item);
       });
-      console.info(res);
     },
     // 获取更多用户发布的 show 数据。
     async getMoreUserReleaseShowData(page) {
