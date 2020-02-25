@@ -86,18 +86,25 @@ const router = new Router({
     {
       path: "/changePersonalPageBg",
       name: "changePersonalPageBg",
-      component: ChangePersonalPageBg
+      component: ChangePersonalPageBg,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: "/changePersonalInfo",
       name: "changePersonalInfo",
-      component: ChangePersonalInfo
+      component: ChangePersonalInfo,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: "/personalInteraction/?userId=:userId",
       name: "personalInteraction",
       component: PersonalInteraction,
       meta: {
+        requiresAuth: true,
         savePosition: true
       }
     },

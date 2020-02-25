@@ -82,9 +82,11 @@ export default {
       isShownTheEditShowDialog: false
     };
   },
+  beforeMount() {
+    this.login();
+  },
   mounted() {
     this.getIndexStadiumData();
-    this.login();
   },
   methods: {
     // 获取首页场馆 item 数据的方法。
@@ -129,12 +131,14 @@ export default {
     },
     // 模拟登陆获取用户 token 。
     async login() {
-      let res = await getUserToken({
-          username: "925614389@qq.com",
-          // username: "974331694@qq.com",
-          password: "123456"
-        }),
-        userToken = res.data.token;
+      // let res = await getUserToken({
+      //     username: "925614389@qq.com",
+      //     // username: "974331694@qq.com",
+      //     password: "123456"
+      //   }),
+      //   userToken = res.data.token;
+      let url = window.location.href;
+      let userToken = url.split('?')[1];
       // 显示提交，存储 token 到 localStorage、vuex 中。
       this.$store.commit(types.USER_LOG_IN, userToken);
     }
