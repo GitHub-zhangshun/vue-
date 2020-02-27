@@ -19,23 +19,26 @@
 </template>
 
 <script>
-import { indexTagListData } from "@/api/common";
+import { indexTagListData, listTagsData } from "@/api/common";
 export default {
   name: "SwiperTagsList",
   data() {
     return {
+      // 存放标签数据源数据数组。
+      originalData: [],
       // 存放标签数据的数组。
-      tagsListData: [],
+      tagsListData: []
     };
   },
   computed: {
     // 是否显示更多按钮。
     isShownMoreButton() {
-      return this.tagsListData.length >= 6 ? true : false;
+      return this.originalData.length >= 6 ? true : false;
     },
   },
   mounted() {
     this.getindexTagListData();
+    this.getListTagsData();
   },
   methods: {
     // 点击标签跳转对应详情页，并传递 id 。
@@ -53,10 +56,15 @@ export default {
         name: 'showTagsPage'
       });
     },
-    // 获取 tag 图数据方法。
+    // 获取预览 tag 图数据方法。
     async getindexTagListData() {
       let res = await indexTagListData();
       this.tagsListData = res.data.slice(0, 5);
+    },
+    // 获取列表 tag 图数据方法。
+    async getListTagsData() {
+      let res = await listTagsData();
+      this.originalData = res.data;
     }
   }
 };

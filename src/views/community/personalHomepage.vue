@@ -72,33 +72,33 @@
                   v-for="(item, index) in showData"
                   :key="index"
                 >
-                  <div v-if="item.thumb !== ''">
-                    <img
-                      :src="item.thumb"
-                      @click="handleClick2DetailPage(item.id)"
-                      alt="読み込みエラー"
-                    />
-                    <div class="item-footer">
-                      <div
-                        v-if="item.avatar"
-                        class="avatar"
-                        @click="handleClick2OthersHomepage(item.user_id)"
-                      >
-                        <img
-                          :src="item.avatar"
-                          @error="defaultAvatarImg(item)"
-                          alt="アバター"
-                        />
-                      </div>
-                      <div v-if="item.nickname" class="name">{{ item.nickname }}</div>
-                      <div
-                        class="like"
-                        :class="item.is_like === 1 ? 'active' : ''"
-                        @click="handleClickLikeShow(item)"
-                      >
-                        <i class="iconfont icon-zan"></i>
-                        <div class="like-total">{{ item.likes }}</div>
-                      </div>
+                  <img
+                    :src="item.thumb"
+                    @click="handleClick2DetailPage(item)"
+                    alt="読み込みエラー"
+                  />
+                  <div class="item-footer">
+                    <div
+                      v-if="item.avatar"
+                      class="avatar"
+                      @click="handleClick2OthersHomepage(item.user_id)"
+                    >
+                      <img
+                        :src="item.avatar"
+                        @error="defaultAvatarImg(item)"
+                        alt="アバター"
+                      />
+                    </div>
+                    <div v-if="item.nickname" class="name">
+                      {{ item.nickname }}
+                    </div>
+                    <div
+                      class="like"
+                      :class="item.is_like === 1 ? 'active' : ''"
+                      @click="handleClickLikeShow(item)"
+                    >
+                      <i class="iconfont icon-zan"></i>
+                      <div class="like-total">{{ item.likes }}</div>
                     </div>
                   </div>
                 </div>
@@ -114,6 +114,8 @@
 <script>
 import editPersonalInfoIcon from "@assets/img/edit-personal-info.png";
 import BlockInterval from "@components/community/BlockInterval";
+import { getStore } from "@/common/util";
+import * as types from "@/store/mutation-types";
 import {
   personalInfoData,
   userReleaseShowData,
@@ -155,11 +157,8 @@ export default {
   components: {
     BlockInterval
   },
-  computed: {
-    // 实时改变用于请求数据的 id ，进行参数传递。
-    computedTabId() {
-      return this.pushTabId;
-    }
+  beforeMount() {
+    this.login();
   },
   mounted() {
     this.getPersonalInfoData();
@@ -213,13 +212,18 @@ export default {
       });
     },
     // 点击跳转详 show 情页面。
-    handleClick2DetailPage(id) {
-      this.$router.push({
-        name: "showDetailsPage",
-        params: {
-          id: id
-        }
-      });
+    handleClick2DetailPage(item) {
+      if(item.status !== 1) {
+        this.$router.push({
+          name: "showDetailsPage",
+          params: {
+            id: item.id
+          }
+        });
+      }
+      else {
+        this.$toast('コンテンツ違反');
+      }
     },
     // 点击头像跳转他人主页。
     handleClick2OthersHomepage(id) {
@@ -232,13 +236,12 @@ export default {
     },
     // 点赞。
     async handleClickLikeShow(item) {
-      if(this.isLike) {
+      if (this.isLike) {
         let res = await likeUnlikeShow(item.id);
         if (res.code === 200) {
           item.is_like = res.data.is_liked;
           item.likes = res.data.likes;
-        }
-        else {
+        } else {
           this.$toast("操作に失敗しました！");
         }
       }
@@ -255,7 +258,7 @@ export default {
     },
     // 获取用户发布的 show 数据。
     async getUserReleaseShowData() {
-      this.showData.splice(1, this.showData.length - 1);
+      this.showData = [];
       let res = await userReleaseShowData({
         id: this.userId,
         page: 1
@@ -271,7 +274,7 @@ export default {
         id: this.userId,
         page: page
       });
-      if(res.data.data) {
+      if (res.data.data) {
         res.data.data.map(item => {
           this.showData.push(item);
         });
@@ -279,7 +282,7 @@ export default {
     },
     // 获取用户点赞的 show 数据。
     async getUserLikeShowData() {
-      this.showData.splice(1, this.showData.length - 1);
+      this.showData = [];
       let res = await userLikeShowData({
         id: this.userId,
         page: 1
@@ -295,7 +298,7 @@ export default {
         id: this.userId,
         page: page
       });
-      if(res.data.data) {
+      if (res.data.data) {
         res.data.data.map(item => {
           this.showData.push(item);
         });
@@ -304,20 +307,31 @@ export default {
     // 滚动触底加载更多数据。
     onLoad() {
       this.loading = true;
-      if(this.currentPage < this.lastPage) {
+      if (this.currentPage < this.lastPage) {
         this.currentPage++;
-        if(!this.isLike) {
+        if (!this.isLike) {
           this.getMoreUserReleaseShowData(this.currentPage);
-        }
-        else if(this.isLike) {
+        } else if (this.isLike) {
           this.getMoreUserLikeShowData(this.currentPage);
         }
         this.loading = false;
         this.finished = true;
-      }
-      else {
+      } else {
         this.loading = false;
         this.finished = true;
+      }
+    },
+    login() {
+      let url = window.location.href;
+      if(url.indexOf('token') !== -1) {
+        let txt = url.split('?')[1];
+        let userToken = txt.split('=')[1];
+        // 显示提交，存储 token 到 localStorage、vuex 中。
+        this.$store.commit(types.USER_LOG_IN, userToken);
+      }
+      else {
+        // 显示提交，存储 token 到 localStorage、vuex 中。
+        this.$store.commit(types.USER_LOG_IN, getStore('token'));
       }
     },
     // 判断是否加载完毕数据的方法。

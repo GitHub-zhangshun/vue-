@@ -86,7 +86,7 @@
                 <span>{{ item.nickname }}</span>
                 <span>{{ item.summary }}</span>
               </div>
-              <div>
+              <div v-if="item.is_show !== 1">
                 <div
                   v-show="item.is_follow === 1"
                   class="is-attention--button"
@@ -244,6 +244,7 @@ export default {
         id: this.$route.params.userId,
         page: 1 
       });
+      console.info(res);
       this.tabList[1].title += `(${res.data.total})`;
       this.fansOriginalData = res.data;
       this.fansData = res.data.data;

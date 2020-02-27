@@ -18,7 +18,8 @@ export const likeUnlikeShow = showId => Request.post(`/api/v1/show/user-like/${s
  * Community module api.
  * @param getUserToken 模拟登陆获取用户 token 。
  * @param personalInfoData 用户个人主页数据。
- * @param editPersonalInfo 用户个人主页数据。
+ * @param editPersonalInfo 修改用户个人信息数据。
+ * @param validateName 判断修改个人信息的用户名合法性。
  * @param personalAttentionData 关注详细数据。
  * @param personalFansData 粉丝详细数据。
  * @param indexBannerData 社区主页轮播数据。
@@ -37,6 +38,7 @@ export const likeUnlikeShow = showId => Request.post(`/api/v1/show/user-like/${s
 export const getUserToken = userInfo => Request.post(`/api/v1/show/login`, userInfo);
 export const personalInfoData = data => Request.get(`/api/v1/show/getUser`);
 export const editPersonalInfo = userInfo => Request.post(`/api/v1/show/user-info`, userInfo);
+export const validateName = data => Request.post(`/api/v1/show/user-info-validation`, data);
 export const personalAttentionData = data => Request.get(`/api/v1/show/follows/${data.id}`, data);
 export const personalFansData = data => Request.get(`/api/v1/show/fans/${data.id}`, data);
 export const othersInfoData = user_id => Request.get(`/api/v1/show/getUser/${user_id}`, user_id);

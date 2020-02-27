@@ -177,6 +177,18 @@
         <span>{{ showData.likes }}</span>
       </div>
     </section>
+    <van-dialog
+      v-model="noLoginDialog"
+      :showConfirmButton="false"
+      :show-cancel-button="false"
+    >
+      <img :src="avatar" />
+      <span>会員登録・ログインをお願いします</span>
+      <p class="confirm-button" @click="handleClick2Login">
+        新規作成・ログイン
+      </p>
+      <p class="cancel-button" @click="handleClickClose">構いません</p>
+    </van-dialog>
   </section>
 </template>
 
@@ -184,9 +196,13 @@
 import recommandIcon from "@/assets/img/is-recommand-icon.png";
 import beforeLikeIcon from "@/assets/img/before-like-icon.png";
 import afterLikeIcon from "@/assets/img/after-like-icon.png";
+import userAvatar from "@/assets/img/default-user-avatar.png";
+import closeIcon from "@/assets/img/no-login-close.png";
 import SaleIcon from "@components/community/SaleIcon";
 import BlockInterval from "@components/community/BlockInterval";
 import { Dialog } from "vant";
+import * as types from "@/store/mutation-types";
+import { getStore } from "@/common/util";
 import {
   showDetailsData,
   unFollowUser,
@@ -225,7 +241,11 @@ export default {
       currentPage: 1,
       lastPage: 0,
       loading: false,
-      finished: false
+      finished: false,
+      // 未登陆弹窗的数据。
+      noLoginDialog: false,
+      avatar: userAvatar,
+      close: closeIcon
     };
   },
   watch: {
@@ -235,6 +255,9 @@ export default {
       this.getDetailsRelatedShowData(to.params.id);
       next();
     }
+  },
+  beforeMount() {
+    this.login();
   },
   mounted() {
     this.getShowDetailsData(this.$route.params.id);
@@ -261,12 +284,11 @@ export default {
     },
     // 点击头像跳转用户页。
     handleClick2UserPage(item) {
-      if(item.is_show === 1) {
+      if (item.is_show === 1) {
         this.$router.push({
-          name: 'personalHomepage'
+          name: "personalHomepage"
         });
-      }
-      else {
+      } else {
         this.$router.push({
           name: "othersHomepage",
           params: {
@@ -285,12 +307,24 @@ export default {
       }
     },
     async handleClickFollowUser(item) {
-      let res = await unFollowUser(item.id);
-      if (res.code === 200) {
-        item.is_follow = 1;
+      if (!getStore("token")) {
+        this.noLoginDialog = true;
       } else {
-        this.$toast("操作に失敗しました！");
+        let res = await unFollowUser(item.id);
+        if (res.code === 200) {
+          item.is_follow = 1;
+        } else {
+          this.$toast("操作に失敗しました！");
+        }
       }
+    },
+    // 点击弹窗中确定去登陆。
+    handleClick2Login() {
+      window.location.href = "https://m-test.sisilily.com/account/login.html";
+    },
+    // 关闭未登陆弹窗。
+    handleClickClose() {
+      this.noLoginDialog = !this.noLoginDialog;
     },
     // 点击列表 show 跳转详 show 情页面。
     handleClick2DetailPage(id) {
@@ -410,10 +444,22 @@ export default {
     // 点击关联产品跳转老系统产品详情。
     async handleClick2ProductPage() {
       let res = await productConfig({
-        key: 'show_web_url'
+        key: "show_web_url"
       });
-      if(res.code === 200) {
+      if (res.code === 200) {
         window.location.href = `${res.data}`;
+      }
+    },
+    login() {
+      let url = window.location.href;
+      if (url.indexOf("token") !== -1) {
+        let txt = url.split("?")[1];
+        let userToken = txt.split("=")[1];
+        // 显示提交，存储 token 到 localStorage、vuex 中。
+        this.$store.commit(types.USER_LOG_IN, userToken);
+      } else {
+        // 显示提交，存储 token 到 localStorage、vuex 中。
+        this.$store.commit(types.USER_LOG_IN, getStore("token"));
       }
     },
     // 判断是否加载完毕数据的方法。
@@ -574,6 +620,7 @@ export default {
       display: grid;
       grid-template: 163px / repeat(3, 108px);
       gap: 4.5px 11.5px;
+      min-height: 185px;
       padding: 0 15px 19.5px;
       margin-top: 18px;
       .goods-wrapper {
@@ -589,7 +636,7 @@ export default {
         }
         div:nth-child(2) {
           position: absolute;
-          bottom: 0;
+          min-height: 20px;
           span {
             margin-right: 2.5px;
             font-size: 10px;
@@ -751,6 +798,48 @@ export default {
       span {
         color: rgba(226, 106, 154, 1);
       }
+    }
+  }
+  // 修改 vant dialog 样式。
+  /deep/ .van-dialog {
+    width: 234px;
+    min-height: 289px;
+    img {
+      display: block;
+      margin: 25px auto 0px;
+      width: 85px;
+      height: 85px;
+    }
+    span {
+      display: block;
+      margin-top: 28px;
+      font-size: 13px;
+      font-family: Yu Gothic;
+      font-weight: bold;
+      text-align: center;
+      color: rgba(21, 21, 21, 1);
+    }
+    p {
+      width: 164px;
+      height: 37px;
+      margin: 0 auto;
+      font-size: 13px;
+      font-family: Yu Gothic;
+      font-weight: bold;
+      text-align: center;
+      line-height: 37px;
+      border-radius: 19px;
+    }
+    .confirm-button {
+      margin-top: 24px;
+      color: rgba(255, 255, 255, 1);
+      background-color: rgba(235, 129, 154, 1);
+    }
+    .cancel-button {
+      margin-top: 13px;
+      color: rgba(60, 60, 60, 1);
+      background-color: rgba(255, 255, 255, 1);
+      border: 1px solid rgba(50, 50, 50, 1);
     }
   }
 }

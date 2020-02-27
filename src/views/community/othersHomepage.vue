@@ -19,8 +19,18 @@
     <section class="name-des_wrapper">
       <div>{{ personalInfo.nickname }}</div>
       <div>{{ personalInfo.summary }}</div>
-      <div v-show="personalInfo.is_follow === 1 ? true : false" @click="handleClickUnfollowUser(personalInfo)">フォロー中</div>
-      <div v-show="personalInfo.is_follow === 0 ? true : false" @click="handleClickFollowUser(personalInfo)">フォローする</div>
+      <div
+        v-show="personalInfo.is_follow === 1 ? true : false"
+        @click="handleClickUnfollowUser(personalInfo)"
+      >
+        フォロー中
+      </div>
+      <div
+        v-show="personalInfo.is_follow === 0 ? true : false"
+        @click="handleClickFollowUser(personalInfo)"
+      >
+        フォローする
+      </div>
       <div>
         <section @click="handleClick2AttentionPage(personalInfo.id)">
           <span class="interaction-num">{{ personalInfo.followings }} </span
@@ -48,7 +58,61 @@
         @click="handleClickGetId"
       >
         <van-tab v-for="(item, idx) in tabList" :key="idx" :title="item.title">
-          <ShowDetailsContent :tabId="computedTabId" />
+          <van-list
+            v-model="loading"
+            :finished="finished"
+            :immediate-check="false"
+            :offset="300"
+            finished-text="END"
+            @load="onLoad"
+          >
+            <waterfall
+              :col="2"
+              :data="showData"
+              height="559"
+              @loadmore="handleScrollLoadmore"
+              @scroll="handleScroll"
+              @finish="handleScrollFinish"
+            >
+              <template>
+                <div
+                  class="cell-item"
+                  v-for="(item, index) in showData"
+                  :key="index"
+                >
+                  <img
+                    :src="item.thumb"
+                    @click="handleClick2DetailPage(item.id)"
+                    alt="読み込みエラー"
+                  />
+                  <div class="item-footer">
+                    <div
+                      v-if="item.avatar"
+                      class="avatar"
+                      @click="handleClick2OthersHomepage(item.user_id)"
+                    >
+                      <img
+                        :src="item.avatar"
+                        @error="defaultAvatarImg(item)"
+                        alt="アバター"
+                      />
+                    </div>
+                    <div v-if="item.nickname" class="name">
+                      {{ item.nickname }}
+                    </div>
+                    <div
+                      class="like"
+                      :class="item.is_like === 1 ? 'active' : ''"
+                      @click="handleClickLikeShow(item)"
+                    >
+                      <i class="iconfont icon-zan"></i>
+                      <div class="like-total">{{ item.likes }}</div>
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </waterfall>
+          </van-list>
         </van-tab>
       </van-tabs>
     </nav>
@@ -59,9 +123,15 @@
 import editPersonalInfoIcon from "@assets/img/edit-personal-info.png";
 import BlockInterval from "@components/community/BlockInterval";
 import ShowDetailsContent from "@components/ShowDetailsContent";
-import { othersInfoData, unFollowUser } from "@/api/common";
+import {
+  othersInfoData,
+  unFollowUser,
+  userReleaseShowData,
+  userLikeShowData,
+  likeUnlikeShow
+} from "@/api/common";
 export default {
-  name: 'othersHomepage',
+  name: "othersHomepage",
   data() {
     return {
       // 编辑个人信息的图标。
@@ -80,14 +150,25 @@ export default {
       // 用来请求数据的 id 。
       pushTabId: 0,
       // 存放个人信息的对象。
-      personalInfo: {}
+      personalInfo: {},
+      // 存放当前用户的 id 。
+      userId: 0,
+      // 存放 show 的数据。
+      showData: [],
+      // 当前是否处于可点赞区域。
+      isLike: false,
+      // 用于加载更多的数据。
+      currentPage: 1,
+      lastPage: 0,
+      loading: false,
+      finished: false
     };
   },
   components: {
     BlockInterval,
     ShowDetailsContent
   },
-  inject: ['reload'],
+  inject: ["reload"],
   computed: {
     // 实时改变用于请求数据的 id ，进行参数传递。
     computedTabId() {
@@ -98,6 +179,18 @@ export default {
     this.getOthersInfoData();
   },
   methods: {
+    // 获取个人信息数据的方法。
+    async getOthersInfoData() {
+      let res = await othersInfoData(this.$route.params.user_id);
+      this.personalInfo = res.data;
+      this.userId = res.data.id;
+      await this.getUserReleaseShowData();
+      if (this.personalInfo.is_show === 1) {
+        this.$router.push({
+          name: "personalHomepage"
+        });
+      }
+    },
     // 背景为空展示默认图片。
     defaultBgImg(item) {
       item.background_image = require("../../assets/img/default-user-bg.png");
@@ -109,19 +202,19 @@ export default {
     // 关注、取关操作。
     async handleClickUnfollowUser(item) {
       let res = await unFollowUser(item.id);
-      if(res.code === 200) {
+      if (res.code === 200) {
         item.is_follow = 0;
-      }
-      else {
+        item.followers -= 1;
+      } else {
         this.$toast("操作に失敗しました！");
       }
     },
     async handleClickFollowUser(item) {
       let res = await unFollowUser(item.id);
-      if(res.code === 200) {
+      if (res.code === 200) {
         item.is_follow = 1;
-      }
-      else {
+        item.followers += 1;
+      } else {
         this.$toast("操作に失敗しました！");
       }
     },
@@ -145,22 +238,125 @@ export default {
         }
       });
     },
-    // 点击 tab item 改变用于请求数据的 id 。
-    handleClickGetId(name) {
-      this.pushTabId = name;
+    // 点击跳转详 show 情页面。
+    handleClick2DetailPage(id) {
+      this.$router.push({
+        name: "showDetailsPage",
+        params: {
+          id: id
+        }
+      });
     },
-    // 获取个人信息数据的方法。
-    async getOthersInfoData() {
-      let res = await othersInfoData(this.$route.params.user_id);
-      this.personalInfo = res.data;
-      if(this.personalInfo.is_show === 1) {
-        this.$router.push({
-          name: 'personalHomepage'
-        })
+    // 点击头像跳转他人主页。
+    handleClick2OthersHomepage(id) {
+      this.$router.push({
+        name: "othersHomepage",
+        params: {
+          user_id: id
+        }
+      });
+    },
+    // 点赞。
+    async handleClickLikeShow(item) {
+      let res = await likeUnlikeShow(item.id);
+      if (res.code === 200) {
+        item.is_like = res.data.is_liked;
+        item.likes = res.data.likes;
+        if(!this.isLike) {
+          if(res.data.is_liked === 1) {
+            this.personalInfo.likes += 1;
+          }
+          else if(res.data.is_liked === 0) {
+            this.personalInfo.likes -= 1;
+          }
+        }
+      } else {
+        this.$toast("操作に失敗しました！");
       }
-    }
+    },
+    // 点击 tab item 改变请求的 show 数据。
+    handleClickGetId(name) {
+      this.currentPage = 1;
+      if (name === 0) {
+        this.getUserReleaseShowData();
+      } else if (name === 1) {
+        this.isLike = true;
+        this.getUserLikeShowData();
+      }
+    },
+    // 获取用户发布的 show 数据。
+    async getUserReleaseShowData() {
+      this.showData = [];
+      let res = await userReleaseShowData({
+        id: this.userId,
+        page: 1
+      });
+      this.lastPage = res.data.last_page;
+      res.data.data.map(item => {
+        this.showData.push(item);
+      });
+    },
+    // 获取更多用户发布的 show 数据。
+    async getMoreUserReleaseShowData(page) {
+      let res = await userReleaseShowData({
+        id: this.userId,
+        page: page
+      });
+      if (res.data.data) {
+        res.data.data.map(item => {
+          this.showData.push(item);
+        });
+      }
+    },
+    // 获取用户点赞的 show 数据。
+    async getUserLikeShowData() {
+      this.showData = [];
+      let res = await userLikeShowData({
+        id: this.userId,
+        page: 1
+      });
+      this.lastPage = res.data.last_page;
+      res.data.data.map(item => {
+        this.showData.push(item);
+      });
+    },
+    // 获取更多用户点赞的 show 数据。
+    async getMoreUserLikeShowData(page) {
+      let res = await userLikeShowData({
+        id: this.userId,
+        page: page
+      });
+      if (res.data.data) {
+        res.data.data.map(item => {
+          this.showData.push(item);
+        });
+      }
+    },
+    // 滚动触底加载更多数据。
+    onLoad() {
+      this.loading = true;
+      if (this.currentPage < this.lastPage) {
+        this.currentPage++;
+        if (!this.isLike) {
+          this.getMoreUserReleaseShowData(this.currentPage);
+        } else if (this.isLike) {
+          this.getMoreUserLikeShowData(this.currentPage);
+        }
+        this.loading = false;
+        this.finished = true;
+      } else {
+        this.loading = false;
+        this.finished = true;
+      }
+    },
+    // 判断是否加载完毕数据的方法。
+    handleScrollFinish() {},
+    // 滚动加载数据信息的方法。
+    handleScroll(scrollData) {},
+    // 滚动加载更多数据的方法。
+    handleScrollLoadmore() {}
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>
@@ -227,9 +423,9 @@ export default {
       font-size: 13px;
       text-align: center;
       line-height: 34px;
-      border-radius:2px;
-      color:rgba(255,255,255,1);
-      background:rgba(235,129,154,1);
+      border-radius: 2px;
+      color: rgba(255, 255, 255, 1);
+      background: rgba(235, 129, 154, 1);
     }
     div:nth-child(5) {
       display: grid;
@@ -250,6 +446,67 @@ export default {
           margin-top: 7.5px;
           font-size: 12px;
           color: rgba(135, 135, 135, 1);
+        }
+      }
+    }
+  }
+  .vue-waterfall {
+    padding: 12.5px 7px 28.5px;
+    .cell-item {
+      width: 100%;
+      padding: 0px 5px 5px;
+      overflow: hidden;
+      box-sizing: border-box;
+      img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-radius: 10px;
+      }
+      .item-footer {
+        position: relative;
+        display: flex;
+        align-items: center;
+        min-height: 24px;
+        .avatar {
+          width: 18px;
+          height: 18px;
+          img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+          }
+        }
+        .name {
+          width: 85px;
+          margin-left: 3px;
+          font-size: 13px;
+          color: rgba(165, 165, 165, 1);
+          @include ellipsis($line: 1, $line-height: 1.2);
+        }
+        .like {
+          position: absolute;
+          right: 0;
+          display: flex;
+          align-items: center;
+          &.active {
+            i {
+              color: #e26a9a;
+            }
+            .like-total {
+              color: #e26a9a;
+            }
+          }
+          i {
+            display: block;
+            width: 17.5px;
+            font-size: 12px;
+          }
+          .like-total {
+            width: 22px;
+            font-size: 12px;
+            color: rgba(21, 21, 21, 1);
+          }
         }
       }
     }

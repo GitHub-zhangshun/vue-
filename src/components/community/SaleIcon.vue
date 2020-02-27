@@ -3,7 +3,7 @@
     class="sale-icon_wrapper"
     :style="{ top: wrapperTop, left: wrapperLeft }"
   >
-    -{{ discount }}%
+    {{ discount }}
   </section>
 </template>
 

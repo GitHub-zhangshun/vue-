@@ -53,7 +53,7 @@ import SwiperTagsList from "@components/community/SwiperTagsList";
 import EditShowButton from "@components/community/EditShowButton";
 import BlockInterval from "@components/community/BlockInterval";
 import PopupDialog from "@components/community/PopupDialog";
-import { sessionGetItem } from "@/common/util";
+import { getStore } from "@/common/util";
 import * as types from "@/store/mutation-types";
 import { getUserToken, indexStadiumData, waterFallData } from "@/api/common";
 export default {
@@ -130,19 +130,24 @@ export default {
       this.isShownTheEditShowDialog = !this.isShownTheEditShowDialog;
     },
     // 模拟登陆获取用户 token 。
-    async login() {
+    // async login() {
+    login() {
       // let res = await getUserToken({
-      //     username: "925614389@qq.com",
-      //     // username: "974331694@qq.com",
+      //     username: "111111@qq.com",
       //     password: "123456"
       //   }),
       //   userToken = res.data.token;
+      // this.$store.commit(types.USER_LOG_IN, userToken);
       let url = window.location.href;
       if(url.indexOf('token') !== -1) {
         let txt = url.split('?')[1];
         let userToken = txt.split('=')[1];
         // 显示提交，存储 token 到 localStorage、vuex 中。
         this.$store.commit(types.USER_LOG_IN, userToken);
+      }
+      else {
+        // 显示提交，存储 token 到 localStorage、vuex 中。
+        this.$store.commit(types.USER_LOG_IN, getStore('token'));
       }
     }
   }

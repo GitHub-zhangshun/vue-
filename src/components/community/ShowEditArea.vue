@@ -79,6 +79,16 @@
         </span>
       </div>
     </section>
+    <van-dialog
+      v-model="noLoginDialog"
+      :showConfirmButton="false"
+      :show-cancel-button="false"
+    >
+      <img :src="avatar" />
+      <span>会員登録・ログインをお願いします</span>
+      <p class="confirm-button" @click="handleClick2Login">新規作成・ログイン</p>
+      <p class="cancel-button" @click="handleClickClose">構いません</p>
+    </van-dialog>
     <van-popup
       v-model="isShownFlag"
       position="bottom"
@@ -161,7 +171,11 @@
 <script>
 import uploadMirror from "@/assets/img/upload-mirror.png";
 import selectProduct from "@/assets/img/select-product.png";
+import userAvatar from "@/assets/img/default-user-avatar.png";
+import closeIcon from "@/assets/img/no-login-close.png";
+import { Dialog } from "vant";
 import PopupDialog from "@components/community/PopupDialog";
+import { getStore } from "@/common/util";
 import {
   editShowTagsData,
   productImageData,
@@ -171,7 +185,8 @@ import {
 export default {
   name: "ShowEditArea",
   components: {
-    PopupDialog
+    PopupDialog,
+    "van-dialog": Dialog.Component
   },
   data() {
     return {
@@ -223,10 +238,13 @@ export default {
       // 对应 tab 下可请求的总页数。
       lastPage: 0,
       // 保存多张图片文件流的数组。
-      imagesArr: []
+      imagesArr: [],
+      // 未登陆弹窗的数据。
+      noLoginDialog: false,
+      avatar: userAvatar,
+      close: closeIcon
     };
   },
-  inject: ["reload"],
   computed: {
     // 根据是否选择产品图，改变提交按钮文字。
     isProductImg() {
@@ -250,13 +268,19 @@ export default {
   methods: {
     // 上传图片之后的回调函数。
     async afterUploading(file) {
-      // 获取上传文件的文件对象，并存在数组中。
-      if (Array.isArray(file) === true) {
-        file.map(item => {
-          this.imagesArr.push(item.file);
-        });
+      if (file.file.size > 1048576) {
+        this.$toast(
+          "写真をサイズは10Mを超えてはいけません。もう一度選択してください。"
+        );
       } else {
-        this.imagesArr.push(file.file);
+        // 获取上传文件的文件对象，并存在数组中。
+        if (Array.isArray(file) === true) {
+          file.map(item => {
+            this.imagesArr.push(item.file);
+          });
+        } else {
+          this.imagesArr.push(file.file);
+        }
       }
     },
     // 获取可选标签数据的方法。
@@ -278,7 +302,7 @@ export default {
         page: 1
       });
       this.lastPage = res.data.last_page;
-      this.productData.splice(0, this.productData.length);
+      this.productData = [];
       res.data.data.map(item => {
         this.productData.push(item);
       });
@@ -297,10 +321,10 @@ export default {
     async handleClickTheTab(id) {
       switch (id) {
         case 0:
-          this.requestType = "cart";
+          this.requestType = "order";
           break;
         case 1:
-          this.requestType = "order";
+          this.requestType = "cart";
           break;
         case 2:
           this.requestType = "collect";
@@ -342,42 +366,56 @@ export default {
     },
     // 点击提交按钮的操作。
     async handleClickSubmit() {
-      // 先检查图片是否为空。
-      if (this.imagesArr.length <= 0) {
-        this.$toast("最初に写真をアップロードしてください！");
+      if (!getStore("token")) {
+        this.noLoginDialog = true;
       } else {
-        // 上传图片到服务器并获取对应 id 。
-        let formData = new FormData();
-        this.imagesArr.map(item => {
-          formData.append("images[]", item);
-        });
-        let imgIdRes = await commonUploadMultipleImgs(1, formData);
-        if (imgIdRes.code === 200) {
-          this.imagesArr = [];
-        }
-        // 组装提交所需的数据。
-        let submitObj = {
-          images: imgIdRes.data,
-          tags: this.checkedTagId,
-          products: this.checkedId,
-          content: this.message
-        };
-        let submitRes = await releaseShow(submitObj);
-        if (submitRes.code === 200) {
-          this.$toast(`${res.data.msg}！`);
-          this.$router.push({
-            name: 'showDetailsPage',
-            params: {
-              id: res.data.id
-            }
-          });
+        // 先检查图片是否为空。
+        if (this.imagesArr.length <= 0) {
+          this.$toast("最初に写真をアップロードしてください！");
         } else {
-          this.$toast("公開に失敗しました。もう一度入力してください！");
-          this.checkedTagId = [];
-          this.checkedId = [];
-          this.message = "";
+          // 上传图片到服务器并获取对应 id 。
+          let formData = new FormData();
+          this.imagesArr.map(item => {
+            formData.append("images[]", item);
+          });
+          let imgIdRes = await commonUploadMultipleImgs(1, formData);
+          if (imgIdRes.code === 200) {
+            this.imagesArr = [];
+          }
+          // 组装提交所需的数据。
+          let submitObj = {
+            images: imgIdRes.data,
+            tags: this.checkedTagId,
+            products: this.checkedId,
+            content: this.message
+          };
+          let submitRes = await releaseShow(submitObj);
+          if (submitRes.code === 200) {
+            this.$toast(`${submitRes.data.msg}！`);
+            this.$router.push({
+              name: "showDetailsPage",
+              params: {
+                id: submitRes.data.id
+              }
+            });
+          } else {
+            this.$toast("公開に失敗しました。もう一度入力してください！");
+            this.checkedTagId = [];
+            this.checkedId = [];
+            this.message = "";
+            // 清空图片预览区域。
+            this.fileList = [];
+          }
         }
       }
+    },
+    // 点击弹窗中确定去登陆。
+    handleClick2Login() {
+      window.location.href = "https://m-test.sisilily.com/account/login.html";
+    },
+    // 关闭未登陆弹窗。
+    handleClickClose() {
+      this.noLoginDialog = !this.noLoginDialog;
     }
   },
   mounted() {
@@ -734,6 +772,48 @@ export default {
       top: 16px;
       right: 0px;
     }
+  }
+}
+// 修改 vant dialog 样式。
+/deep/ .van-dialog {
+  width: 234px;
+  min-height: 289px;
+  img {
+    display: block;
+    margin: 25px auto 0px;
+    width: 85px;
+    height: 85px;
+  }
+  span {
+    display: block;
+    margin-top: 28px;
+    font-size: 13px;
+    font-family: Yu Gothic;
+    font-weight: bold;
+    text-align: center;
+    color: rgba(21, 21, 21, 1);
+  }
+  p {
+    width: 164px;
+    height: 37px;
+    margin: 0 auto;
+    font-size: 13px;
+    font-family: Yu Gothic;
+    font-weight: bold;
+    text-align: center;
+    line-height: 37px;
+    border-radius: 19px;
+  }
+  .confirm-button {
+    margin-top: 24px;
+    color: rgba(255, 255, 255, 1);
+    background-color: rgba(235, 129, 154, 1);
+  }
+  .cancel-button {
+    margin-top: 13px;
+    color: rgba(60, 60, 60, 1);
+    background-color: rgba(255, 255, 255, 1);
+    border: 1px solid rgba(50, 50, 50, 1);
   }
 }
 </style>

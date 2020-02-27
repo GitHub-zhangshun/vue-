@@ -1,5 +1,6 @@
 import axios from "axios";
 import env from "@/config/env";
+import * as types from "@/store/mutation-types";
 import loginStore from "@/store/community/login";
 /**
  * 自定义 Axios 实例。
@@ -39,11 +40,8 @@ AJAX.interceptors.response.use(
       // 返回状态码为 401，表示未授权，清除 token 信息并跳转到社区主页。
       switch (error.response.code) {
         case 401:
-          store.commit(types.LOG_OUT);
-          router.replace({
-            path: "/community/show-details-content/recommend"
-            // query: { redirect: router.currentRoute.fullPath }
-          });
+          store.commit(types.USER_LOG_OUT);
+          window.location.href = 'https://m-test.sisilily.com/account/login.html';
       }
     }
     return Promise.reject(error);

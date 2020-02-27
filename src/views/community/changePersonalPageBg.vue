@@ -1,7 +1,7 @@
 <template>
   <section class="change-bg_wrapper">
     <div class="bg-wrapper">
-      <img :src="bgImgSrc" @error="defaultBgImg(bgImgSrc)" alt="背景画像" />
+      <img :src="bgImgSrc" @error="defaultBgImg" alt="背景画像" />
     </div>
     <van-uploader
       v-model="fileList"
@@ -52,8 +52,8 @@ export default {
   },
   methods: {
     // 背景图为空显示默认图片。
-    defaultBgImg(item) {
-      item = require("../../assets/img/default-user-bg.png");
+    defaultBgImg() {
+      this.bgImgSrc = require("../../assets/img/default-user-bg.png");
     },
     // 获取个人信息数据的方法。
     async getPersonalInfoData() {
@@ -62,17 +62,22 @@ export default {
     },
     // 背景图上传完毕之后的回调函数。
     async afterUploading(file) {
-      this.whichButtonShown = !this.whichButtonShown;
-      this.bgImgSrc = this.fileList[0].content;
-      this.fileList = [];
-      // 上传文件到服务器，并获取 id 。
-      let formData = new FormData();
-      formData.append("image", file.file);
-      let res = await commonUploadSingleImg(1, formData);
-      if(res.code === 200) {
-        this.whichButtonShown = !this.whichButtonShown;
+      if(file.file.size > 1048576) {
+        this.$toast('写真をサイズは10Mを超えてはいけません。もう一度選択してください。');
       }
-      this.bgCode = res.data;
+      else {
+        this.whichButtonShown = !this.whichButtonShown;
+        this.bgImgSrc = this.fileList[0].content;
+        this.fileList = [];
+        // 上传文件到服务器，并获取 id 。
+        let formData = new FormData();
+        formData.append("image", file.file);
+        let res = await commonUploadSingleImg(1, formData);
+        if(res.code === 200) {
+          this.whichButtonShown = !this.whichButtonShown;
+        }
+        this.bgCode = res.data;
+      }
     },
     // 点击取消回退页面。
     handleClickCancelUpload() {

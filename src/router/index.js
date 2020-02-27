@@ -62,20 +62,20 @@ const router = new Router({
   base: base,
   routes: [
     {
-      path: "/",
+      path: '/',
+      redirect: '/community/show-details-content/recommend'
+    },
+    {
+      path: "/community",
       component: Community,
-      children: community,
-      meta: {
-        savePosition: true
-      }
+      children: community
     },
     {
       path: "/personalHomepage",
       name: "personalHomepage",
       component: PersonalHomepage,
       meta: {
-        requiresAuth: true,
-        savePosition: true
+        requiresAuth: true
       }
     },
     {
@@ -104,17 +104,13 @@ const router = new Router({
       name: "personalInteraction",
       component: PersonalInteraction,
       meta: {
-        requiresAuth: true,
-        savePosition: true
+        requiresAuth: true
       }
     },
     {
       path: "/othersInteraction/?userId=:userId",
       name: "othersInteraction",
-      component: OthersInteraction,
-      meta: {
-        savePosition: true
-      }
+      component: OthersInteraction
     },
     {
       path: "/showDetailsPage/?id=:id",
@@ -124,41 +120,31 @@ const router = new Router({
     {
       path: "/showTagsPage",
       name: "showTagsPage",
-      component: ShowTagsPage,
-      meta: {
-        savePosition: true
-      }
+      component: ShowTagsPage
     },
     {
       path: "/tagDetailsPage/?tag_id=:tag_id",
       name: "tagDetailsPage",
-      component: TagDetailsPage,
-      meta: {
-        savePosition: true
-      }
+      component: TagDetailsPage
     },
     {
       path: "/shield",
       name: "shield",
       component: Shield
-    },
-    {
-      path: "*",
-      redirect: "/"
     }
-  ],
-  scrollBehavior(to, from, savedPosition) {
-    // 如果存在记录位置，保持路由跳转页面位置不变。
-    if (savedPosition && to.meta.savePosition) {
-      return savedPosition;
-    }
-    else {
-      return {
-        x: 0,
-        y: 0
-      };
-    }
-  }
+  ]
+  // 路由跳转之后，记住 from 的页面位置。
+  // scrollBehavior(to, from, savedPosition) {
+  //   // 如果存在记录位置，保持路由跳转页面位置不变。
+  //   if (savedPosition) {
+  //     return savedPosition;
+  //   } else {
+  //     return {
+  //       x: 0,
+  //       y: 0
+  //     };
+  //   }
+  // }
 });
 /**
  * 全局导航守卫。
