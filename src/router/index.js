@@ -59,11 +59,12 @@ let base = `${process.env.BASE_URL}`;
 const router = new Router({
   // 路由有两种模式：history、hash，想要不带 # 号就选 history，但是需要后端配合。默认是 hash 模式，只需要前端工作就行了。
   mode: "hash",
-  base: base,
+  // H5 history 模式专用。
+  // base: base,
   routes: [
     {
-      path: '/',
-      redirect: '/community/show-details-content/recommend'
+      path: "/",
+      redirect: "/community/show-details-content/recommend"
     },
     {
       path: "/community",
@@ -145,6 +146,14 @@ const router = new Router({
   //     };
   //   }
   // }
+});
+router.onError((error) => {
+  const pattern = /Loading chunk (\d)+ failed/g;
+  const isChunkLoadFailed = error.message.match(pattern);
+  const targetPath = router.history.pending.fullPath;
+  if (isChunkLoadFailed) {
+    router.replace(targetPath);
+  }
 });
 /**
  * 全局导航守卫。

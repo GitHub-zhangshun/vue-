@@ -6,7 +6,6 @@
     <van-uploader
       v-model="fileList"
       :preview-image="false"
-      :max-count="1"
       :after-read="afterUploading"
     >
       <div class="upload-button">プロフィール写真を変更</div>

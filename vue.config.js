@@ -9,7 +9,7 @@ function resolve(dir) {
 
 module.exports = {
   // 公共路径。
-  publicPath: "./",
+  publicPath: "/",
   // 不同的环境打不同包名。
   outputDir: process.env.NODE_ENV === "development" ? "devdist" : "dist",
   // 使用运行时编译器的 Vue 构建版本
@@ -28,7 +28,7 @@ module.exports = {
     // 使用 https 提供服务。
     https: false,
     // 这里写调用接口的基础路径，来解决跨域，如果设置了代理，那本地开发环境的 axios 的 baseUrl 要写为 '' ，即空字符串。
-    // proxy: "http://localhost:8080"
+    // proxy: "http://47.91.164.235:9505"
     proxy: null
   },
   chainWebpack: config => {

@@ -6,11 +6,11 @@
  */
 const dev = {
   // or history
-  routerMode: 'hash',
+  routerMode: 'history',
   /* beta */
   // 自定义反向代理
-  // baseUrl: `${location.origin}`,
-  baseUrl: ``,
+  baseUrl: `${location.origin}`,
+  // baseUrl: ``,
   credential: false
 };
 

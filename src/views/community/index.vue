@@ -3,6 +3,16 @@
     <SwiperBanner />
     <SwiperTagsList />
     <BlockInterval />
+    <van-dialog
+      v-model="noLoginDialog"
+      :showConfirmButton="false"
+      :show-cancel-button="false"
+    >
+      <img :src="avatar" />
+      <span>会員登録・ログインをお願いします</span>
+      <p class="confirm-button" @click="handleClick2Login">新規作成・ログイン</p>
+      <p class="cancel-button" @click="handleClickClose">構いません</p>
+    </van-dialog>
     <van-sticky :offset-top="47">
       <nav class="switch-list_wrapper">
         <van-tabs
@@ -47,12 +57,15 @@
 </template>
 
 <script>
+import userAvatar from "@/assets/img/default-user-avatar.png";
+import closeIcon from "@/assets/img/no-login-close.png";
 import animate from "animate.css";
 import SwiperBanner from "@components/community/SwiperBanner";
 import SwiperTagsList from "@components/community/SwiperTagsList";
 import EditShowButton from "@components/community/EditShowButton";
 import BlockInterval from "@components/community/BlockInterval";
 import PopupDialog from "@components/community/PopupDialog";
+import { Dialog } from "vant";
 import { getStore } from "@/common/util";
 import * as types from "@/store/mutation-types";
 import { getUserToken, indexStadiumData, waterFallData } from "@/api/common";
@@ -63,7 +76,8 @@ export default {
     SwiperTagsList,
     EditShowButton,
     BlockInterval,
-    PopupDialog
+    PopupDialog,
+    "van-dialog": Dialog.Component
   },
   data() {
     return {
@@ -79,7 +93,11 @@ export default {
         }
       ],
       // 是否展示弹窗的标志变量。
-      isShownTheEditShowDialog: false
+      isShownTheEditShowDialog: false,
+      // 未登陆弹窗的数据。
+      noLoginDialog: false,
+      avatar: userAvatar,
+      close: closeIcon
     };
   },
   beforeMount() {
@@ -124,10 +142,23 @@ export default {
     },
     // 打开关闭弹窗的方法。
     handleClick2ShowEditShowDialog() {
-      this.isShownTheEditShowDialog = !this.isShownTheEditShowDialog;
+      if(getStore('token') === 'null' || !getStore('token')) {
+        this.noLoginDialog = true;
+      }
+      else {
+        this.isShownTheEditShowDialog = !this.isShownTheEditShowDialog;
+      }
     },
     handleClick2CloseEditShowDialog() {
       this.isShownTheEditShowDialog = !this.isShownTheEditShowDialog;
+    },
+    // 点击弹窗中确定去登陆。
+    handleClick2Login() {
+      window.location.href = "https://m-test.sisilily.com/account/login.html";
+    },
+    // 关闭未登陆弹窗。
+    handleClickClose() {
+      this.noLoginDialog = !this.noLoginDialog;
     },
     // 模拟登陆获取用户 token 。
     // async login() {
@@ -167,6 +198,48 @@ export default {
     rgba(219, 67, 64, 1),
     rgba(255, 163, 172, 1)
   );
+}
+// 修改 vant dialog 样式。
+/deep/ .van-dialog {
+  width: 234px;
+  min-height: 289px;
+  img {
+    display: block;
+    margin: 25px auto 0px;
+    width: 85px;
+    height: 85px;
+  }
+  span {
+    display: block;
+    margin-top: 28px;
+    font-size: 13px;
+    font-family: Yu Gothic;
+    font-weight: bold;
+    text-align: center;
+    color: rgba(21, 21, 21, 1);
+  }
+  p {
+    width: 164px;
+    height: 37px;
+    margin: 0 auto;
+    font-size: 13px;
+    font-family: Yu Gothic;
+    font-weight: bold;
+    text-align: center;
+    line-height: 37px;
+    border-radius: 19px;
+  }
+  .confirm-button {
+    margin-top: 24px;
+    color: rgba(255, 255, 255, 1);
+    background-color: rgba(235, 129, 154, 1);
+  }
+  .cancel-button {
+    margin-top: 13px;
+    color: rgba(60, 60, 60, 1);
+    background-color: rgba(255, 255, 255, 1);
+    border: 1px solid rgba(50, 50, 50, 1);
+  }
 }
 </style>
 <style lang="scss">

@@ -2,8 +2,8 @@
   <section class="show-details--content_erapper">
     <section class="show-details_banner">
       <van-swipe :autoplay="3000" indicator-color="white">
-        <van-swipe-item v-for="(item, idx) in productImg" :key="idx">
-          <img :src="item.original_url" />
+        <van-swipe-item v-for="(item, idx) in productImg" :key="idx" @click="handleClickPreviewImg()">
+          <img :src="item.detail_thumb_url" />
         </van-swipe-item>
       </van-swipe>
       <div class="show-details_number">NO.{{ showData.id }}</div>
@@ -201,6 +201,7 @@ import closeIcon from "@/assets/img/no-login-close.png";
 import SaleIcon from "@components/community/SaleIcon";
 import BlockInterval from "@components/community/BlockInterval";
 import { Dialog } from "vant";
+import { ImagePreview } from 'vant';
 import * as types from "@/store/mutation-types";
 import { getStore } from "@/common/util";
 import {
@@ -227,6 +228,8 @@ export default {
       likeIcon: afterLikeIcon,
       // show 轮播数据。
       productImg: [],
+      // 点击轮播图预览的图片数组。
+      previewImgs: [],
       // show 标签数据。
       productTags: [],
       // show 关联商品数据。
@@ -268,6 +271,9 @@ export default {
     async getShowDetailsData(id) {
       let res = await showDetailsData(id);
       this.productImg = res.data.images;
+      res.data.images.map(item => {
+        this.previewImgs.push(item.original_url);
+      });
       this.productTags = res.data.tags;
       this.relatedGoodsData = res.data.products;
       this.showData = res.data;
@@ -277,6 +283,12 @@ export default {
           name: "shield"
         });
       }
+    },
+    // 点击轮播图预览。
+    handleClickPreviewImg() {
+      ImagePreview({
+        images: this.previewImgs
+      });
     },
     // 未设置头像展示默认图。
     defaultAvatarImg(item) {

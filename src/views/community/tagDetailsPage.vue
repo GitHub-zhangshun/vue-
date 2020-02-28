@@ -25,11 +25,14 @@
         </div>
         <div>
           <p>ENDS IN</p>
-          <p v-show="tagDetailsData.is_period_enabled === 0 ? true : false">
+          <p v-if="tagDetailsData.is_in_expiration === 0 ? true : false">
+            ——&nbsp;&nbsp;&nbsp;イベント準備中&nbsp;&nbsp;&nbsp;——
+          </p>
+          <p v-if="tagDetailsData.is_in_expiration === 2 ? true : false">
             ——&nbsp;&nbsp;&nbsp;イベント終了&nbsp;&nbsp;&nbsp;——
           </p>
           <CountDown
-            v-show="tagDetailsData.is_period_enabled === 1 ? true : false"
+            v-if="tagDetailsData.is_period_enabled === 1 ? true : false"
             :startTime="start_at"
             :endTime="end_at"
             :tipText="''"

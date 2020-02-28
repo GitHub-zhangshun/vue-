@@ -79,16 +79,6 @@
         </span>
       </div>
     </section>
-    <van-dialog
-      v-model="noLoginDialog"
-      :showConfirmButton="false"
-      :show-cancel-button="false"
-    >
-      <img :src="avatar" />
-      <span>会員登録・ログインをお願いします</span>
-      <p class="confirm-button" @click="handleClick2Login">新規作成・ログイン</p>
-      <p class="cancel-button" @click="handleClickClose">構いません</p>
-    </van-dialog>
     <van-popup
       v-model="isShownFlag"
       position="bottom"
@@ -171,9 +161,6 @@
 <script>
 import uploadMirror from "@/assets/img/upload-mirror.png";
 import selectProduct from "@/assets/img/select-product.png";
-import userAvatar from "@/assets/img/default-user-avatar.png";
-import closeIcon from "@/assets/img/no-login-close.png";
-import { Dialog } from "vant";
 import PopupDialog from "@components/community/PopupDialog";
 import { getStore } from "@/common/util";
 import {
@@ -185,8 +172,7 @@ import {
 export default {
   name: "ShowEditArea",
   components: {
-    PopupDialog,
-    "van-dialog": Dialog.Component
+    PopupDialog
   },
   data() {
     return {
@@ -238,11 +224,7 @@ export default {
       // 对应 tab 下可请求的总页数。
       lastPage: 0,
       // 保存多张图片文件流的数组。
-      imagesArr: [],
-      // 未登陆弹窗的数据。
-      noLoginDialog: false,
-      avatar: userAvatar,
-      close: closeIcon
+      imagesArr: []
     };
   },
   computed: {
@@ -366,56 +348,44 @@ export default {
     },
     // 点击提交按钮的操作。
     async handleClickSubmit() {
-      if (!getStore("token")) {
-        this.noLoginDialog = true;
+      // 先检查图片是否为空。
+      if (this.imagesArr.length <= 0) {
+        this.$toast("最初に写真をアップロードしてください！");
       } else {
-        // 先检查图片是否为空。
-        if (this.imagesArr.length <= 0) {
-          this.$toast("最初に写真をアップロードしてください！");
-        } else {
-          // 上传图片到服务器并获取对应 id 。
-          let formData = new FormData();
-          this.imagesArr.map(item => {
-            formData.append("images[]", item);
+        // 上传图片到服务器并获取对应 id 。
+        let formData = new FormData();
+        this.imagesArr.map(item => {
+          formData.append("images[]", item);
+        });
+        let imgIdRes = await commonUploadMultipleImgs(1, formData);
+        if (imgIdRes.code === 200) {
+          this.imagesArr = [];
+        }
+        // 组装提交所需的数据。
+        let submitObj = {
+          images: imgIdRes.data,
+          tags: this.checkedTagId,
+          products: this.checkedId,
+          content: this.message
+        };
+        let submitRes = await releaseShow(submitObj);
+        if (submitRes.code === 200) {
+          this.$toast(`${submitRes.data.msg}！`);
+          this.$router.push({
+            name: "showDetailsPage",
+            params: {
+              id: submitRes.data.id
+            }
           });
-          let imgIdRes = await commonUploadMultipleImgs(1, formData);
-          if (imgIdRes.code === 200) {
-            this.imagesArr = [];
-          }
-          // 组装提交所需的数据。
-          let submitObj = {
-            images: imgIdRes.data,
-            tags: this.checkedTagId,
-            products: this.checkedId,
-            content: this.message
-          };
-          let submitRes = await releaseShow(submitObj);
-          if (submitRes.code === 200) {
-            this.$toast(`${submitRes.data.msg}！`);
-            this.$router.push({
-              name: "showDetailsPage",
-              params: {
-                id: submitRes.data.id
-              }
-            });
-          } else {
-            this.$toast("公開に失敗しました。もう一度入力してください！");
-            this.checkedTagId = [];
-            this.checkedId = [];
-            this.message = "";
-            // 清空图片预览区域。
-            this.fileList = [];
-          }
+        } else {
+          this.$toast("公開に失敗しました。もう一度入力してください！");
+          this.checkedTagId = [];
+          this.checkedId = [];
+          this.message = "";
+          // 清空图片预览区域。
+          this.fileList = [];
         }
       }
-    },
-    // 点击弹窗中确定去登陆。
-    handleClick2Login() {
-      window.location.href = "https://m-test.sisilily.com/account/login.html";
-    },
-    // 关闭未登陆弹窗。
-    handleClickClose() {
-      this.noLoginDialog = !this.noLoginDialog;
     }
   },
   mounted() {
@@ -772,48 +742,6 @@ export default {
       top: 16px;
       right: 0px;
     }
-  }
-}
-// 修改 vant dialog 样式。
-/deep/ .van-dialog {
-  width: 234px;
-  min-height: 289px;
-  img {
-    display: block;
-    margin: 25px auto 0px;
-    width: 85px;
-    height: 85px;
-  }
-  span {
-    display: block;
-    margin-top: 28px;
-    font-size: 13px;
-    font-family: Yu Gothic;
-    font-weight: bold;
-    text-align: center;
-    color: rgba(21, 21, 21, 1);
-  }
-  p {
-    width: 164px;
-    height: 37px;
-    margin: 0 auto;
-    font-size: 13px;
-    font-family: Yu Gothic;
-    font-weight: bold;
-    text-align: center;
-    line-height: 37px;
-    border-radius: 19px;
-  }
-  .confirm-button {
-    margin-top: 24px;
-    color: rgba(255, 255, 255, 1);
-    background-color: rgba(235, 129, 154, 1);
-  }
-  .cancel-button {
-    margin-top: 13px;
-    color: rgba(60, 60, 60, 1);
-    background-color: rgba(255, 255, 255, 1);
-    border: 1px solid rgba(50, 50, 50, 1);
   }
 }
 </style>

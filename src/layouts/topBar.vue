@@ -11,16 +11,37 @@
       <i class="iconfont icon-yonghu" v-show="isUserButton" @click="handleClick2UserPage"></i>
       <!-- <i class="iconfont icon-fenxiang" v-show="isShareButton" @click="handleClickShowShareContent"></i> -->
     </div>
+    <van-dialog
+      v-model="noLoginDialog"
+      :showConfirmButton="false"
+      :show-cancel-button="false"
+    >
+      <img :src="avatar" />
+      <span>会員登録・ログインをお願いします</span>
+      <p class="confirm-button" @click="handleClick2Login">新規作成・ログイン</p>
+      <p class="cancel-button" @click="handleClickClose">構いません</p>
+    </van-dialog>
   </section>
 </template>
 
 <script>
+import userAvatar from "@/assets/img/default-user-avatar.png";
+import closeIcon from "@/assets/img/no-login-close.png";
+import { Dialog } from "vant";
+import { getStore } from "@/common/util";
 export default {
   name: "TopBar",
+  components: {
+    "van-dialog": Dialog.Component
+  },
   data() {
     return {
       // 站点标题文本。
-      titleText: 'SISILILY'
+      titleText: 'SISILILY',
+      // 未登陆弹窗的数据。
+      noLoginDialog: false,
+      avatar: userAvatar,
+      close: closeIcon
     }
   },
   computed: {
@@ -81,7 +102,7 @@ export default {
     // 点击 topbar 中各项对应方法。
     handleClickGoBack() {
       // 舍弃路由返回，首先因为数据缓存的原因；其次就是嵌套路由导致的 Bug 。
-      history.go(-1);
+      window.history.go(-1);
     },
     handleClick2Sidebar() {
       window.location.href = "https://m-test.sisilily.com/sidebar-page.html";
@@ -90,9 +111,22 @@ export default {
       window.location.href = "https://m-test.sisilily.com/";
     },
     handleClick2UserPage() {
-      this.$router.push({
-        name: "personalHomepage"
-      });
+      if(getStore('token') === 'null' || !getStore('token')) {
+        this.noLoginDialog = true;
+      }
+      else {
+        this.$router.push({
+          name: "personalHomepage"
+        });
+      }
+    },
+    // 点击弹窗中确定去登陆。
+    handleClick2Login() {
+      window.location.href = "https://m-test.sisilily.com/account/login.html";
+    },
+    // 关闭未登陆弹窗。
+    handleClickClose() {
+      this.noLoginDialog = !this.noLoginDialog;
     }
     // handleClickShowShareContent() {
     //   console.info('分享');
@@ -131,6 +165,48 @@ export default {
     .icon-yonghu {
       font-size: 18px;
     }
+  }
+}
+// 修改 vant dialog 样式。
+/deep/ .van-dialog {
+  width: 234px;
+  min-height: 289px;
+  img {
+    display: block;
+    margin: 25px auto 0px;
+    width: 85px;
+    height: 85px;
+  }
+  span {
+    display: block;
+    margin-top: 28px;
+    font-size: 13px;
+    font-family: Yu Gothic;
+    font-weight: bold;
+    text-align: center;
+    color: rgba(21, 21, 21, 1);
+  }
+  p {
+    width: 164px;
+    height: 37px;
+    margin: 0 auto;
+    font-size: 13px;
+    font-family: Yu Gothic;
+    font-weight: bold;
+    text-align: center;
+    line-height: 37px;
+    border-radius: 19px;
+  }
+  .confirm-button {
+    margin-top: 24px;
+    color: rgba(255, 255, 255, 1);
+    background-color: rgba(235, 129, 154, 1);
+  }
+  .cancel-button {
+    margin-top: 13px;
+    color: rgba(60, 60, 60, 1);
+    background-color: rgba(255, 255, 255, 1);
+    border: 1px solid rgba(50, 50, 50, 1);
   }
 }
 </style>

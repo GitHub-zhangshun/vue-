@@ -213,7 +213,7 @@ export default {
     },
     // 点击跳转详 show 情页面。
     handleClick2DetailPage(item) {
-      if(item.status !== 1) {
+      if(item.status !== 0) {
         this.$router.push({
           name: "showDetailsPage",
           params: {

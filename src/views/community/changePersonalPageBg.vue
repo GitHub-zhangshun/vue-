@@ -66,16 +66,13 @@ export default {
         this.$toast('写真をサイズは10Mを超えてはいけません。もう一度選択してください。');
       }
       else {
-        this.whichButtonShown = !this.whichButtonShown;
+        this.whichButtonShown = false;
         this.bgImgSrc = this.fileList[0].content;
         this.fileList = [];
         // 上传文件到服务器，并获取 id 。
         let formData = new FormData();
         formData.append("image", file.file);
         let res = await commonUploadSingleImg(1, formData);
-        if(res.code === 200) {
-          this.whichButtonShown = !this.whichButtonShown;
-        }
         this.bgCode = res.data;
       }
     },
