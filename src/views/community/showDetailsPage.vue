@@ -311,7 +311,7 @@ export default {
     },
     // 关注、取关 show 所属用户操作。
     async handleClickUnfollowUser(item) {
-      let res = await unFollowUser(item.id);
+      let res = await unFollowUser(item.user_id);
       if (res.code === 200) {
         item.is_follow = 0;
       } else {
@@ -319,10 +319,11 @@ export default {
       }
     },
     async handleClickFollowUser(item) {
+      console.log(item)
       if (!getStore("token")) {
         this.noLoginDialog = true;
       } else {
-        let res = await unFollowUser(item.id);
+        let res = await unFollowUser(item.user_id);
         if (res.code === 200) {
           item.is_follow = 1;
         } else {
@@ -490,12 +491,12 @@ export default {
   .show-details_banner {
     position: relative;
     width: 100%;
-    height: 375px;
+    // height: 375px;
     .van-swipe {
       width: 100%;
-      height: 100%;
+      // height: 100%;
       img {
-        height: 100%;
+        // height: 100%;
       }
     }
     .show-details_number {

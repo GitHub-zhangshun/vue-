@@ -224,7 +224,8 @@ export default {
       // 对应 tab 下可请求的总页数。
       lastPage: 0,
       // 保存多张图片文件流的数组。
-      imagesArr: []
+      imagesArr: [],
+      button_once_flag:true //发布按钮只能触发一次的flag
     };
   },
   computed: {
@@ -348,6 +349,8 @@ export default {
     },
     // 点击提交按钮的操作。
     async handleClickSubmit() {
+      if(!this.button_once_flag) return
+      this.button_once_flag = false
       // 先检查图片是否为空。
       if (this.imagesArr.length <= 0) {
         this.$toast("最初に写真をアップロードしてください！");
@@ -378,6 +381,7 @@ export default {
             }
           });
         } else {
+          this.button_once_flag = true
           this.$toast("公開に失敗しました。もう一度入力してください！");
           this.checkedTagId = [];
           this.checkedId = [];
