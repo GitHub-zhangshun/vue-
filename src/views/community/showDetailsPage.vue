@@ -81,7 +81,7 @@
           v-for="(item, idx) in relatedGoodsData"
           :key="idx"
         >
-          <div @click="handleClick2ProductPage">
+          <div @click="handleClick2ProductPage(item)">
             <img :src="item.product_thumb" alt="関連製品図" />
           </div>
           <div>
@@ -455,12 +455,13 @@ export default {
       }
     },
     // 点击关联产品跳转老系统产品详情。
-    async handleClick2ProductPage() {
+    async handleClick2ProductPage(item) {
+      console.log(item)
       let res = await productConfig({
         key: "show_web_url"
       });
       if (res.code === 200) {
-        window.location.href = `${res.data}`;
+        window.location.href = `${res.data}/${item.slug_url}`;
       }
     },
     login() {
