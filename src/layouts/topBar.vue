@@ -103,6 +103,7 @@ export default {
     handleClickGoBack() {
       // 舍弃路由返回，首先因为数据缓存的原因；其次就是嵌套路由导致的 Bug 。
       window.history.go(-1);
+      // this.$router.go(-1)
     },
     handleClick2Sidebar() {
       window.location.href = "https://m-test.sisilily.com/sidebar-page.html";

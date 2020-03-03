@@ -6,6 +6,7 @@ const community = [
   {
     path: "/",
     name: "community",
+    redirect: "/community/show-details-content/recommend"
   },
   {
     path: "/community/show-details-content/recommend",

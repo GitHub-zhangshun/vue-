@@ -304,10 +304,10 @@ export default {
     async handleClickTheTab(id) {
       switch (id) {
         case 0:
-          this.requestType = "order";
+          this.requestType = "cart";
           break;
         case 1:
-          this.requestType = "cart";
+          this.requestType = "order";
           break;
         case 2:
           this.requestType = "collect";

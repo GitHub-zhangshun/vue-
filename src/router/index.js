@@ -64,7 +64,7 @@ const router = new Router({
   routes: [
     {
       path: "/",
-      redirect: "/community/show-details-content/recommend"
+      redirect: "/community"
     },
     {
       path: "/community",
