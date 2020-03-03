@@ -234,11 +234,13 @@ export default {
   methods: {
     // 点击 tab item 改变用于请求数据的 id 。
     handleClickGetType(name) {
+      this.showData = []
       if (name === 0) {
         this.type = "hot";
       } else if (name === 1) {
         this.type = "new";
       }
+      this.getTagRelatedShowData()
     },
     // 点击跳转详 show 情页面。
     handleClick2DetailPage(id) {
